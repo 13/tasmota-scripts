@@ -10,10 +10,10 @@
 
 | NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
 |--:|:--|:--|--:|:--|---|---|---|
-| 1 | GDL_O | Relay_i1 | 5 | D5 | | x | GDL open |
-| 2 | GDL_C | Relay_i2 | 7 | D7 | | x | GDL close |
-| 3 | HDL_O | Relay_i3 | 9 | D9 | | x | HDL open |
-| 4 | HDL_C | Relay_i4 | 11 | D11 | | x | HDL close |
+| 1 | GDL_C | Relay_i1 | 5 | D5 | | x | GDL close |
+| 2 | GDL_O | Relay_i2 | 7 | D7 | | x | GDL open |
+| 3 | HDL_C | Relay_i3 | 9 | D9 | | x | HDL close |
+| 4 | HDL_O | Relay_i4 | 11 | D11 | | x | HDL open |
 | 5 | G_T | Relay_i5 | 12 | D12 | | x | G toggle |
 
 ## Settings
@@ -27,18 +27,10 @@ Backlog SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 
 ```
 Backlog Rule1 1;
 PulseTime5 6;
-PulseTime1 0;
-PulseTime2 2;
-PulseTime3 0;
-PulseTime4 2
-
-// PulseTime2 5
-LOCK/UNLOCK
- Backlog Power1 1; Delay 2; Power1 0
-OPEN 
- Backlog Power1 1; Delay 10; Power1 0
-TOGGLE G
- Backlog Power1 1; Delay 8; Power1 0
+PulseTime1 2;
+PulseTime2 0;
+PulseTime3 2;
+PulseTime4 0
  
 Rule1
   ON mqtt#connected DO Subscribe RLY, tasmota/sensors/RLY/cmnd ENDON
