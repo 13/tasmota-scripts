@@ -53,8 +53,12 @@ import webserver
 
 class relayButtonsMethods : Driver
 
-  def runRelay(numRelay, numDelay)
-    log("Relay Button " + str(numRelay) + "pressed with delay " + str(numRelay))
+  def runRelay(numRelay, openDoor)
+    log("Relay Button " + str(numRelay) + "pressed " + str(openDoor))
+    var numDelay = 2
+    if openDoor
+      numDelay = 10
+    end
     tasmota.cmd("Backlog Power" + str(numRelay) + " 1; Delay " + str(numDelay) + "; Power" + str(numRelay) + " 0")
   end
 
@@ -62,18 +66,18 @@ class relayButtonsMethods : Driver
     webserver.content_send("<p></p><button onclick='la(\"&o=5\");'>GARAGE</button><table style=\"width:100%\"><tbody><tr>
     <td style=\"width:33%\">
     <button onclick='la(\"&o=1\");'>GD LOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&mrly=2&mdly=2\");'>UNLOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&mrly=2&mdly=10\");'>OPEN</button></td></tr><tr><td style=\"width:33%\">
+    <button onclick='la(\"&rly=2\");'>UNLOCK</button></td><td style=\"width:33%\">
+    <button onclick='la(\"&rly=2&opendoor=1\");'>OPEN</button></td></tr><tr><td style=\"width:33%\">
     <button onclick='la(\"&o=3\");'>HD LOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&mrly=4&mdly=2\");'>UNLOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&mrly=4&mdly=10\");'>OPEN</button></td></tr></tbody></table><p></p>")
+    <button onclick='la(\"&rly=4\");'>UNLOCK</button></td><td style=\"width:33%\">
+    <button onclick='la(\"&rly=4&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
   end
 
   def web_sensor()
-    if webserver.has_arg("mrly") && webserver.has_arg("mdly")
-      var numRelay = int(webserver.arg("mrly"))
-      var numDelay = int(webserver.arg("mdly"))
-      self.runRelay(numRelay, numDelay)
+    if webserver.has_arg("rly") && webserver.has_arg("opendoor")
+      var numRelay = int(webserver.arg("rly"))
+      var openDoor = toBool(webserver.arg("opendoor"))
+      self.runRelay(numRelay, openDoor)
     end
   end
   
