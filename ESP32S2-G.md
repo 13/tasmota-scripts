@@ -80,3 +80,10 @@ class relayButtonsMethods : Driver
 d1 = relayButtonsMethods()
 tasmota.add_driver(d1)
 ```
+
+Lock Door after x Minutes
+
+```
+tasmota.set_timer(5000, tasmota.cmd("Power3 1"), "GDL")
+tasmota.remove_timer("GDL")
+```
