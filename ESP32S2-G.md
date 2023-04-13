@@ -10,16 +10,16 @@
 
 | NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
 |--:|:--|:--|--:|:--|---|---|---|
-| 1 | GDL_O | Relay1 | 15 | D25 | | x | GDL OPEN Relay |
-| 2 | GDL_C | Relay2 | 17 | D26 | | x | GDL CLOSE Relay |
-| 3 | HDL_O | Relay3 | 27 | D27 | | x | HDL OPEN Relay |
-| 4 | HDL_C | Relay4 | 32 | D32 | | x | HDL CLOSE Relay |
-| 5 | G_T | Relay5 | 32 | D32 | | x | HDL CLOSE Relay |
+| 1 | GDL_O | Relay_i1 | 5 | D5 | | x | GDL open |
+| 2 | GDL_C | Relay_i2 | 7 | D7 | | x | GDL close |
+| 3 | HDL_O | Relay_i3 | 9 | D9 | | x | HDL open |
+| 4 | HDL_C | Relay_i4 | 11 | D11 | | x | HDL close |
+| 5 | G_T | Relay_i5 | 12 | D12 | | x | Garage Toggle |
 
 ## Settings
 
 ```
-Backlog SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0;
+Backlog SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0
 ```
 
 ## Rules
@@ -33,6 +33,7 @@ PulseTime3 0;
 PulseTime4 2
 ```
 
+```
 Backlog
 PulseTime5 6;
 PulseTime1 0;
@@ -53,5 +54,4 @@ Rule1
   ON Event#RLY=HDLOPEN DO Backlog Power2 1; Delay 10; Power2 0 ENDON
   ON Event#RLY=GDOPEN DO Backlog Power4 1; Delay 2; Power4 0 ENDON
   ON Event#RLY=GDLOPEN DO Backlog Power4 1; Delay 10; Power4 0 ENDON
-  
 ```
