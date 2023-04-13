@@ -66,10 +66,10 @@ class relayButtonsMethods : Driver
     webserver.content_send("<p></p><button onclick='la(\"&o=5\");'>GARAGE</button><table style=\"width:100%\"><tbody><tr>
     <td style=\"width:33%\">
     <button onclick='la(\"&o=1\");'>GD LOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&rly=2\");'>UNLOCK</button></td><td style=\"width:33%\">
+    <button onclick='la(\"&rly=2&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\">
     <button onclick='la(\"&rly=2&opendoor=1\");'>OPEN</button></td></tr><tr><td style=\"width:33%\">
     <button onclick='la(\"&o=3\");'>HD LOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&rly=4\");'>UNLOCK</button></td><td style=\"width:33%\">
+    <button onclick='la(\"&rly=4&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\">
     <button onclick='la(\"&rly=4&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
   end
 
