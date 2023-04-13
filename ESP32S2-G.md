@@ -3,7 +3,7 @@
 ## Template
 
 ```
-
+{"NAME":"S2 Mini v1.0.0","GPIO":[32,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],"FLAG":0,"BASE":1}
 ```
 
 ## Table
@@ -19,7 +19,9 @@
 ## Settings
 
 ```
-Backlog FriendlyName1 GRELAY; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0
+Backlog FriendlyName1 GRELAY; 
+GPIO5 256; GPIO7 257; GPIO9 258; GPIO11 259; GPIO12 260;
+SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0
 ```
 
 ## Rules
