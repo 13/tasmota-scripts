@@ -19,7 +19,7 @@
 ## Settings
 
 ```
-Backlog SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0
+Backlog FriendlyName1 GRELAY; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0
 ```
 
 ## Rules
