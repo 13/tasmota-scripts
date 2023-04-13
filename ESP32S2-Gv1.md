@@ -99,3 +99,31 @@ tasmota.add_rule("Switch2#state",lockGDL)
 
 tasmota.add_rule("Switch1#state",tasmota.publish("tasmota/sensors/G/state", value, true))
 ```
+
+```
+bool stateG = 0
+bool stateGDL = 0
+
+def LEDG(value)
+  stateG = toBool(value)
+  setLED()
+end
+
+def LEDGDL(value)
+  stateGDL = toBool(value)
+  setLED()
+end
+
+def setLED()
+  if stateLEDG && stateLEDGDL
+    tasmota.set_power(1, true)
+  elif !stateLEDG && !stateLEDGDL
+    tasmota.set_power(1, true)
+  else 
+    tasmota.cmd("Power1 3") 
+  end
+end
+
+mqtt.subscribe("tasmota/sensors/G", LEDG)
+mqtt.subscribe("tasmota/sensors/GDL", LEDGDL)
+```
