@@ -1,4 +1,4 @@
-# ESP32S2 G
+# ESP32S2 Gv1
 
 ## Template
 
@@ -82,8 +82,16 @@ tasmota.add_driver(d1)
 ```
 
 Lock Door after x Minutes
-
+RULES
 ```
-tasmota.set_timer(5000, tasmota.cmd("Power3 1"), "GDL")
-tasmota.remove_timer("GDL")
+def lockGDL(value)
+  if value == 1
+    tasmota.set_timer(5000, tasmota.set_power(3, true), "GDL")
+  else
+    tasmota.remove_timer("GDL")
+  end
+end
+tasmota.add_rule("Switch2#state",lockGDL)
+
+tasmota.add_rule("Switch1#state",tasmota.publish("tasmota/sensors/G/state", value, true))
 ```
