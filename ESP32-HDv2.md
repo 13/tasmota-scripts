@@ -17,17 +17,12 @@
 | 5 | L_G | Relay1 | 23 | D23 | x | x | GLED (Garage/GarageDoor LED) |
 | 6 | HDG | Button2 | 25 | D25 |   | x | G_Door OPEN Relay |
 | 7 | R_B | Relay2 | 26 | D26 | | x | Bell Relay |
-| 8 | | | 27 | D27 | | | |
-| 9 | | | 32 | D32 | | | |
-
-
-| NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
-|--:|:--|:--|--:|:--|---|---|---|
-| 1 | GDL_C | Relay_i1 | 5 | D5 | | x | GDL close |
-| 2 | GDL_O | Relay_i2 | 7 | D7 | | x | GDL open |
-| 3 | HDL_C | Relay_i3 | 9 | D9 | | x | HDL close |
-| 4 | HDL_O | Relay_i4 | 11 | D11 | | x | HDL open |
-| 5 | G_T | Relay_i5 | 12 | D12 | | x | G toggle |
+| 8 | DFPlayer | mp3player | 27 | D27 | | | |
+| 9 | HDL_O | Relayi1 | 32 | D32 | | | |
+| 10 | HDL_C | Relayi2 | 33 | D33 | | | |
+| 11 | | | 21 | D21 | | | |
+| 12 | | | 22 | D22 | | | |
+| 13 | RFID | | 13 | D13 | | | |
 
 ## Settings
 
