@@ -27,6 +27,8 @@
 ## Settings
 
 ```
+Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
+
 Backlog FriendlyName1 HD; 
 GPIO5 256; GPIO7 257; GPIO9 258; GPIO11 259; GPIO12 260;
 SwitchMode1 2; SwitchMode2 2; SwitchMode3 1; SwitchTopic 0;
