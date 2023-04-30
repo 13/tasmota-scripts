@@ -24,10 +24,11 @@
 | 13 | RFID | | 13 | D13 | | | RDM6300 |
 
 ## Settings
-
+### Switches
 ```
 Backlog DeviceName GARAGE; FriendlyName1 GARAGE; 
-SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0;
-
+SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0;
+```
+```
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0
 ```
