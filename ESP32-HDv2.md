@@ -50,11 +50,11 @@ tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDG/json"
 - Classic
 ```
 Rule1
-  on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%", "tstamp": %localtime%} endon
-  on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%", "tstamp": %localtime%} endon
-  on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%", "tstamp": %localtime%} endon
-  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%", "tstamp": %localtime%} endon
-  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%", "tstamp": %localtime%} endon
+  on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%", "tstamp": %LOCALTIME%} endon
+  on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%", "tstamp": %LOCALTIME%} endon
+  on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%", "tstamp": %LOCALTIME%} endon
+  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%", "tstamp": %LOCALTIME%} endon
+  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%", "tstamp": %LOCALTIME%} endon
 ```
 
 ## Berry
