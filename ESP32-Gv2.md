@@ -32,6 +32,7 @@ SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime3 6; PulseTime1 0; PulseTime2 2;
 ```
 
+autoexec.be
 ```
 import webserver
 
