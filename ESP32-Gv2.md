@@ -26,7 +26,7 @@
 ## Settings
 
 ```
-Backlog FriendlyName1 GARAGE; 
+Backlog DeviceName GARAGE; FriendlyName1 GARAGE; 
 GPIO5 256; GPIO7 257; GPIO9 258; GPIO11 259; GPIO12 260;
 SwitchMode1 2; SwitchMode2 2; SwitchMode3 1; SwitchTopic 0;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0
