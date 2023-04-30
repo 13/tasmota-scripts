@@ -26,10 +26,33 @@
 ## Settings
 ### Switches
 ```
+Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
+```
+```
 Backlog DeviceName GARAGE; FriendlyName1 GARAGE; 
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime3 6; PulseTime1 0; PulseTime2 2;
+```
+
+```
+on Switch1#state do Publish2 tasmota/sensors/GD/state %value% endon
+on Switch2#state do Publish2 tasmota/sensors/GDL/state %value% endon
+on Switch3#state do Publish tasmota/sensors/GDP/state %value% endon
+on Switch4#state do Publish2 tasmota/sensors/G/state %value% endon
+
+import mqtt
+
+def publishPortal(value)
+  if value == 1
+    tasmota.set_timer(5000, tasmota.set_power(3, true), "GDL")
+  else
+    tasmota.remove_timer("GDL")
+  end
+end
+tasmota.add_rule("Switch1#state",publishPortal)
+
+tasmota.add_rule("Switch1#state",mqtt.publish("muh/portal/G/json", {'state': value, 'tstamp': 21}, true))
 ```
 
 autoexec.be
@@ -49,10 +72,9 @@ class relayButtonsMethods : Driver
 
   def web_add_main_button()
     webserver.content_send("<p></p><button onclick='la(\"&o=3\");'>GARAGE</button>
-    <table style=\"width:100%\"><tbody><tr><td style=\"width:33%\">
-    <button onclick='la(\"&o=2\");'>GD LOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&rly=1&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&rly=1&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
+    <table style=\"width:100%\"><tbody><tr><td style=\"width:33%\"><button onclick='la(\"&o=2\");'>GD LOCK</button></td>
+    <td style=\"width:33%\"><button onclick='la(\"&rly=1&opendoor=0\");'>UNLOCK</button></td>
+    <td style=\"width:33%\"><button onclick='la(\"&rly=1&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
   end
 
   def web_sensor()
