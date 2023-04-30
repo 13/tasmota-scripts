@@ -1,9 +1,9 @@
-# ESP32 Gv2
+# ESP32 GARAGE
 
 ## Template
 
 ```
-{"NAME":"ESP32-HD","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,160,161,162,32,0,0,0,228,0,224,225,226,0,0,0,0,227,0,0,0,0,0,0,0],"FLAG":0,"BASE":1}
+{"NAME":"ESP32-GARAGE","GPIO":[0,0,0,0,0,0,0,0,0,0,0,0,160,161,162,32,0,0,0,228,0,224,225,226,0,0,0,0,227,0,0,0,0,0,0,0],"FLAG":0,"BASE":1}
 ```
 
 ## Table
@@ -26,7 +26,7 @@
 ## Settings
 
 ```
-Backlog FriendlyName1 HD; 
+Backlog FriendlyName1 GARAGE; 
 GPIO5 256; GPIO7 257; GPIO9 258; GPIO11 259; GPIO12 260;
 SwitchMode1 2; SwitchMode2 2; SwitchMode3 1; SwitchTopic 0;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0
