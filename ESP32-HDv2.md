@@ -50,11 +50,11 @@ tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDG/json"
 - Classic
 ```
 Rule1
-  on Switch1#state do Publish2 tasmota/sensors/HD/state %value% endon
-  on Switch2#state do Publish2 tasmota/sensors/HDL/state %value% endon
-  on Switch3#state do Publish tasmota/sensors/HDP/state %value% endon
-  on Button1#state do Publish tasmota/sensors/HDB/state %value% endon
-  on Button2#state do Publish tasmota/sensors/HDG/state %value% endon
+  on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "tstamp":" %timestamp%"} endon
+  on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "tstamp":" %timestamp%"} endon
+  on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "tstamp":" %timestamp%"} endon
+  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "tstamp":" %timestamp%"} endon
+  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "tstamp":" %timestamp%"} endon
 ```
 
 ## Berry
