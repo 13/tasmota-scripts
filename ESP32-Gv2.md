@@ -36,23 +36,13 @@ PulseTime3 6; PulseTime1 0; PulseTime2 2;
 ```
 
 ```
-on Switch1#state do Publish2 tasmota/sensors/GD/state %value% endon
-on Switch2#state do Publish2 tasmota/sensors/GDL/state %value% endon
-on Switch3#state do Publish tasmota/sensors/GDP/state %value% endon
-on Switch4#state do Publish2 tasmota/sensors/G/state %value% endon
-
 import mqtt
+tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/G/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
+tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/GD/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
+tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/GDL/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
+tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDW/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
+tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", false) end )
 
-def publishPortal(value)
-  if value == 1
-    tasmota.set_timer(5000, tasmota.set_power(3, true), "GDL")
-  else
-    tasmota.remove_timer("GDL")
-  end
-end
-tasmota.add_rule("Switch1#state",publishPortal)
-
-tasmota.add_rule("Switch1#state",mqtt.publish("muh/portal/G/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true))
 ```
 
 autoexec.be
