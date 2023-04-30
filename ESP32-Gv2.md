@@ -39,11 +39,11 @@ PulseTime3 6; PulseTime1 0; PulseTime2 2;
 import string
 import mqtt
 
-tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/G/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
-tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/GD/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
-tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/GDL/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
-tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDW/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
-tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/G/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/GD/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/GDL/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDW/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), false) end )
 ```
 
 autoexec.be
