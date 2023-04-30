@@ -41,20 +41,20 @@ Publish to custom topics (with retain)
 import string
 import mqtt
 
-tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/HD/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
-tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
-tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/HDP/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
-tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
-tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDG/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
+tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/HD/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/HDP/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), false) end )
+tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), false) end )
+tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDG/json", string.format("{'state': %d, 'time': %s, 'tstamp': %d}", value, tasmota.time_str(tasmota.rtc()['local']), tasmota.rtc()['local']), false) end )
 ```
 - Classic
 ```
 Rule1
-  on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "tstamp":" %timestamp%"} endon
-  on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "tstamp":" %timestamp%"} endon
-  on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "tstamp":" %timestamp%"} endon
-  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "tstamp":" %timestamp%"} endon
-  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "tstamp":" %timestamp%"} endon
+  on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%", "tstamp": "%localtime%"} endon
+  on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%", "tstamp": "%localtime%"} endon
+  on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%", "tstamp": "%localtime%"} endon
+  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%", "tstamp": "%localtime%"} endon
+  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%", "tstamp": "%localtime%"} endon
 ```
 
 ## Berry
