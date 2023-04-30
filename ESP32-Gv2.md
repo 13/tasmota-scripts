@@ -38,18 +38,17 @@ PulseTime3 6; PulseTime1 0; PulseTime2 2;
 ```
 import string
 import mqtt
-tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/G/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
-tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/GD/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
-tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/GDL/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
-tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDW/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
-tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", false) end )
+tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/G/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/GD/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/GDL/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDW/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
 
 tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/HD/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
-
-tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/HDL/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true) end )
-tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/HDP/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", false) end )
-tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", false) end )
-tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDG/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", false) end )
+tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
+tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/HDP/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
+tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
+tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDG/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
 ```
 
 autoexec.be
