@@ -52,7 +52,7 @@ def publishPortal(value)
 end
 tasmota.add_rule("Switch1#state",publishPortal)
 
-tasmota.add_rule("Switch1#state",mqtt.publish("muh/portal/G/json", {'state': value, 'tstamp': 21}, true))
+tasmota.add_rule("Switch1#state",mqtt.publish("muh/portal/G/json", "{\'state\': " + value + ", \'tstamp\': " + tasmota.rtc()['local'] + "}", true))
 ```
 
 autoexec.be
