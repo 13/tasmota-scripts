@@ -71,6 +71,24 @@ Rule1
   on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  
+Rule2
+  ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
+  ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
+
+  ON Event#LEDG DO Backlog var3 %value%;
+  IF ((var3==1) AND (var4==1)) Power1 1 
+  ELSEIF ((var3==0) AND (var4==0)) Power1 0 
+  ELSE Power1 3 
+  ENDIF
+  ENDON
+
+  ON Event#LEDGDL DO Backlog var4 %value%;
+  IF ((var3==1) AND (var4==1)) Power1 1 
+  ELSEIF ((var3==0) AND (var4==0)) Power1 0 
+  ELSE Power1 3 
+  ENDIF
+  ENDON  
 ```
 
 ## Berry
