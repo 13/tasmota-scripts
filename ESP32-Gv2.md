@@ -48,7 +48,7 @@ tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/HD/json",
 tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), true) end )
 tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/HDP/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
 tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
-tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDG/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
+tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDG/json", string.format("{'state': %d, 'tstamp': %d}", value, tasmota.rtc()['local']), false) end )
 ```
 
 autoexec.be
