@@ -62,7 +62,7 @@ Rule1
   on Switch1#Boot do var1 %value% endon
   on Switch2#Boot do var2 %value% endon
   on Switch3#Boot do var3 %value% endon
-  on Switch4#Boot do var3 %value% endon
+  on Switch4#Boot do var4 %value% endon
   on mqtt#connected do Publish2 muh/portal/G/json {"state": %var1%, "tstamp": "%timestamp%"} endon
   on mqtt#connected do Publish2 muh/portal/GD/json {"state": %var2%, "tstamp": "%timestamp%"} endon
   on mqtt#connected do Publish2 muh/portal/GDL/json {"state": %var3%, "tstamp": "%timestamp%"} endon
