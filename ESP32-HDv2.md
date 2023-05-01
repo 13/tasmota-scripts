@@ -117,45 +117,6 @@ Rule2
 
 ## Berry
 
-Keymatic unlock & open method over web ui
-
-```
-import webserver
-
-class relayButtonsMethods : Driver
-
-  def runRelay(numRelay, openDoor)
-    log("Relay Button " + str(numRelay) + "pressed " + str(openDoor))
-    var numDelay = 2
-    if openDoor
-      numDelay = 10
-    end
-    tasmota.cmd("Backlog Power" + str(numRelay) + " 1; Delay " + str(numDelay) + "; Power" + str(numRelay) + " 0")
-  end
-
-  def web_add_main_button()
-    webserver.content_send("<p></p><button onclick='la(\"&o=5\");'>GARAGE</button><table style=\"width:100%\"><tbody><tr>
-    <td style=\"width:33%\">
-    <button onclick='la(\"&o=1\");'>GD LOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&rly=2&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&rly=2&opendoor=1\");'>OPEN</button></td></tr><tr><td style=\"width:33%\">
-    <button onclick='la(\"&o=3\");'>HD LOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&rly=4&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\">
-    <button onclick='la(\"&rly=4&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
-  end
-
-  def web_sensor()
-    if webserver.has_arg("rly") && webserver.has_arg("opendoor")
-      var numRelay = int(webserver.arg("rly"))
-      var openDoor = toBool(webserver.arg("opendoor"))
-      self.runRelay(numRelay, openDoor)
-    end
-  end
-  
-d1 = relayButtonsMethods()
-tasmota.add_driver(d1)
-```
-
 LED G/GDL
 
 ```
@@ -163,12 +124,12 @@ bool stateG = 0
 bool stateGDL = 0
 
 def LEDG(value)
-  stateG = toBool(value)
+  stateG = bool(value)
   setLED()
 end
 
 def LEDGDL(value)
-  stateGDL = toBool(value)
+  stateGDL = bool(value)
   setLED()
 end
 
