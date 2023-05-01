@@ -52,8 +52,8 @@ tasmota.add_rule("Switch2#Boot", def (value) stateSwitch2 = value end )
 tasmota.add_rule("System#Boot", def (value) mqtt.publish("muh/portal/HD/json", string.format("{'state': %d, 'tstamp': '%s'}", stateSwitch1, tasmota.time_str(tasmota.rtc()['local'])), true) end )
 tasmota.add_rule("System#Boot", def (value) mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'tstamp': '%s'}", stateSwitch2, tasmota.time_str(tasmota.rtc()['local'])), true) end )
 
-tasmota.add_rule("Switch1#state", def (value) stateSwitch1 = value mqtt.publish("muh/portal/HD/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-tasmota.add_rule("Switch2#state", def (value) stateSwitch2 = value mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
+tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/HD/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
+tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
 
 tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/HDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
 tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
@@ -66,8 +66,8 @@ Rule1
   on Switch2#Boot do var2 %value% endon
   on System#Boot do Publish2 muh/portal/HD/json {"state": %var1%, "tstamp": "%timestamp%"} endon
   on System#Boot do Publish2 muh/portal/HDL/json {"state": %var2%, "tstamp": "%timestamp%"} endon
-  on Switch1#state do Backlog var1 %value%; Publish2 muh/portal/HD/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch2#state do Backlog var2 %value%; Publish2 muh/portal/HDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "tstamp": "%timestamp%"} endon
