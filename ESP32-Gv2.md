@@ -29,7 +29,7 @@ Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
 Backlog DeviceName GARAGE; FriendlyName1 GARAGE; 
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
-PulseTime3 6; PulseTime1 0; PulseTime2 2;
+PulseTime3 6; PulseTime1 2; PulseTime2 0;
 ```
 ### Rules
 ```
@@ -87,7 +87,7 @@ class relayButtonsMethods : Driver
   end
 
   def web_add_main_button()
-    webserver.content_send("<p></p><button onclick='la(\"&o=3\");'>GARAGE</button><table style=\"width:100%\"><tbody><tr><td style=\"width:33%\"><button onclick='la(\"&o=2\");'>GD LOCK</button></td><td style=\"width:33%\"><button onclick='la(\"&rly=1&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\"><button onclick='la(\"&rly=1&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
+    webserver.content_send("<p></p><button onclick='la(\"&o=3\");'>GARAGE</button><table style=\"width:100%\"><tbody><tr><td style=\"width:33%\"><button onclick='la(\"&o=1\");'>GD LOCK</button></td><td style=\"width:33%\"><button onclick='la(\"&rly=2&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\"><button onclick='la(\"&rly=2&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
   end
 
   def web_sensor()
