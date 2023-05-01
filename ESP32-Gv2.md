@@ -73,7 +73,7 @@ tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json"
 
 autoexec.be
 ```
-import webserver
+import webserver 
 
 class relayButtonsMethods : Driver
 
@@ -87,20 +87,17 @@ class relayButtonsMethods : Driver
   end
 
   def web_add_main_button()
-    webserver.content_send("<p></p><button onclick='la(\"&o=3\");'>GARAGE</button>
-    <table style=\"width:100%\"><tbody><tr><td style=\"width:33%\"><button onclick='la(\"&o=2\");'>GD LOCK</button></td>
-    <td style=\"width:33%\"><button onclick='la(\"&rly=1&opendoor=0\");'>UNLOCK</button></td>
-    <td style=\"width:33%\"><button onclick='la(\"&rly=1&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
+    webserver.content_send("<p></p><button onclick='la(\"&o=3\");'>GARAGE</button><table style=\"width:100%\"><tbody><tr><td style=\"width:33%\"><button onclick='la(\"&o=2\");'>GD LOCK</button></td><td style=\"width:33%\"><button onclick='la(\"&rly=1&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\"><button onclick='la(\"&rly=1&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
   end
 
   def web_sensor()
     if webserver.has_arg("rly") && webserver.has_arg("opendoor")
       var numRelay = int(webserver.arg("rly"))
-      var openDoor = toBool(webserver.arg("opendoor"))
+      var openDoor = bool(webserver.arg("opendoor"))
       self.runRelay(numRelay, openDoor)
     end
   end
-  
+end
 d1 = relayButtonsMethods()
 tasmota.add_driver(d1)
 ```
