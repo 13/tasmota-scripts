@@ -50,8 +50,8 @@ Rule1
   
 Rule2
   on Switch2#Boot=1 do RuleTimer1 600 endon
-  on Switch2#state=0 do RuleTimer1 600 endon
-  on Switch2#state=1 do RuleTimer1 0 endon
+  on Switch2#state=1 do RuleTimer1 600 endon
+  on Switch2#state=0 do RuleTimer1 0 endon
   on Switch3#state=1 do RuleTimer1 0 endon
   ON Rules#Timer=1 DO Power1 1 ENDON
   ON event#G_T=1 DO Power3 1 ENDON
