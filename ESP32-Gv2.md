@@ -49,12 +49,15 @@ Rule1
   on Switch5#state do Publish muh/portal/GDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
   
 Rule2
-  on Switch3#state=0 do RuleTimer1 600 endon
+  on Switch2#state=0 do RuleTimer1 600 endon
+  on Switch2#state=1 do RuleTimer1 0 endon
   on Switch3#state=1 do RuleTimer1 0 endon
   ON Rules#Timer=1 DO Power1 1 ENDON
   ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
-  ON Event#RLY=GDOPEN DO Backlog Power2 1; Delay 2; Power2 0 ENDON
-  ON Event#RLY=GDLOPEN DO Backlog Power2 1; Delay 10; Power2 0 ENDON
+  ON Event#RLY=G_TOGGLE DO Power3 1 ENDON
+  ON Event#RLY=GD_LOCK DO Power1 1 ENDON
+  ON Event#RLY=GD_UNLOCK DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+  ON Event#RLY=GD_OPEN DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 
 ```
 ```
