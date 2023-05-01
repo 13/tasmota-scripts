@@ -32,6 +32,8 @@ SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime3 6; PulseTime1 2; PulseTime2 0;
 ```
 ### Rules
+#### Rule 1
+- Publish switches 
 ```
 Rule1
   on Switch1#Boot do var1 %value% endon
@@ -47,7 +49,13 @@ Rule1
   on Switch3#state do Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} endon
   on Switch4#state do Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} endon
   on Switch5#state do Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} endon
-  
+```
+#### Rule 2
+- Autolock after 10m
+- Event HTTP for relays
+- Event MQTT for relays
+- Publish RFID
+```
 Rule2
   on Switch2#Boot=1 do RuleTimer1 600 endon
   on Switch2#state=1 do RuleTimer1 600 endon
@@ -72,9 +80,14 @@ http://192.168.22.199/cm?cmnd=event%20G%5FT=1
 http://192.168.22.199/cm?cmnd=event%20GD%5FL=1
 http://192.168.22.199/cm?cmnd=event%20GD%5FU=1
 http://192.168.22.199/cm?cmnd=event%20GD%5FO=1
+muh/portal/RLY/cmnd G_T
+muh/portal/RLY/cmnd GD_L
+muh/portal/RLY/cmnd GD_U
+muh/portal/RLY/cmnd GD_O
 ```
 
 ## Berry
+autoexec.be
 ```
 import string
 import mqtt
@@ -97,8 +110,7 @@ tasmota.add_rule("Switch3#state", def (value) stateSwitch3 = value mqtt.publish(
 tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDW/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
 tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
 ```
-
-autoexec.be
+- Show Buttons
 ```
 import string
 import webserver 
