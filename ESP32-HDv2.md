@@ -31,7 +31,7 @@ Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
 
 Backlog DeviceName HD; FriendlyName1 HD; 
 GPIO5 256; GPIO7 257; GPIO9 258; GPIO11 259; GPIO12 260;
-SwitchMode1 2; SwitchMode2 2; SwitchMode3 1; SwitchTopic 0;
+SwitchMode1 2; SwitchMode2 2; SwitchMode3 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0
 ```
 
@@ -62,12 +62,12 @@ tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDG/json"
 - Classic
 ```
 Rule1
-  on Switch1#Boot do var1 %value% endon
-  on Switch2#Boot do var2 %value% endon
+  on Switch1#Boot do mem1 %value% endon
+  on Switch2#Boot do mem2 %value% endon
   on mqtt#connected do Publish2 muh/portal/HD/json {"state": %var1%, "tstamp": "%timestamp%"} endon
   on mqtt#connected do Publish2 muh/portal/HDL/json {"state": %var2%, "tstamp": "%timestamp%"} endon
-  on Switch1#state do Backlog var1 %value%; Publish2 muh/portal/HD/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch2#state do Backlog var2 %value%; Publish2 muh/portal/HDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on Switch1#state do Backlog mem1 %value%; Publish2 muh/portal/HD/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on Switch2#state do Backlog mem2 %value%; Publish2 muh/portal/HDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "tstamp": "%timestamp%"} endon
