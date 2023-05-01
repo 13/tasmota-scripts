@@ -73,17 +73,17 @@ tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json"
 
 autoexec.be
 ```
+import string
 import webserver 
 
 class relayButtonsMethods : Driver
 
   def runRelay(numRelay, openDoor)
-    log("Relay Button " + str(numRelay) + "pressed " + str(openDoor))
     var numDelay = 2
     if openDoor
       numDelay = 10
     end
-    tasmota.cmd("Backlog Power" + str(numRelay) + " 1; Delay " + str(numDelay) + "; Power" + str(numRelay) + " 0")
+    tasmota.cmd(string.format("Backlog Power%d 1; Delay %d; Power%d 0", numRelay, numDelay, numRelay))
   end
 
   def web_add_main_button()
