@@ -21,8 +21,9 @@
 | 9 | SDA | I2C SDA | 21 | D21 | x | x | RTC DS3231 |
 | 10 | SCL | I2C SCL | 22 | D22 | | | RTC DS3231 |
 | 11 | RFID | RDM6300 RX | 13 | D13 | x | x | RFID |
-| 12 | |  | 26 | D26 | | |  |
-| 13 | |  | 27 | D27 | | |  |
+| 12 | BCLK | I2S_BCLK | 26 | D26 | | |  |
+| 13 | LRC | I2S_WS | 27 | D27 | | |  |
+| 14 | DIN | I2S_DOUT | 4 | D4 | | |  |
 
 ## Settings
 ```
