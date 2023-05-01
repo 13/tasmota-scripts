@@ -38,14 +38,14 @@ Rule1
   on Switch2#Boot do var2 %value% endon
   on Switch3#Boot do var3 %value% endon
   on Switch4#Boot do var4 %value% endon
-  on mqtt#connected do Publish2 muh/portal/G/json {"state": %var1%, "tstamp": "%timestamp%"} endon
-  on mqtt#connected do Publish2 muh/portal/GD/json {"state": %var2%, "tstamp": "%timestamp%"} endon
-  on mqtt#connected do Publish2 muh/portal/GDL/json {"state": %var3%, "tstamp": "%timestamp%"} endon
-  on mqtt#connected do Publish2 muh/portal/GDW/json {"state": %var4%, "tstamp": "%timestamp%"} endon
-  on Switch1#state do Backlog var1 %value%; Publish2 muh/portal/G/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch2#state do Backlog var2 %value%; Publish2 muh/portal/GD/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch3#state do Backlog var3 %value%; Publish2 muh/portal/GDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch4#state do Backlog var4 %value%; Publish2 muh/portal/GDW/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/G/json {"state": %var1%, "tstamp": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/GD/json {"state": %var2%, "tstamp": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/GDL/json {"state": %var3%, "tstamp": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/GDW/json {"state": %var4%, "tstamp": "%timestamp%"} endon
+  on Switch1#state do Publish2 muh/portal/G/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on Switch2#state do Publish2 muh/portal/GD/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on Switch3#state do Publish2 muh/portal/GDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on Switch4#state do Publish2 muh/portal/GDW/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Switch5#state do Publish muh/portal/GDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
 ```
 ```
