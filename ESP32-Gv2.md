@@ -38,15 +38,15 @@ Rule1
   on Switch2#Boot do var2 %value% endon
   on Switch3#Boot do var3 %value% endon
   on Switch4#Boot do var4 %value% endon
-  on System#Boot do Publish2 muh/portal/G/json {"state": %var1%, "tstamp": "%timestamp%"} endon
-  on System#Boot do Publish2 muh/portal/GD/json {"state": %var2%, "tstamp": "%timestamp%"} endon
-  on System#Boot do Publish2 muh/portal/GDL/json {"state": %var3%, "tstamp": "%timestamp%"} endon
-  on System#Boot do Publish2 muh/portal/GDW/json {"state": %var4%, "tstamp": "%timestamp%"} endon
-  on Switch1#state do Publish2 muh/portal/G/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch2#state do Publish2 muh/portal/GD/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch3#state do Publish2 muh/portal/GDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch4#state do Publish2 muh/portal/GDW/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch5#state do Publish muh/portal/GDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/G/json {"state": %var1%, "time": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/GD/json {"state": %var2%, "time": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/GDL/json {"state": %var3%, "time": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/GDW/json {"state": %var4%, "time": "%timestamp%"} endon
+  on Switch1#state do Publish2 muh/portal/G/json {"state": %value%, "time": "%timestamp%"} endon
+  on Switch2#state do Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} endon
+  on Switch3#state do Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} endon
+  on Switch4#state do Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} endon
+  on Switch5#state do Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} endon
   
 Rule2
   on Switch2#Boot=1 do RuleTimer1 600 endon
@@ -54,23 +54,23 @@ Rule2
   on Switch2#state=1 do RuleTimer1 0 endon
   on Switch3#state=1 do RuleTimer1 0 endon
   ON Rules#Timer=1 DO Power1 1 ENDON
-  ON event#G=1 DO Power3 1 ENDON
-  ON event#GD_LOCK=1 DO Power1 1 ENDON
-  ON event#GD_UNLOCK=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
-  ON event#GD_OPEN=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
+  ON event#G_T=1 DO Power3 1 ENDON
+  ON event#GD_L=1 DO Power1 1 ENDON
+  ON event#GD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+  ON event#GD_O=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
   ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
-  ON Event#RLY=G_TOGGLE DO Power3 1 ENDON
-  ON Event#RLY=GD_LOCK DO Power1 1 ENDON
-  ON Event#RLY=GD_UNLOCK DO Backlog Power2 1; Delay 2; Power2 0 ENDON
-  ON Event#RLY=GD_OPEN DO Backlog Power2 1; Delay 10; Power2 0 ENDON
+  ON Event#RLY=G_T DO Power3 1 ENDON
+  ON Event#RLY=GD_L DO Power1 1 ENDON
+  ON Event#RLY=GD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+  ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 
 ```
 ### Commands
 ```
-http://192.168.22.199/cm?cmnd=event%20G=1
-http://192.168.22.199/cm?cmnd=event%20GD%5FLOCK=1
-http://192.168.22.199/cm?cmnd=event%20GD%5FUNLOCK=1
-http://192.168.22.199/cm?cmnd=event%20GD%5FOPEN=1
+http://192.168.22.199/cm?cmnd=event%20G%5FT=1
+http://192.168.22.199/cm?cmnd=event%20GD%5FL=1
+http://192.168.22.199/cm?cmnd=event%20GD%5FU=1
+http://192.168.22.199/cm?cmnd=event%20GD%5FO=1
 ```
 
 ## Berry
