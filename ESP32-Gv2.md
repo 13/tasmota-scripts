@@ -72,6 +72,8 @@ Rule2
   ON Event#RLY=GD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
   ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
   ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
+  
+  ON RDM6300#UID=XXXX Power3 1 ENDON
 
 ```
 ### Commands
