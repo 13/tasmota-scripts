@@ -47,6 +47,12 @@ Rule1
   on Switch3#state do Publish2 muh/portal/GDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Switch4#state do Publish2 muh/portal/GDW/json {"state": %value%, "tstamp": "%timestamp%"} endon
   on Switch5#state do Publish muh/portal/GDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  
+Rule2
+  on Switch3#state=0 do ruletimer1 600 endon
+  on Switch3#state=1 do ruletimer1 0 endon
+  ON Rules#timer=1 DO Power1 1 ENDON
+
 ```
 ```
 import string
