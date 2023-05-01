@@ -48,16 +48,39 @@ var stateSwitch2 = 0
 
 tasmota.add_rule("Switch1#Boot", def (value) stateSwitch1 = value end )
 tasmota.add_rule("Switch2#Boot", def (value) stateSwitch2 = value end )
-
 tasmota.add_rule("System#Boot", def (value) mqtt.publish("muh/portal/HD/json", string.format("{'state': %d, 'tstamp': '%s'}", stateSwitch1, tasmota.time_str(tasmota.rtc()['local'])), true) end )
 tasmota.add_rule("System#Boot", def (value) mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'tstamp': '%s'}", stateSwitch2, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-
 tasmota.add_rule("Switch1#state", def (value) mqtt.publish("muh/portal/HD/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
 tasmota.add_rule("Switch2#state", def (value) mqtt.publish("muh/portal/HDL/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-
 tasmota.add_rule("Switch3#state", def (value) mqtt.publish("muh/portal/HDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
 tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
 tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDG/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
+
+bool stateG = 0
+bool stateGDL = 0
+
+def setLEDG(value)
+  stateG = toBool(value)
+  setLED()
+end
+
+def setLEDGDL(value)
+  stateGDL = toBool(value)
+  setLED()
+end
+
+def setLED()
+  if stateLEDG && stateLEDGDL
+    tasmota.set_power(1, true)
+  elif !stateLEDG && !stateLEDGDL
+    tasmota.set_power(1, true)
+  else 
+    tasmota.cmd("Power1 3") 
+  end
+end
+
+mqtt.subscribe("muh/portal/G/json, state", setLEDG)
+mqtt.subscribe("tasmota/sensors/GDL", setLEDGDL)
 ```
 - Classic
 ```
@@ -75,14 +98,12 @@ Rule1
 Rule2
   ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
   ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
-
   ON Event#LEDG DO Backlog var3 %value%;
   IF ((var3==1) AND (var4==1)) Power1 1 
   ELSEIF ((var3==0) AND (var4==0)) Power1 0 
   ELSE Power1 3 
   ENDIF
   ENDON
-
   ON Event#LEDGDL DO Backlog var4 %value%;
   IF ((var3==1) AND (var4==1)) Power1 1 
   ELSEIF ((var3==0) AND (var4==0)) Power1 0 
