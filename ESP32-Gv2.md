@@ -3,7 +3,7 @@
 ## Template
 
 ```
-{"NAME":"ESP32-GARAGE","GPIO":[0,0,0,0,0,0,0,0,0,3616,0,0,160,161,162,163,0,640,608,164,0,258,0,2144,0,0,0,0,256,257,0,0,0,0,0,0],"FLAG":0,"BASE":1}
+{"NAME":"ESP32-GARAGE","GPIO":[0,0,0,0,7776,0,0,0,0,3616,0,0,160,161,162,163,0,640,608,164,0,258,7840,7808,0,0,0,0,256,257,0,0,0,0,0,0],"FLAG":0,"BASE":1}
 ```
 
 ## Table
@@ -76,7 +76,10 @@ Rule2
   ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
   
   ON RDM6300#UID=XXXX Power3 1 ENDON
-  
+```
+#### Rule 3
+- Play sounds
+```
 Rule3
   ON System#Boot DO i2sgain 100 ENDON
   ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
@@ -85,7 +88,6 @@ Rule3
   ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
   ON Event#HDB DO i2splay +/HDB.mp3 ENDON
   ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
-
 ```
 ### Commands
 ```
