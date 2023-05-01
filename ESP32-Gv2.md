@@ -76,6 +76,15 @@ Rule2
   ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
   
   ON RDM6300#UID=XXXX Power3 1 ENDON
+  
+Rule3
+  ON System#Boot DO i2sgain 100 ENDON
+  ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
+  ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
+  ON Event#HD DO i2splay +/HD%value%.mp3 ENDON
+  ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
+  ON Event#HDB DO i2splay +/HDB.mp3 ENDON
+  
 
 ```
 ### Commands
