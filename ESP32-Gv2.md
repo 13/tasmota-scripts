@@ -16,12 +16,13 @@
 | 4 | GDW | Switch 4 | 19 | D19 |   | x | Garage Door Window Reed |
 | 5 | GDP | Switch 5 | 23 | D23 | x | x | Garage Door PiR |
 | 6 | G_T | Relay_i 3 | 25 | D25 | x | x | Relay |
-| 8 | DFPlayer | MP3 Player | 27 | D27 | | | MP3 Mplayer |
-| 9 | GD_L | Relay_i 1 | 32 | D32 | | | Relay |
-| 10 | GD_U | Relay_i 2 | 33 | D33 | | | Relay |
-| 11 | SDA | I2C SDA | 21 | D21 | x | x | RTC DS3231 |
-| 12 | SCL | I2C SCL | 22 | D22 | | | RTC DS3231 |
-| 13 | RFID | RDM6300 RX | 13 | D13 | x | x | RFID |
+| 7 | GD_L | Relay_i 1 | 32 | D32 | | | Relay |
+| 8 | GD_U | Relay_i 2 | 33 | D33 | | | Relay |
+| 9 | SDA | I2C SDA | 21 | D21 | x | x | RTC DS3231 |
+| 10 | SCL | I2C SCL | 22 | D22 | | | RTC DS3231 |
+| 11 | RFID | RDM6300 RX | 13 | D13 | x | x | RFID |
+| 12 | |  | 26 | D26 | | |  |
+| 13 | |  | 27 | D27 | | |  |
 
 ## Settings
 ```
