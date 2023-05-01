@@ -64,6 +64,13 @@ Rule2
   ON Event#RLY=GD_OPEN DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 
 ```
+### Commands
+```
+http://192.168.22.199/cm?cmnd=event%20G=1
+http://192.168.22.199/cm?cmnd=event%20GD%5FLOCK=1
+http://192.168.22.199/cm?cmnd=event%20GD%5FUNLOCK=1
+http://192.168.22.199/cm?cmnd=event%20GD%5FOPEN=1
+```
 ```
 import string
 import mqtt
