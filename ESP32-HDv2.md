@@ -87,13 +87,16 @@ mqtt.subscribe("tasmota/sensors/GDL", setLEDGDL)
 Rule1
   on Switch1#Boot do var1 %value% endon
   on Switch2#Boot do var2 %value% endon
-  on System#Boot do Publish2 muh/portal/HD/json {"state": %var1%, "tstamp": "%timestamp%"} endon
-  on System#Boot do Publish2 muh/portal/HDL/json {"state": %var2%, "tstamp": "%timestamp%"} endon
-  on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "tstamp": "%timestamp%"} endon
-  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "tstamp": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/HD/json {"state": %var1%, "time": "%timestamp%"} endon
+  on System#Boot do Publish2 muh/portal/HDL/json {"state": %var2%, "time": "%timestamp%"} endon
+  on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} endon
+  on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} endon
+  on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} endon
+  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} endon
+  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"} endon
+  // Backlog var1 = %value%; 
+  ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
+  ON Event#HD IF (var1!=%value%) Backlog var1 = %value%; Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} ENDIF ENDON
   
 Rule2
   ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
