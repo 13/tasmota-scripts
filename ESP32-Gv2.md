@@ -84,7 +84,7 @@ Rule3
   ON Event#HD DO i2splay +/HD%value%.mp3 ENDON
   ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
   ON Event#HDB DO i2splay +/HDB.mp3 ENDON
-  
+  ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
 
 ```
 ### Commands
