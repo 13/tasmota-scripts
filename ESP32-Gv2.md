@@ -49,6 +49,7 @@ Rule1
   on Switch5#state do Publish muh/portal/GDP/json {"state": %value%, "tstamp": "%timestamp%"} endon
   
 Rule2
+  on Switch2#Boot=1 do RuleTimer1 600 endon
   on Switch2#state=0 do RuleTimer1 600 endon
   on Switch2#state=1 do RuleTimer1 0 endon
   on Switch3#state=1 do RuleTimer1 0 endon
