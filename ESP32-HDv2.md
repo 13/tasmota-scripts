@@ -80,7 +80,8 @@ Rule3
   ON Time#Minute|30 DO IF (((%time%) % 60) == 30) i2splay +/PC.mp3 ELSE IF (((%time%) % 60) == 0) var10=%time%/60; i2swr http://192.168.22.99:3000/sounds/PC/PC%var10%.mp3 ENDIF ENDON
   
   ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
-  ON event#checkdate$|-01T01 DO Var16 1 ENDON
+  ON event#checkdate$|-12-24T DO IF (%value%) Var16 X ELSE Var16 " ENDIF ENDON
+  ON event#checkdate$|-12-25T DO IF (%value%) Var16 X ELSE Var16 " ENDIF ENDON
 
 ```
 
