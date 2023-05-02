@@ -39,6 +39,7 @@ PulseTime3 4; PulseTime1 2; PulseTime2 0;
 ## Rules
 ### Rule 1
 - Publish states
+- Publish RFID
 ```
 Rule1
   on Switch1#Boot do var1 %value% endon
@@ -54,6 +55,7 @@ Rule1
 ### Rule 2
 - HTTP Relay API
 - MQTT Relay API
+- Publish RFID
 - LED for state of G & GDL
 ```
 Rule2
@@ -65,7 +67,6 @@ Rule2
   ON Event#RLY=HD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
   ON Event#RLY=HD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
   ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "HD"} ENDON
-
   ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
   ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
   ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power5 1 ELSEIF ((var3==0) AND (var4==0)) Power5 0 ELSE Power5 3 ENDIF ENDON
@@ -86,16 +87,11 @@ Rule3
   ON Event#GD DO IF (var12==1) var12 0 ELSE i2splay +/GD%value%.mp3 ENDIF ENDON
   ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
   ON Button2#state=10 DO i2splay +/HDB%Var16%.mp3 ENDON
-  
-  ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
-  
   ON Time#Minute|30 DO IF (((%time%) % 60) == 30) i2splay +/PC.mp3 ELSE IF (((%time%) % 60) == 0) var10=%time%/60; i2swr http://192.168.22.99:3000/sounds/PC/PC%var10%.mp3 ENDIF ENDON
-  
   ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
   ON event#checkdate$|-12-24T DO Var16 X ENDON
   ON event#checkdate$|-12-25T DO Var16 X ENDON
   ON event#checkdate$|-12-26T DO Var16 " ENDON
-
 ```
 
 ## Berry
