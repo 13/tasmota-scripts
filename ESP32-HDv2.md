@@ -51,20 +51,31 @@ Rule1
   on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"} endon
   
 Rule2
+  ON event#HD_L=1 DO Power1 1 ENDON
+  ON event#HD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+  ON event#HD_O=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
+  ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
+  ON Event#RLY=HD_L DO Power1 1 ENDON
+  ON Event#RLY=HD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+  ON Event#RLY=HD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
+  ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "HD"} ENDON
+
   ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
   ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
-  ON Event#LEDG DO Backlog var3 %value%;
-  IF ((var3==1) AND (var4==1)) Power5 1 
-  ELSEIF ((var3==0) AND (var4==0)) Power5 0 
-  ELSE Power5 3 
-  ENDIF
-  ENDON
-  ON Event#LEDGDL DO Backlog var4 %value%;
-  IF ((var3==1) AND (var4==1)) Power5 1 
-  ELSEIF ((var3==0) AND (var4==0)) Power5 0 
-  ELSE Power5 3 
-  ENDIF
-  ENDON  
+  ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power5 1 ELSEIF ((var3==0) AND (var4==0)) Power5 0 ELSE Power5 3 ENDIF ENDON
+  ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power5 1 ELSEIF ((var3==0) AND (var4==0)) Power5 0 ELSE Power5 3 ENDIF ENDON  
+  
+Rule3
+  ON System#Init DO Backlog var11 1; var12 1 ENDON
+  ON System#Boot DO i2sgain 100 ENDON
+  ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
+  ON mqtt#connected DO Backlog var11 1; Subscribe G, muh/portal/G/json, state ENDON
+  ON Event#G DO IF (var11==1) var11 0 ELSE i2splay +/G%value%.mp3 ENDIF ENDON  
+  ON mqtt#connected DO Backlog var12 1; Subscribe GD, muh/portal/GD/json, state ENDON
+  ON Event#GD DO IF (var12==1) var12 0 ELSE i2splay +/GD%value%.mp3 ENDIF ENDON
+  ON Switch1#state DO i2splay +/HD%value%.mp3 ENDON
+  ON Button2#state=10 DO i2splay +/HDB.mp3 ENDON
+  ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
 ```
 
 
