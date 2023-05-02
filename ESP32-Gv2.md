@@ -60,6 +60,7 @@ Rule1
 ```
 Rule2
   on Switch2#Boot=1 do RuleTimer1 600 endon
+  on Switch3#Boot=1 do RuleTimer1 0 endon
   on Switch2#state=1 do RuleTimer1 600 endon
   on Switch2#state=0 do RuleTimer1 0 endon
   on Switch3#state=1 do RuleTimer1 0 endon
@@ -81,10 +82,11 @@ Rule2
 - Play sounds
 ```
 Rule3
+  ON System#Init DO var11 1 ENDON
   ON System#Boot DO i2sgain 100 ENDON
   ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
-  ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
-  ON Event#HD DO i2splay +/HD%value%.mp3 ENDON
+  ON mqtt#connected DO Backlog var11 1; Subscribe HD, muh/portal/HD/json, state ENDON
+  ON Event#HD DO IF (var11==1) var11 0 ELSE i2splay +/HD%value%.mp3 ENDON
   ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
   ON Event#HDB DO i2splay +/HDB.mp3 ENDON
   ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
