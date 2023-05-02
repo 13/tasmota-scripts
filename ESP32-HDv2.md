@@ -37,7 +37,8 @@ PulseTime3 4; PulseTime1 2; PulseTime2 0;
 ```
 
 ## Rules
-- Classic
+### Rule 1
+- Publish states
 ```
 Rule1
   on Switch1#Boot do var1 %value% endon
@@ -49,7 +50,12 @@ Rule1
   on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} endon
   on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} endon
   on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"} endon
-  
+```
+### Rule 2
+- HTTP Relay API
+- MQTT Relay API
+- LED for state of G & GDL
+```
 Rule2
   ON event#HD_L=1 DO Power1 1 ENDON
   ON event#HD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
@@ -64,7 +70,12 @@ Rule2
   ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
   ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power5 1 ELSEIF ((var3==0) AND (var4==0)) Power5 0 ELSE Power5 3 ENDIF ENDON
   ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power5 1 ELSEIF ((var3==0) AND (var4==0)) Power5 0 ELSE Power5 3 ENDIF ENDON  
-  
+```
+### Rule 3
+- Play sounds
+- Play Pendulum Clock
+- Play Christmas Easteregg sounds
+```
 Rule3
   ON System#Init DO Backlog var11 1; var12 1 ENDON
   ON System#Boot DO i2sgain 100 ENDON
