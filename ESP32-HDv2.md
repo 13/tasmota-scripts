@@ -16,7 +16,7 @@
 | 4 | HDB | Button 1 | 19 | D19 |   | x | Door Bell |
 | 5 | G_LED | Relay 5 | 23 | D23 | x | x | GLED (Garage/GarageDoor LED) |
 | 6 | HDG | Button 2 | 25 | D25 |   | x | G_Door OPEN Relay |
-| 7 | HDB_R | Relay_i 3 | 26 | D26 | | x | Bell Relay |
+| 7 | HDB_R | Relay_i 3 | 14 | D14 | | x | Bell Relay |
 | 8 | HD_L | Relay_i 1 | 32 | D32 | | | |
 | 9 | HD_U | Relay_i 2 | 33 | D33 | | | |
 | 10 | SDA | I2C SDA | 21 | D21 | x | x | RTC DS3231 |
