@@ -98,9 +98,8 @@ Rule3
 
 ```
 
-
-Publish to custom topics (with retain)
-- Berry
+## Berry
+- Publish to custom topics (with retain)
 ```
 import string
 import mqtt
