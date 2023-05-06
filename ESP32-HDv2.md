@@ -29,6 +29,7 @@
 ## Settings
 
 ```
+Backlog IPAddress1 192.168.22.92; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
 Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
 Backlog DeviceName HD; FriendlyName1 HD; 
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 1; SwitchTopic 0; SwitchDebounce 100;
@@ -139,10 +140,7 @@ end
 mqtt.subscribe("muh/portal/G/json, state", setLEDG)
 mqtt.subscribe("tasmota/sensors/GDL", setLEDGDL)
 ```
-## Berry
-
 LED G/GDL
-
 ```
 bool stateG = 0
 bool stateGDL = 0
