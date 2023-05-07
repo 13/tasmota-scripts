@@ -13,9 +13,9 @@
 | 1 | HD | Switch 1 | 16 | RX2 | | x | Door Reed |
 | 2 | HDL | Switch 2 | 17 | TX2 | x | x | Door Reed Lock |
 | 3 | HDP | Switch 3 | 18 | D18 | x | x | Door PiR |
-| 4 | HDBG | Button 2 | 19 | D19 |   | x | HD BTN MQTT |
+| 4 | HDB | Button 1 | 19 | D19 |   | x | HD Bell |
 | 5 | G_LED | Relay 5 | 23 | D23 | x | x | G/GDL LED) |
-| 6 | HDB | Button 1 | 25 | D25 |   | x | HD Bell |
+| 6 | HDBG | Button 2 | 25 | D25 |   | x | HD MQTT G Toggle |
 | 7 | HDB_R | Relay_i 3 | 26 | D26 | | x | Bell Relay |
 | 8 | HD_L | Relay_i 1 | 32 | D32 | | | |
 | 9 | HD_U | Relay_i 2 | 33 | D33 | | | |
@@ -50,8 +50,9 @@ Rule1
   on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} endon
   on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} endon
   on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} endon
-  on Button1#state do Backlog Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"}; Publish muh/portal/RLY/cmnd G_T endon
-  on Button2#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} endon
+  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} endon
+  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"} endon
+  ON Button2#state=11 DO Publish muh/portal/RLY/cmnd G_T ENDON
 ```
 ### Rule 2
 - HTTP Relay API
@@ -87,7 +88,7 @@ Rule3
   ON mqtt#connected DO Backlog var12 1; Subscribe GD, muh/portal/GD/json, state ENDON
   ON Event#GD DO IF (var12==1) var12 0 ELSE i2splay +/GD%value%.mp3 ENDIF ENDON
   ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
-  ON Button2#state=10 DO i2splay +/HDB%Var16%.mp3 ENDON
+  ON Button1#state=10 DO i2splay +/HDB%Var16%.mp3 ENDON
   ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
   ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
   ON event#checkdate$|-12-24T DO Var16 X ENDON
