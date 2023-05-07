@@ -88,11 +88,13 @@ Rule3
   ON Event#GD DO IF (var12==1) var12 0 ELSE i2splay +/GD%value%.mp3 ENDIF ENDON
   ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
   ON Button2#state=10 DO i2splay +/HDB%Var16%.mp3 ENDON
-  ON Time#Minute|30 DO IF (((%time%) % 60) == 30) i2splay +/PC.mp3 ELSE IF (((%time%) % 60) == 0) var10=%time%/60; i2swr http://192.168.22.99:3000/sounds/PC/PC%var10%.mp3 ENDIF ENDON
+  ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
   ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
   ON event#checkdate$|-12-24T DO Var16 X ENDON
   ON event#checkdate$|-12-25T DO Var16 X ENDON
   ON event#checkdate$|-12-26T DO Var16 " ENDON
+  
+  ON Time#Minute|30 DO IF (((%time%) % 60) == 30) i2splay +/PC.mp3 ELSE IF (((%time%) % 60) == 0) var10=%time%/60; i2swr http://192.168.22.99:3000/sounds/PC/PC%var10%.mp3 ENDIF ENDON
 ```
 
 ## Berry
