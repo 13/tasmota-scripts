@@ -50,8 +50,8 @@ Rule1
   on Switch1#state do Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} endon
   on Switch2#state do Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} endon
   on Switch3#state do Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} endon
-  on Button1#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} endon
-  on Button2#state do Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"} endon
+  on Button1#state do Backlog Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"}; Publish muh/portal/RLY/cmnd G_T endon
+  on Button2#state do Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} endon
 ```
 ### Rule 2
 - HTTP Relay API
