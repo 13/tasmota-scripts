@@ -13,9 +13,9 @@
 | 1 | HD | Switch 1 | 16 | RX2 | | x | Door Reed |
 | 2 | HDL | Switch 2 | 17 | TX2 | x | x | Door Reed Lock |
 | 3 | HDP | Switch 3 | 18 | D18 | x | x | Door PiR |
-| 4 | HDB | Button 1 | 19 | D19 |   | x | Door Bell |
+| 4 | HDBG | Button 2 | 19 | D19 |   | x | HD BTN MQTT |
 | 5 | G_LED | Relay 5 | 23 | D23 | x | x | G/GDL LED) |
-| 6 | HDBG | Button 2 | 25 | D25 |   | x | HD BTN MQTT |
+| 6 | HDB | Button 1 | 25 | D25 |   | x | HD Bell |
 | 7 | HDB_R | Relay_i 3 | 26 | D26 | | x | Bell Relay |
 | 8 | HD_L | Relay_i 1 | 32 | D32 | | | |
 | 9 | HD_U | Relay_i 2 | 33 | D33 | | | |
