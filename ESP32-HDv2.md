@@ -70,8 +70,8 @@ Rule2
   ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "HD"} ENDON
   ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
   ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
-  ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power5 1 ELSEIF ((var3==0) AND (var4==0)) Power5 0 ELSE Power5 3 ENDIF ENDON
-  ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power5 1 ELSEIF ((var3==0) AND (var4==0)) Power5 0 ELSE Power5 3 ENDIF ENDON  
+  ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON
+  ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON  
 ```
 ### Rule 3
 - Play sounds
