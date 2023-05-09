@@ -66,10 +66,6 @@ Rule2
   on Switch2#state=0 do RuleTimer1 0 endon
   on Switch3#state=1 do RuleTimer1 0 endon
   ON Rules#Timer=1 DO Power1 1 ENDON
-  ON event#G_T=1 DO Power3 1 ENDON
-  ON event#GD_L=1 DO Power1 1 ENDON
-  ON event#GD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
-  ON event#GD_O=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
   ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
   ON Event#RLY=G_T DO Power3 1 ENDON
   ON Event#RLY=GD_L DO Power1 1 ENDON
@@ -77,6 +73,10 @@ Rule2
   ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
   ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
   
+  ON event#G_T=1 DO Power3 1 ENDON
+  ON event#GD_L=1 DO Power1 1 ENDON
+  ON event#GD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+  ON event#GD_O=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
   ON RDM6300#UID=XXXX Power3 1 ENDON
 ```
 #### Rule 3
