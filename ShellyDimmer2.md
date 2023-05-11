@@ -1,4 +1,4 @@
-# ShellyDimmer2
+# Shelly Dimmer 2
 ## Template
 ```
 {"NAME":"Shelly Dimmer 2","GPIO":[0,3200,0,3232,5568,5600,0,0,193,0,192,0,320,4736],"FLAG":0,"BASE":18}
