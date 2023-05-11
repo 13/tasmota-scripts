@@ -18,3 +18,7 @@ Rule1
   on event#upordown=+ do var1 - ENDON
   on event#upordown=- do var1 + ENDON
 ```
+
+## TODO
+- add sunrise emulation for winter 
+- add timer to turn off after 3 hours
