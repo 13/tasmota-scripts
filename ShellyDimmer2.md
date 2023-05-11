@@ -18,7 +18,13 @@ Rule1
   on event#upordown=+ do var1 - ENDON
   on event#upordown=- do var1 + ENDON
 ```
+- timer to turn off after 3 hours
+```
+Rule2
+  ON Power1#state=1 DO RuleTimer1 10800 ENDON
+  ON Power1#state=0 DO RuleTimer1 0 ENDON
+  ON Rules#timer=1 DO Power1 0 ENDON
+```
 
 ## TODO
 - add sunrise emulation for winter 
-- add timer to turn off after 3 hours
