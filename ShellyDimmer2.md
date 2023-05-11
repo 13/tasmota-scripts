@@ -5,8 +5,10 @@
 ```
 ## Settings
 ```
+Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 2;
+
 Backlog Ledtable 0; DimmerRange 45,100; ShdLeadingEdge 1; ShdLeadingEdge 0;
-Backlog SwitchMode 11; SetOption32 10; Rule1 1;
+SwitchMode 11; SetOption32 10; Rule1 1;
 ```
 ## Rules
 ```
@@ -24,6 +26,7 @@ Rule2
   ON Power1#state=1 DO RuleTimer1 10800 ENDON
   ON Power1#state=0 DO RuleTimer1 0 ENDON
   ON Rules#timer=1 DO Power1 0 ENDON
+  
 ```
 
 ## TODO
