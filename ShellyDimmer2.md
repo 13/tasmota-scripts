@@ -6,7 +6,7 @@
 ## Settings
 ```
 Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120;
-Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 2;
+Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 
 Backlog Ledtable 0; DimmerRange 45,100; ShdLeadingEdge 1; ShdLeadingEdge 0;
 SwitchMode 11; SetOption32 10; Rule1 1;
