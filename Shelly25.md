@@ -11,11 +11,19 @@ Backlog DeviceName ROLLERK2; FriendlyName1 ROLLERK2;
 Backlog SetOption21 1
 ```
 ## Rules
+### Rule 1
 - Endpoint
+```
+Rule1
+  ON energy#current[2]>0.600 DO ShutterStop ENDON
+  ON energy#current[1]>0.600 DO ShutterStop ENDON  
+Rule1 5
+```
+### Rule 2
 - Open/Close at sunrise/sunset
 - Summer close/open at 09:30/18:00 
 ```
-Rule1
+Rule2
   ON Time#Minute=%sunrise% DO ShutterOpen ENDON
   ON Time#Minute=%sunset% DO ShutterClose ENDON
   ON Time#Minute=510 DO Backlog event smrc=%timestamp% ENDON
@@ -26,14 +34,6 @@ Rule1
   ON event#smro$|-06- DO ShutterOpen ENDON
   ON event#smro$|-07- DO ShutterOpen ENDON
   ON event#smro$|-08- DO ShutterOpen ENDON
-  ON energy#current[2]>0.600 DO ShutterStop ENDON
-  ON energy#current[1]>0.600 DO ShutterStop ENDON  
-Rule1 5
-```
-
-```
-
-  
 ```
 ## Commands
 ```
