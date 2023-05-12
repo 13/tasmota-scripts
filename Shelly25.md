@@ -8,22 +8,15 @@
 Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
 Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 2;
 Backlog DeviceName ROLLERK2; FriendlyName1 ROLLERK2; 
-Backlog SetOption21 1
+Backlog PowerOnState 0; SetOption80 1; ShutterRelay1 1; Interlock 1,2; Interlock ON;
+ShutterOpenDuration 17; ShutterCloseDuration 17;
 ```
 ## Rules
 ### Rule 1
-- Endpoint
-```
-Rule1
-  ON energy#current[2]>0.600 DO ShutterStop ENDON
-  ON energy#current[1]>0.600 DO ShutterStop ENDON  
-Rule1 5
-```
-### Rule 2
 - Open/Close at sunrise/sunset
 - Summer close/open at 09:30/18:00 
 ```
-Rule2
+Rule1
   ON Time#Minute=%sunrise% DO ShutterOpen ENDON
   ON Time#Minute=%sunset% DO ShutterClose ENDON
   ON Time#Minute=510 DO Backlog event smrc=%timestamp% ENDON
