@@ -6,10 +6,10 @@
 ## Settings
 ```
 Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
-Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 2;
+Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 Backlog SerialLog 0; PowerOnState 0; SetOption80 1; ShutterRelay1 1; Interlock 1,2; Interlock ON;
 Backlog DeviceName ROLLERK2; FriendlyName1 ROLLERK2; 
-ShutterOpenDuration 17; ShutterCloseDuration 17;
+ShutterOpenDuration 18; ShutterCloseDuration 18;
 
 Backlog DeviceName ROLLERK1; FriendlyName1 ROLLERK1; 
 Backlog ShutterOpenDuration 28; ShutterCloseDuration 28;
