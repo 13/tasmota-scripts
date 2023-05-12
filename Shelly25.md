@@ -13,9 +13,11 @@ Backlog SetOption21 1
 ## Rules
 - Endpoint
 ```
-Rule1 
-  ON energy#current[2]>0.600 DO shutterstop ENDON
-  ON energy#current[1]>0.600 DO shutterstop ENDON  
+Rule1
+  ON Time#Minute=%sunrise% DO ShutterOpen ENDON
+  ON Time#Minute=%sunset% DO ShutterClose ENDON
+  ON energy#current[2]>0.600 DO ShutterStop ENDON
+  ON energy#current[1]>0.600 DO ShutterStop ENDON  
 Rule1 5
 ```
 
