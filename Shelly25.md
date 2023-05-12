@@ -12,6 +12,7 @@ Backlog SetOption21 1
 ```
 ## Rules
 - Endpoint
+- Open/Close at sunrise/sunset
 ```
 Rule1
   ON Time#Minute=%sunrise% DO ShutterOpen ENDON
