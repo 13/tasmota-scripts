@@ -35,6 +35,10 @@ Rule1 5
 
   
 ```
+## Commands
+```
+Publish tasmota/cmnd/tasmota_XXXXXX/ShutterStop
+```
 
 ## TODO
 
