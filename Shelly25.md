@@ -37,7 +37,7 @@ Rule1
   ON event#smro$|-06- DO ShutterOpen ENDON
   ON event#smro$|-07- DO ShutterOpen ENDON
   ON event#smro$|-08- DO ShutterOpen ENDON
-  ON Shutter1#Position DO Publish2 tasmota/status/%topic%/level {"%value%"} ENDON
+  ON Shutter1#Position DO Publish2 tasmota/status/%topic%/level %value% ENDON
 ```
 ## Commands
 ```
