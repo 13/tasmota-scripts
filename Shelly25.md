@@ -12,7 +12,7 @@ Backlog DeviceName ROLLERK2; FriendlyName1 ROLLERK2;
 ShutterOpenDuration 17; ShutterCloseDuration 17;
 
 Backlog DeviceName ROLLERK1; FriendlyName1 ROLLERK1; 
-ShutterOpenDuration 17; ShutterCloseDuration 17;
+Backlog ShutterOpenDuration 25; ShutterCloseDuration 25;
 ```
 ## Calibration
 ```
