@@ -43,15 +43,15 @@ Rule1
   on Switch2#Boot do var2 %value% endon
   on Switch3#Boot do var3 %value% endon
   on Switch4#Boot do var4 %value% endon
-  on System#Boot do Publish2 muh/portal/G/json {"state": %var1%, "time": "%timestamp%"} endon
-  on System#Boot do Publish2 muh/portal/GD/json {"state": %var2%, "time": "%timestamp%"} endon
-  on System#Boot do Publish2 muh/portal/GDL/json {"state": %var3%, "time": "%timestamp%"} endon
-  on System#Boot do Publish2 muh/portal/GDW/json {"state": %var4%, "time": "%timestamp%"} endon
-  on Switch1#state do Publish2 muh/portal/G/json {"state": %value%, "time": "%timestamp%"} endon
-  on Switch2#state do Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} endon
-  on Switch3#state do Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} endon
-  on Switch4#state do Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} endon
-  on Switch5#state do Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} endon
+  ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/G/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+  ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/GD/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
+  ON System#Boot DO IF (%var3%!=%mem3%) mem3 %var3%; Publish2 muh/portal/GDL/json {"state": %var3%, "time": "%timestamp%"} ENDIF ENDON
+  ON System#Boot DO IF (%var4%!=%mem4%) mem4 %var4%; Publish2 muh/portal/GDW/json {"state": %var4%, "time": "%timestamp%"} ENDIF ENDON
+  ON Switch1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/portal/G/json {"state": %value%, "time": "%timestamp%"} ENDON
+  ON Switch2#state!=%mem2% DO Backlog mem2 %value%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
+  ON Switch3#state!=%mem3% DO Backlog mem3 %value%; Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} ENDON
+  ON Switch4#state!=%mem4% DO Backlog mem4 %value%; Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} ENDON
+  ON Switch5#state DO Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} ENDON
 ```
 #### Rule 2
 - Autolock after 10m
