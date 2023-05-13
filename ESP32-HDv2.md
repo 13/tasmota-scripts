@@ -81,14 +81,14 @@ Rule2
 ```
 Rule3
   ON System#Init DO Backlog var11 1; var12 1 ENDON
-  ON System#Boot DO i2sgain 100 ENDON
+  ON System#Boot DO i2sgain 40 ENDON
   ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
   ON mqtt#connected DO Backlog var11 1; Subscribe G, muh/portal/G/json, state ENDON
   ON Event#G DO IF (var11==1) var11 0 ELSE i2splay +/G%value%.mp3 ENDIF ENDON  
   ON mqtt#connected DO Backlog var12 1; Subscribe GD, muh/portal/GD/json, state ENDON
   ON Event#GD DO IF (var12==1) var12 0 ELSE i2splay +/GD%value%.mp3 ENDIF ENDON
   ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
-  ON Button1#state=10 DO i2splay +/HDB%Var16%.mp3 ENDON
+  ON Button1#state=10 DO Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40 ENDON
   ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
   ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
   ON event#checkdate$|-12-24T DO Var16 X ENDON
