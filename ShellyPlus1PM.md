@@ -18,22 +18,22 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 - Extend ON (5m) if GDP=1
 ```
 Rule1
-ON Power1#state=1 DO RuleTimer1 600 ENDON
-ON Power1#state=0 DO RuleTimer1 0 ENDON
+ON Power1#state=1 DO Backlog var1 1; RuleTimer1 600 ENDON
+ON Power1#state=0 DO Backlog var1 0; RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
 ON Event#G=0 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
-ON event#chcksr0<%sunrise% DO IF (var1==0) Power1 1; RuleTimer1 300 ENDIF ENDON
-ON event#chckss0>%sunset% DO IF (var1==0) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chcksr0<%sunrise% DO IF (var2==0) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chckss0>%sunset% DO IF (var2==0) Power1 1; RuleTimer1 300 ENDIF ENDON
 ON mqtt#connected DO Subscribe GD, muh/portal/GD/json, state ENDON
 ON Event#GD=0 DO Backlog event chcksr1=%time%; event chckss1=%time% ENDON
-ON event#chcksr1<%sunrise% DO IF (var1==0) Power1 1; RuleTimer1 300 ENDIF ENDON
-ON event#chckss1>%sunset% DO IF (var1==0) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chcksr1<%sunrise% DO IF (var2==0) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chckss1>%sunset% DO IF (var2==0) Power1 1; RuleTimer1 300 ENDIF ENDON
 ON mqtt#connected DO Subscribe GDP, muh/portal/GDP/json, state ENDON
 ON Event#GDP=1 DO Backlog event chcksr2=%time%; event chckss2=%time% ENDON
-ON Event#GDP DO var1 %value% ENDON
-ON event#chcksr2<%sunrise% DO Backlog Power1 1; RuleTimer1 300 ENDON
-ON event#chckss2>%sunset% DO Backlog Power1 1; RuleTimer1 300 ENDON
+ON Event#GDP DO var2 %value% ENDON
+ON event#chcksr2<%sunrise% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chckss2>%sunset% DO IF (var1==1) Backlog Power1 1; RuleTimer1 300 ENDIF ENDON
 ```
 
 ## G_EXT
