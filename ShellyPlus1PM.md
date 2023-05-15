@@ -37,12 +37,11 @@ ON event#chckss2>%sunset% DO Backlog Power1 1; RuleTimer1 300 ENDON
 ```
 
 ## G_EXT
-- Turn OFF after 30m
-- Turn ON (5m) if G=1
-- Extend ON (5m) if GDP=1
+- Turn OFF after 10m
+- Turn OFF after 5s if Daylight
 ```
 Rule1
-ON Switch1#state=1 DO RuleTimer1 1800 ENDON
+ON Switch1#state=1 DO RuleTimer1 600 ENDON
 ON Switch1#state=0 DO RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
