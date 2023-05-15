@@ -18,8 +18,8 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 - Extend ON (5m) if GDP=1
 ```
 Rule1
-ON Switch1#state=1 DO RuleTimer1 1800 ENDON
-ON Switch1#state=0 DO RuleTimer1 0 ENDON
+ON Power1#state=1 DO RuleTimer1 600 ENDON
+ON Power1#state=0 DO RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
 ON Event#G=0 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
@@ -77,8 +77,8 @@ ON event#chckss0>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 - Turn ON (30s) if cam2mqtt
 ```
 Rule1
-ON Switch1#state=1 DO RuleTimer1 1800 ENDON
-ON Switch1#state=0 DO RuleTimer1 0 ENDON
+ON Power1#state=1 DO RuleTimer1 600 ENDON
+ON Power1#state=0 DO RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ON mqtt#connected DO Subscribe G, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
 ON Event#G=1 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
