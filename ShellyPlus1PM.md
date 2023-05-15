@@ -12,9 +12,9 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 ```
 
 ## G_INT
-- Turn OFF after 30m
-- Turn ON (5m) if G=0 & GDP=0
-- Turn ON (5m) if GD=0 & GDP=0
+- Turn OFF after 10m
+- Turn ON (5m) if G=0 && GDP=0
+- Turn ON (5m) if GD=0 && GDP=0
 - Extend ON (5m) if GDP=1
 ```
 Rule1
@@ -33,7 +33,7 @@ ON mqtt#connected DO Subscribe GDP, muh/portal/GDP/json, state ENDON
 ON Event#GDP=1 DO Backlog event chcksr2=%time%; event chckss2=%time% ENDON
 ON Event#GDP DO var2 %value% ENDON
 ON event#chcksr2<%sunrise% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
-ON event#chckss2>%sunset% DO IF (var1==1) Backlog Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 ```
 
 ## G_EXT
