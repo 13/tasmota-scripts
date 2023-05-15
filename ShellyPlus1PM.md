@@ -38,11 +38,17 @@ ON Event#GDP=1 DO Backlog Power1 1; RuleTimer1 300 ENDON
 Rule1
 ON Switch1#state=1 DO RuleTimer1 1800 ENDON
 ON Switch1#state=0 DO RuleTimer1 0 ENDON
-
 ON Rules#Timer=1 DO Power1 0 ENDON
-
 ON mqtt#connected DO Subscribe G, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
-ON Event#G=1 DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
-ON event#checksunrise<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
-ON event#checksunset>%sunset% DO Backlog Power1 1; RuleTimer1 30 ENDON
+ON Event#G=1 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
+ON event#chcksr0<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
+ON event#chckss0>%sunset% DO Backlog Power1 1; RuleTimer1 30 ENDON
+ON mqtt#connected DO Subscribe P, cam2mqtt/camera/reolink_cam_1/event/onvif/object/people/detected ENDON
+ON Event#P=1 DO Backlog event chcksr1=%time%; event chckss1=%time% ENDON
+ON event#chcksr1<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
+ON event#chckss1>%sunset% DO Backlog Power1 1; RuleTimer1 30 ENDON
+ON mqtt#connected DO Subscribe PAI, cam2mqtt/camera/reolink_cam_1/event/onvif/object/people_ai/detected ENDON
+ON Event#PAI=1 DO Backlog event chcksr2=%time%; event chckss2=%time% ENDON
+ON event#chcksr2<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
+ON event#chckss2>%sunset% DO Backlog Power1 1; RuleTimer1 30 ENDON
 ```
