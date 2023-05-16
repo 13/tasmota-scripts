@@ -41,17 +41,12 @@ ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 - Turn OFF after 5s if Daylight
 ```
 Rule1
-ON Switch1#state=1 DO RuleTimer1 600 ENDON
-ON Switch1#state=0 DO RuleTimer1 0 ENDON
+ON Power1#state=1 DO RuleTimer1 600 ENDON
+ON Power1#state=0 DO RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
-ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
-ON Event#G=1 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
-ON event#chcksr0<%sunrise% DO Backlog Power1 1; RuleTimer1 300 ENDON
-ON event#chckss0>%sunset% DO Backlog Power1 1; RuleTimer1 300 ENDON
-ON mqtt#connected DO Subscribe GDP, muh/portal/GDP/json, state ENDON
-ON Event#GDP=1 DO Backlog event chcksr1=%time%; event chckss1=%time% ENDON
-ON event#chcksr1<%sunrise% DO Backlog Power1 1; RuleTimer1 300 ENDON
-ON event#chckss1>%sunset% DO Backlog Power1 1; RuleTimer1 300 ENDON
+ON Switch1#state=1 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
+ON event#chcksr0>%sunrise% DO Backlog Power1 1; RuleTimer1 5 ENDON
+ON event#chckss0<%sunset% DO Backlog Power1 1; RuleTimer1 5 ENDON
 ```
 
 ## HD_INT
