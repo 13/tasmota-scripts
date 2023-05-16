@@ -59,16 +59,21 @@ ON event#chckss1>%sunset% DO Backlog Power1 1; RuleTimer1 300 ENDON
 - Turn ON (10m) if HD=0 & ShellyPiR=1
 ```
 Rule1
-ON Switch1#state=1 DO RuleTimer1 600 ENDON
-ON Switch1#state=0 DO RuleTimer1 0 ENDON
+ON Power1#state=1 DO Backlog var1 1; RuleTimer1 600 ENDON
+ON Power1#state=0 DO Backlog var1 0; RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
-ON mqtt#connected DO Subscribe HDPS, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
-ON Event#HDPS DO var1 %value% ENDON
+ON mqtt#connected DO Subscribe MTN, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
+ON Event#MTN=true DO var2 1 ENDON
+ON Event#MTN=false DO var2 0 ENDON
 ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
 ON Event#HD=0 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
-ON event#chcksr0<%sunrise% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
-ON event#chckss0>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chcksr0<%sunrise% DO IF (var2==1) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chckss0>%sunset% DO IF (var2==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 
+ON mqtt#connected DO Subscribe HDP, muh/portal/HDP/json, state ENDON
+ON Event#HDP=1 DO Backlog event chcksr2=%time%; event chckss2=%time% ENDON
+ON event#chcksr2<%sunrise% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 ```
 
 ## HD_EXT
