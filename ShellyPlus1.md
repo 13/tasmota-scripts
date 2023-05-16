@@ -14,10 +14,12 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 ## HZ_UD
 - Turn OFF after 5h
 - RTC
-- Kommertemp > 21.5 OFF
+- Kommertemp >= 21.5 OFF
 ```
 Rule1
-ON Switch1#state=1 DO RuleTimer1 1800 ENDON
-ON Switch1#state=0 DO RuleTimer1 0 ENDON
+ON Power1#state=1 DO RuleTimer1 1800 ENDON
+ON Power1#state=0 DO RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
+ON mqtt#connected DO Subscribe TEMPK, muh/sensors/22/json, T2 ENDON
+ON Event#TEMPK>=21.5 DO Power1 0 ENDON
 ```
