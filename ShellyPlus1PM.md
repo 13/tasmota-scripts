@@ -52,14 +52,12 @@ Backlog SwitchMode 5; SetOption1 1
 - Publish state to MQTT
 ```
 Rule1
-ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 180 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_EXT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_EXT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
-ON Power1#state=1 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
-ON event#chcksr0>%sunrise% DO RuleTimer1 5 ENDON
-ON event#chckss0<%sunset% DO RuleTimer1 5 ENDON
+ON Power1#state=1 DO IF ((%time% > %sunrise%) AND (%time < %sunset%)) RuleTimer1 5 ENDIF ENDON
 ```
 
 ## HD_INT
