@@ -58,7 +58,7 @@ ON event#chckss0<%sunset% DO Backlog Power1 1; RuleTimer1 5 ENDON
 - Turn ON (10m) if HD=0 & ShellyPiR=1
 ```
 Rule1
-ON Power1#Boot DO var1 %value% ENDON
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/HD_INT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/HD_INT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value% IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
