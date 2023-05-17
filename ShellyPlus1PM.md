@@ -45,8 +45,10 @@ Momentary switch
 ```
 SwitchMode 3
 ```
+### Rules
 - Turn OFF after 10m
 - Turn OFF after 5s if Daylight
+- Publish state to MQTT
 ```
 Rule1
 ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
