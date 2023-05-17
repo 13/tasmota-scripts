@@ -44,6 +44,7 @@ ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 Momentary switch
 ```
 SwitchMode 3
+Backlog SwitchMode 5; SetOption1 1
 ```
 ### Rules
 - Turn OFF after 10m
