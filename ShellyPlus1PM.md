@@ -58,8 +58,8 @@ ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_EXT/json 
 ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ON Power1#state=1 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
-ON event#chcksr0>%sunrise% DO RuleTimer1 5 ENDON
-ON event#chckss0<%sunset% DO RuleTimer1 5 ENDON
+ON event#chcksr0<%sunrise% DO RuleTimer1 5 ENDON
+ON event#chckss0>%sunset% DO RuleTimer1 5 ENDON
 ```
 
 ## HD_INT
@@ -84,6 +84,20 @@ ON mqtt#connected DO Subscribe HDP, muh/portal/HDP/json, state ENDON
 ON Event#HDP=1 DO Backlog event chcksr2=%time%; event chckss2=%time% ENDON
 ON event#chcksr2<%sunrise% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
+
+Rule1
+ON Switch1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ENDIF ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/HD_INT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON Switch1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/HD_INT/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch1#state DO Backlog var1 %value%; IF (%value%==1) Power1 2; RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
+ON Rules#Timer=1 DO Power1 2 ENDON
+ON mqtt#connected DO Subscribe MTN, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
+ON Event#MTN=true DO var2 1 ENDON
+ON Event#MTN=false DO var2 0 ENDON
+ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
+ON Event#HD=0 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
+ON event#chcksr0<%sunrise% DO IF (var2==1) Power1 2; RuleTimer1 300 ENDIF ENDON
+ON event#chckss0>%sunset% DO IF (var2==1) Power1 2; RuleTimer1 300 ENDIF ENDON
 ```
 
 ## HD_EXT
