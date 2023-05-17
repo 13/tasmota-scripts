@@ -18,7 +18,7 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 - Extend ON (5m) if GDP=1
 ```
 Rule1
-ON Power1#Boot DO var1 %value% ENDON
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_INT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_INT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value% IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
@@ -83,7 +83,7 @@ ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 - Turn ON (30s) if cam2mqtt
 ```
 Rule1
-ON Power1#Boot DO var1 %value% ENDON
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/HD_EXT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/HD_EXT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value% IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
