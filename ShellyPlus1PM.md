@@ -40,6 +40,11 @@ ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 ```
 
 ## G_EXT
+### Settings
+Momentary switch
+```
+SwitchMode 3
+```
 - Turn OFF after 10m
 - Turn OFF after 5s if Daylight
 ```
@@ -47,7 +52,7 @@ Rule1
 ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_EXT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_EXT/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Power1#state DO Backlog var1 %value% IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
+ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ON Power1#state=1 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
 ON event#chcksr0>%sunrise% DO RuleTimer1 5 ENDON
