@@ -41,6 +41,10 @@ PulseTime3 4; PulseTime1 2; PulseTime2 0;
 ### Rule 1
 - Publish states
 - Publish RFID
+- Button 1c G_INT LIGHT
+- Button 2c G OPEN
+- Button 3c GD OPEN
+- Button 4c GD LOCK
 ```
 Rule1
 ON Switch1#Boot DO var1 %value% ENDON
