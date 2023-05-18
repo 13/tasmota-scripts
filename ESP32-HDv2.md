@@ -43,8 +43,8 @@ PulseTime3 4; PulseTime1 2; PulseTime2 0;
 - Publish RFID
 ```
 Rule1
-ON Switch1#Boot do var1 %value% endon
-ON Switch2#Boot do var2 %value% endon
+ON Switch1#Boot DO var1 %value% ENDON
+ON Switch2#Boot DO var2 %value% ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/HD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/HDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
 ON Switch1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} ENDON
