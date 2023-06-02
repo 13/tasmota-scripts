@@ -30,18 +30,19 @@ ShutterSetHalfway 50
 - Summer close/open at 11:00/18:00 
 ```
 Rule1
-  ON Time#Minute=%sunrise% DO ShutterOpen ENDON
-  ON Time#Minute=%sunset% DO ShutterClose ENDON
-  ON Time#Minute=660 DO Backlog event smrc=%timestamp% ENDON
-  ON event#smrc$|-06- DO ShutterClose ENDON
-  ON event#smrc$|-07- DO ShutterClose ENDON
-  ON event#smrc$|-08- DO ShutterClose ENDON
-  ON Time#Minute=1020 DO Backlog event smro=%timestamp% ENDON
-  ON event#smro$|-06- DO ShutterOpen ENDON
-  ON event#smro$|-07- DO ShutterOpen ENDON
-  ON event#smro$|-08- DO ShutterOpen ENDON
-  ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
+ON Time#Minute=%sunrise% DO ShutterOpen ENDON
+ON Time#Minute=%sunset% DO ShutterClose ENDON
+ON Time#Minute=660 DO Backlog event smrc=%timestamp% ENDON
+ON event#smrc$|-06- DO ShutterClose ENDON
+ON event#smrc$|-07- DO ShutterClose ENDON
+ON event#smrc$|-08- DO ShutterClose ENDON
+ON Time#Minute=1020 DO Backlog event smro=%timestamp% ENDON
+ON event#smro$|-06- DO ShutterOpen ENDON
+ON event#smro$|-07- DO ShutterOpen ENDON
+ON event#smro$|-08- DO ShutterOpen ENDON
+ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
 ```
+
 ## Commands
 ```
 Publish tasmota/cmnd/tasmota_XXXXXX/ShutterStop
