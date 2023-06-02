@@ -27,16 +27,16 @@ ShutterSetHalfway 50
 ## Rules
 ### Rule 1
 - Open/Close at sunrise/sunset
-- Summer close/open at 09:30/18:00 
+- Summer close/open at 11:00/18:00 
 ```
 Rule1
   ON Time#Minute=%sunrise% DO ShutterOpen ENDON
   ON Time#Minute=%sunset% DO ShutterClose ENDON
-  ON Time#Minute=510 DO Backlog event smrc=%timestamp% ENDON
+  ON Time#Minute=660 DO Backlog event smrc=%timestamp% ENDON
   ON event#smrc$|-06- DO ShutterClose ENDON
   ON event#smrc$|-07- DO ShutterClose ENDON
   ON event#smrc$|-08- DO ShutterClose ENDON
-  ON Time#Minute=1080 DO Backlog event smro=%timestamp% ENDON
+  ON Time#Minute=1020 DO Backlog event smro=%timestamp% ENDON
   ON event#smro$|-06- DO ShutterOpen ENDON
   ON event#smro$|-07- DO ShutterOpen ENDON
   ON event#smro$|-08- DO ShutterOpen ENDON
