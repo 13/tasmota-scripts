@@ -38,10 +38,13 @@ ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
 - Summer close/open at 11:00/18:00 if HOT
 ```
 Rule2
+ON mqtt#connected DO Subscribe SolarTemp, muh/sensors/DDD99C/json, DS18B20.Temperature ENDON
+ON Event#SolarTemp>=40 DO Var1 1 ENDON
+ON Event#SolarTemp<40 DO Var1 0 ENDON
 ON Time#Minute=660 DO Backlog event smrc=%timestamp% ENDON
-ON event#smrc$|-06- DO ShutterClose ENDON
-ON event#smrc$|-07- DO ShutterClose ENDON
-ON event#smrc$|-08- DO ShutterClose ENDON
+ON event#smrc$|-06- DO IF (Var1 == 1) ShutterClose ENDIF ENDON
+ON event#smrc$|-07- DO IF (Var1 == 1) ShutterClose ENDIF ENDON
+ON event#smrc$|-08- DO IF (Var1 == 1) ShutterClose ENDIF ENDON
 ON Time#Minute=1020 DO Backlog event smro=%timestamp% ENDON
 ON event#smro$|-06- DO ShutterOpen ENDON
 ON event#smro$|-07- DO ShutterOpen ENDON
