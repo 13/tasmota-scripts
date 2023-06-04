@@ -27,11 +27,17 @@ ShutterSetHalfway 50
 ## Rules
 ### Rule 1
 - Open/Close at sunrise/sunset
-- Summer close/open at 11:00/18:00 
+- Set shutter position MQTT
 ```
 Rule1
 ON Time#Minute=%sunrise% DO ShutterOpen ENDON
 ON Time#Minute=%sunset% DO ShutterClose ENDON
+ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
+```
+### Rule 2
+- Summer close/open at 11:00/18:00 if HOT
+```
+Rule2
 ON Time#Minute=660 DO Backlog event smrc=%timestamp% ENDON
 ON event#smrc$|-06- DO ShutterClose ENDON
 ON event#smrc$|-07- DO ShutterClose ENDON
@@ -40,7 +46,6 @@ ON Time#Minute=1020 DO Backlog event smro=%timestamp% ENDON
 ON event#smro$|-06- DO ShutterOpen ENDON
 ON event#smro$|-07- DO ShutterOpen ENDON
 ON event#smro$|-08- DO ShutterOpen ENDON
-ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
 ```
 
 ## Commands
