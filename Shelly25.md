@@ -47,9 +47,14 @@ ShutterSetHalfway 72
 - Set shutter position MQTT
 ```
 Rule1
+ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
 ON Time#Minute=%sunrise% DO ShutterOpen ENDON
 ON Time#Minute=%sunset% DO ShutterClose ENDON
-ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
+ON Time#Minute=%sunset% DO Backlog event scs=%timestamp% ENDON
+ON event#scs$|-06- DO ShutterPosition 25 ENDON
+ON event#scs$|-07- DO ShutterPosition 25 ENDIF ENDON
+ON event#scs$|-08- DO ShutterPosition 25 ENDIF ENDON
+ON event#scs$|-09- DO ShutterPosition 25 ENDON
 ```
 ### Rule 2
 - Summer close/open at 11:00/18:00 if HOT
