@@ -5,23 +5,40 @@
 ```
 ## Settings
 ```
-Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
-Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 0;
 Backlog SerialLog 0; PowerOnState 0; SetOption80 1; ShutterRelay1 1; Interlock 1,2; Interlock ON;
-
-Backlog DeviceName ROLLERK2; FriendlyName1 ROLLERK2; 
-ShutterOpenDuration 18; ShutterCloseDuration 18;
 
 Backlog DeviceName ROLLERK1; FriendlyName1 ROLLERK1; 
 Backlog ShutterOpenDuration 28; ShutterCloseDuration 28;
 
+Backlog DeviceName ROLLERK2; FriendlyName1 ROLLERK2; 
+ShutterOpenDuration 18; ShutterCloseDuration 18;
+
 MqttWifiTimeout 1000
 ```
 ## Calibration
+- ROLLERK1 (RIGHT)
 ```
 ShutterSetClose
-ShutterSetOpen
+shutteropenduration 29
+shuttercloseduration 29
 ShutterSetHalfway 50
+shuttermotordelay 0
+shuttercloseduration 26.7
+shuttermotordelay 0.35
+shuttercalibration 29 72 125 192 202
+ShutterSetHalfway 65
+```
+- ROLLERK2 (LEFT)
+```
+ShutterSetClose
+shutteropenduration 18
+shuttercloseduration 18
+ShutterSetHalfway 50
+shuttermotordelay 0
+shuttercloseduration 17.4
+shuttermotordelay 0
+shuttercalibration 15 37 83 95 97
+ShutterSetHalfway 72
 ```
 
 ## Rules
