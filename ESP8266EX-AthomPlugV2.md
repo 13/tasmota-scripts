@@ -9,6 +9,9 @@
 Backlog DeviceName HZ_BRENNER; FriendlyName1 HZ_BRENNER; 
 Backlog PowerOnState 0
 ```
+```
+Backlog DeviceName KMMR_PC; FriendlyName1 KMMR_PC; 
+```
 ## Rules
 ### Rule 1
 - At boot turn ON if Warmwater under 45
