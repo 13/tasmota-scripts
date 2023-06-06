@@ -7,7 +7,7 @@
 ## Settings
 ```
 Backlog DeviceName HZ_BRENNER; FriendlyName1 HZ_BRENNER; 
-Backlog PowerOnState 0
+PowerDelta 101
 ```
 ```
 Backlog DeviceName KMMR_PC; FriendlyName1 KMMR_PC; 
@@ -20,7 +20,7 @@ Backlog DeviceName KMMR_PC; FriendlyName1 KMMR_PC;
 - At boot turn ON if Warmwater under 45
 ```
 Rule1
-ON mqtt#connected DO Subscribe WwTemp, muh/sensors/DDD99C/json, DS18B20.Temperature ENDON
+ON mqtt#connected DO Subscribe WwTemp, shellies/HZ_WW/status/temperature:102, tC ENDON
 ON Event#WwTemp<=40 DO Var1 1 ENDON
 ON Event#WwTemp>40 DO Var1 0 ENDON
 ON Time#Minute=1140 DO Backlog event bron=%timestamp% ENDON
