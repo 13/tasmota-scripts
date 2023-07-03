@@ -13,6 +13,7 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 
 ## G_INT
 - Turn OFF after 10m
+- Turn OFF after 60m with Switch1=1
 - Turn ON (5m) if G=0 && GDP=0
 - Turn ON (5m) if GD=0 && GDP=0
 - Extend ON (5m) if GDP=1
@@ -22,6 +23,7 @@ ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF END
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_INT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_INT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
+ON Switch1#state=1 DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 3600 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 Rule2
 ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
@@ -47,7 +49,7 @@ SwitchMode 3
 Backlog SwitchMode 5; SetOption1 1; SetOption32 30
 ```
 ### Rules
-- Turn OFF after 10m
+- Turn OFF after 30m
 - Turn OFF after 5s if Daylight
 - Publish state to MQTT
 - Turn ON Garage LIGHT
@@ -56,7 +58,7 @@ Rule1
 ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 180 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_EXT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_EXT/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Power1#state=1 DO IF ((%time% > %sunrise%) AND (%time% < %sunset%)) RuleTimer1 5 ELSE RuleTimer1 600 ENDIF ENDON
+ON Power1#state=1 DO IF ((%time% > %sunrise%) AND (%time% < %sunset%)) RuleTimer1 5 ELSE RuleTimer1 1800 ENDIF ENDON
 ON Switch1#state=3 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ```
