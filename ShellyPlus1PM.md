@@ -12,6 +12,11 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 ```
 
 ## G_INT
+### Settings
+```
+Backlog SwitchMode 1
+```
+### Rules
 - Turn OFF after 10m
 - Turn OFF after 60m with Switch1=1
 - Turn ON (5m) if G=0 && GDP=0
@@ -45,7 +50,6 @@ ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 ### Settings
 Momentary switch
 ```
-SwitchMode 3
 Backlog SwitchMode 5; SetOption1 1; SetOption32 30
 ```
 ### Rules
@@ -64,6 +68,11 @@ ON Rules#Timer=1 DO Power1 0 ENDON
 ```
 
 ## HD_INT
+### Settings
+```
+Backlog SwitchMode 1
+```
+### Rules
 - Turn OFF after 10m
 - Turn ON (10m) if HD=0 & ShellyPiR=1
 ```
@@ -102,6 +111,11 @@ ON event#chckss0>%sunset% DO IF (var2==1) Power1 2; RuleTimer1 300 ENDIF ENDON
 ```
 
 ## HD_EXT
+### Settings
+```
+Backlog SwitchMode 1
+```
+### Rules
 - Turn OFF after 10m
 - Turn ON (30s) if Shelly PiR2=1
 - Turn ON (30s) if cam2mqtt
