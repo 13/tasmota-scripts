@@ -18,6 +18,7 @@ Backlog DeviceName KMMR_PC; FriendlyName1 KMMR_PC;
 - Zeitzone F1 MO-FR 08-19
 - Zeitzone F2/F3 MO-FR 19-08, SA-SO 0-24, FEIERTAGE
 - At boot turn ON if Warmwater under 45
+- Summer check if <= 40 and turn on 19:00 and turn off 21:30
 ```
 Rule1
 ON mqtt#connected DO Subscribe WwTemp, shellies/HZ_WW/status/temperature:102, tC ENDON
