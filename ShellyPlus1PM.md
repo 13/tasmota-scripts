@@ -152,3 +152,38 @@ ON Event#CPET=on DO Backlog event chcksr4=%time%; event chckss4=%time% ENDON
 ON event#chcksr4<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
 ON event#chckss4>%sunset% DO Backlog Power1 1; RuleTimer1 30 ENDON
 ```
+## STCK2
+### Settings
+```
+Backlog SwitchMode 1
+```
+### Rules
+#### Rule1
+- Turn OFF after 10m
+#### Rule2
+- Toggle HD_INT
+```
+Rule1
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/STCK2/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/STCK2/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
+ON Rules#Timer=1 DO Power1 0 ENDON
+```
+
+## STCK3
+### Settings
+```
+Backlog SwitchMode 1
+```
+### Rules
+#### Rule1
+- Turn OFF after 10m
+```
+Rule1
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/STCK3/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/STCK3/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
+ON Rules#Timer=1 DO Power1 0 ENDON
+```
