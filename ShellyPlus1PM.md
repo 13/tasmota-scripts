@@ -152,7 +152,7 @@ ON Event#CPET=on DO Backlog event chcksr4=%time%; event chckss4=%time% ENDON
 ON event#chcksr4<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
 ON event#chckss4>%sunset% DO Backlog Power1 1; RuleTimer1 30 ENDON
 ```
-## STCK2
+## STCK2_GANG
 ### Settings
 ```
 Backlog SwitchMode1 1
@@ -166,8 +166,8 @@ Backlog SwitchMode2 5; SetOption1 1; SetOption32 30
 ```
 Rule1
 ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
-ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/STCK2/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
-ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/STCK2/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/STCK2_GANG/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/STCK2_GANG/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 
@@ -175,10 +175,10 @@ Rule2
 ON Switch2#state=3 DO Publish tasmota/cmnd/tasmota_BE3540/POWER 2 ENDON
 ```
 
-## STCK3
+## UD_GANG
 ### Settings
 ```
-Backlog SwitchMode 1
+Backlog SwitchMode 0
 ```
 ### Rules
 #### Rule1
@@ -186,8 +186,8 @@ Backlog SwitchMode 1
 ```
 Rule1
 ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
-ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/STCK3/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
-ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/STCK3/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/UD_GANG/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/UD_GANG/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ```
