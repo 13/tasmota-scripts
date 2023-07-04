@@ -17,8 +17,10 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 Backlog SwitchMode 1
 ```
 ### Rules
+#### Rule1
 - Turn OFF after 10m
 - Turn OFF after 60m with Switch1=1
+### Rule2
 - Turn ON (5m) if G=0 && GDP=0
 - Turn ON (5m) if GD=0 && GDP=0
 - Extend ON (5m) if GDP=1
@@ -53,6 +55,7 @@ Momentary switch
 Backlog SwitchMode 5; SetOption1 1; SetOption32 30
 ```
 ### Rules
+#### Rule1
 - Turn OFF after 30m
 - Turn OFF after 5s if Daylight
 - Publish state to MQTT
