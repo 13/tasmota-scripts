@@ -71,6 +71,20 @@ ON Rules#Timer=1 DO Power1 0 ENDON
 ON Switch1#state=3 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
 ```
 
+## G_TREPPE
+### Settings
+### Rules
+#### Rule1
+- Turn OFF after 5m
+```
+Rule1
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_TREPPE/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_TREPPE/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ELSE RuleTimer1 0 ENDIF ENDON
+ON Rules#Timer=1 DO Power1 0 ENDON
+```
+---
 ## HD_INT
 ### Settings
 ```
@@ -153,6 +167,7 @@ ON Event#CPET=on DO Backlog event chcksr4=%time%; event chckss4=%time% ENDON
 ON event#chcksr4<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
 ON event#chckss4>%sunset% DO Backlog Power1 1; RuleTimer1 30 ENDON
 ```
+---
 ## STCK2_GANG
 ### Settings
 ```
@@ -187,7 +202,7 @@ Backlog SwitchMode 0
 Rule1
 ON Switch1#state DO Publish tasmota/cmnd/tasmota_BE3540/POWER 2 ENDON
 ```
-
+---
 ## UD_GANG
 ### Settings
 ```
