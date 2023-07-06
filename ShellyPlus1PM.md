@@ -59,7 +59,7 @@ Backlog SwitchMode 5; SetOption1 1; SetOption32 30
 - Turn OFF after 30m
 - Turn OFF after 5s if Daylight
 - Publish state to MQTT
-- Turn ON Garage LIGHT
+- ~Turn ON Garage LIGHT~
 ```
 Rule1
 ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 180 ENDIF ENDON
@@ -171,23 +171,6 @@ ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE Rul
 ON Rules#Timer=1 DO Power1 0 ENDON
 ```
 
-## UD_GANG
-### Settings
-```
-Backlog SwitchMode 0
-```
-### Rules
-#### Rule1
-- Turn OFF after 10m
-```
-Rule1
-ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
-ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/UD_GANG/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
-ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/UD_GANG/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
-ON Rules#Timer=1 DO Power1 0 ENDON
-```
-
 ## STCK2_SW
 ## Template
 ```
@@ -203,4 +186,21 @@ Backlog SwitchMode 0
 ```
 Rule1
 ON Switch1#state DO Publish tasmota/cmnd/tasmota_BE3540/POWER 2 ENDON
+```
+
+## UD_GANG
+### Settings
+```
+Backlog SwitchMode 0
+```
+### Rules
+#### Rule1
+- Turn OFF after 10m
+```
+Rule1
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/UD_GANG/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/UD_GANG/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
+ON Rules#Timer=1 DO Power1 0 ENDON
 ```
