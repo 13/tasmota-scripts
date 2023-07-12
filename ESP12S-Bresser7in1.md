@@ -9,6 +9,8 @@ H: 39
  Backlog TuyaMCU 73,39; TuyaMCU 71,67;
 
 ```
+Backlog TuyaMCU 99,1; TuyaMCU 99,2; TuyaMCU 13,3; TuyaMCU 14,4; TuyaMCU 15,5; TuyaMCU 16,6; TuyaMCU 99,9; TuyaMCU 99,10; TuyaMCU 99,11; TuyaMCU 99,12; TuyaMCU 99,13; TuyaMCU 99,30; TuyaMCU 99,38; TuyaMCU 73,39; TuyaMCU 99,54; TuyaMCU 99,55; TuyaMCU 99,56; TuyaMCU 99,57; TuyaMCU 99,58; TuyaMCU 99,60; TuyaMCU 99,61; TuyaMCU 99,62; TuyaMCU 99,63; TuyaMCU 99,64; TuyaMCU 99,65; TuyaMCU 99,66; TuyaMCU 99,67; TuyaMCU 99,68; TuyaMCU 99,101; TuyaMCU 99,102; TuyaMCU 99,103;
+
 >D
 temp=""
 tin=tin
