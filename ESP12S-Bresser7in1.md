@@ -15,6 +15,7 @@
 ```
 Backlog TuyaMcu 99,1; setoption97 1; weblog 4
 ```
+{"NAME":"Bresser","GPIO":[1,1,1,1,1,1,0,0,1,1,1,1,1,0],"FLAG":0,"BASE":54,"CMND":"SO97 1 | TuyaMcu 99,1 | weblog 4"}
 T: 38, 65, 67
 H: 39
  Backlog TuyaMCU 73,39; TuyaMCU 71,67;
