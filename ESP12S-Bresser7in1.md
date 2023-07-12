@@ -1,9 +1,20 @@
+#### Compiling
+```
+/* Only Tuya (Bresser)*/
+#ifndef USE_SCRIPT
+#define USE_SCRIPT  // adds about 17k flash size, variable ram size
+#endif
+#ifdef USE_RULES
+#undef USE_RULES
+#endif
+#define USE_SCRIPT_WEB_DISPLAY
+```
+### Settings
 - disable switch on 1
 - set 115200 bps
 ```
 Backlog TuyaMcu 99,1; setoption97 1; weblog 4
 ```
-
 T: 38, 65, 67
 H: 39
  Backlog TuyaMCU 73,39; TuyaMCU 71,67;
@@ -59,7 +70,7 @@ Feuchte innen{m} %0hin% %%
 Temperatur außen {m} %1tout% °C
 Feuchte außen{m} %0hout% %%
 Windstärke{m} %1wind% m/s
-Windrichtung{m} %0windr% ° -- 0°->Nord 90°->Ost...
+Windrichtung{m} %0windr%°
 Luftdruck{m} %1luftd% hPa
 Regen pro Std{m} %1regenrate% l/Std
 Regen pro Tag{m} %1regenprotag% l/T
