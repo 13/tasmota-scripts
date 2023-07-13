@@ -13,6 +13,7 @@
 ### Settings
 - disable switch on 1
 - set 115200 bps
+- Tuya probe SerialSend5 55aa0001000000 
 ```
 {"NAME":"Bresser7in1","GPIO":[1,1,1,1,1,1,0,0,1,1,1,1,1,0],"FLAG":0,"BASE":54,"CMND":"SO97 1 | TuyaMcu 99,1 | weblog 4"}
 ```
