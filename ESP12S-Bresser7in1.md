@@ -1,4 +1,5 @@
 #### Compiling
+- Latest known version 12.3.1
 ```
 /* Only Tuya (Bresser)*/
 #ifndef USE_SCRIPT
@@ -13,11 +14,7 @@
 - disable switch on 1
 - set 115200 bps
 ```
-
-{"NAME":"Bresser","GPIO":[1,1,1,1,1,1,0,0,1,1,1,1,1,0],"FLAG":0,"BASE":54,"CMND":"SO97 1 | TuyaMcu 99,1 | weblog 4"}
-T: 38, 65, 67
-H: 39
- Backlog TuyaMCU 73,39; TuyaMCU 71,67;
+{"NAME":"Bresser7in1","GPIO":[1,1,1,1,1,1,0,0,1,1,1,1,1,0],"FLAG":0,"BASE":54,"CMND":"SO97 1 | TuyaMcu 99,1 | weblog 4"}
 ```
 ```
 Backlog TuyaMCU 99,1; TuyaMCU 99,2; TuyaMCU 13,3; TuyaMCU 14,4; TuyaMCU 15,5; TuyaMCU 16,6; TuyaMCU 99,9; TuyaMCU 99,10; TuyaMCU 99,11; TuyaMCU 99,12; TuyaMCU 99,13; TuyaMCU 99,30; TuyaMCU 99,38; TuyaMCU 73,39; TuyaMCU 99,54; TuyaMCU 99,55; TuyaMCU 99,56; TuyaMCU 99,57; TuyaMCU 99,58; TuyaMCU 99,60; TuyaMCU 99,61; TuyaMCU 99,62; TuyaMCU 99,63; TuyaMCU 99,64; TuyaMCU 99,65; TuyaMCU 99,66; TuyaMCU 99,67; TuyaMCU 99,68; TuyaMCU 99,101; TuyaMCU 99,102; TuyaMCU 99,103;
@@ -39,7 +36,7 @@ licht=licht
 tin=TuyaReceived#DpType2Id1/10
 hin=TuyaReceived#DpType2Id2
 hout=TuyaReceived#DpType2Id39
-wind=TuyaReceived#DpType2Id56/10
+wind=TuyaReceived#DpType2Id56*36/100
 windr=TuyaReceived#DpType2Id101
 luftd=TuyaReceived#DpType2Id54/10
 temp=TuyaReceived#38#DpIdData
@@ -53,27 +50,27 @@ regenprotag=TuyaReceived#DpType2Id60/1000
 uv=TuyaReceived#DpType2Id62/10
 licht=TuyaReceived#DpType2Id63/1000
 >T
-=>publish /Smarthome/%topic%/tele/SENSOR {"Temperatur innen":%1tin%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Freuchte innen":%0hin%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Temperatur aussen":%1tout%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Feuchte aussen":%0hout%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Wind m/s":%1wind%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Windrichtung":%0windr%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Luftdruck hPa":%1luftd%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Regenrate l/Std":%1regenrate%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Regen l/T":%1regenprotag%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"UV Pegel":%1uv%}
-=>publish /Smarthome/%topic%/tele/SENSOR {"Lichtstaerke kLux":%3licht%}
+=>publish2 /muh/wsr/json {"temp_in":%1tin%}
+=>publish2 /muh/wsr/json {"hum_in":%0hin%}
+=>publish2 /muh/wsr/json {"temp_out":%1tout%}
+=>publish2 /muh/wsr/json {"hum_out":%0hout%}
+=>publish2 /muh/wsr/json {"wind_speed:%1wind%}
+=>publish2 /muh/wsr/json {"wind_dir":%0windr%}
+=>publish2 /muh/wsr/json {"pressure":%1luftd%}
+=>publish2 /muh/wsr/json {"rain_rate":%1regenrate%}
+=>publish2 /muh/wsr/json {"rain_day":%1regenprotag%}
+=>publish2 /muh/wsr/json {"uv":%1uv%}
+=>publish2 /muh/wsr/json {"illuminance":%1licht%}
 >WS
-Temperatur innen{m} %1tin% °C
-Feuchte innen{m} %0hin% %%
-Temperatur außen {m} %1tout% °C
-Feuchte außen{m} %0hout% %%
-Windstärke{m} %1wind% m/s
-Windrichtung{m} %0windr%°
-Luftdruck{m} %1luftd% hPa
-Regen pro Std{m} %1regenrate% l/Std
-Regen pro Tag{m} %1regenprotag% l/T
-UV Pegel {m} %1uv%
-Lichtstärke {m} %3licht% kLux
+Temperature In{m} %1tin% °C
+Humidity In{m} %0hin% %%
+Temperature Out{m} %1tout% °C
+Humidity Out{m} %0hout% %%
+Windspeed{m} %1wind% km/h
+Winddirection{m} %0windr% °
+Pressure{m} %1luftd% hPa
+Rainrate{m} %1regenrate% l/h
+Rain{m} %1regenprotag% l/d
+UV{m} %1uv%
+Illuminance{m} %1licht% kLux
 ```
