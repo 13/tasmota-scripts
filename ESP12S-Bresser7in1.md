@@ -25,7 +25,7 @@ hin=hin
 tout=tout
 hout=hout
 wind=wind
-windr=windr
+windr=0
 winddirname=""
 luftd=luftd
 regenrate=regenrate
@@ -41,16 +41,28 @@ windr=TuyaReceived#DpType2Id101
 if windr>=0 {
 winddirname="N"
 }
-if windr>=45 {
+if windr>=22 {
+winddirname="NE"
+}
+if windr>=67 {
 winddirname="E"
 }
-if windr>=135 {
+if windr>=112 {
+winddirname="SE"
+}
+if windr>=157 {
 winddirname="S"
 }
-if windr>=225 {
+if windr>=202 {
+winddirname="SW"
+}
+if windr>=247 {
 winddirname="W"
 }
-if windr>=315 {
+if windr>=292 {
+winddirname="NW"
+}
+if windr>=337 {
 winddirname="N"
 }
 luftd=TuyaReceived#DpType2Id54/10
