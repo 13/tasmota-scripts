@@ -38,6 +38,11 @@ hin=TuyaReceived#DpType2Id2
 hout=TuyaReceived#DpType2Id39
 wind=TuyaReceived#DpType2Id56*36/100
 windr=TuyaReceived#DpType2Id101
+if windr>=0 {
+winddirname="N"
+} else if windr>=45 {
+winddirname="NE"
+}
 luftd=TuyaReceived#DpType2Id54/10
 temp=TuyaReceived#38#DpIdData
 if ins(temp "FFFF")==-1 {
