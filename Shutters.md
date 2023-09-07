@@ -72,7 +72,21 @@ ON event#smro$|-06- DO ShutterOpen ENDON
 ON event#smro$|-07- DO ShutterOpen ENDON
 ON event#smro$|-08- DO ShutterOpen ENDON
 ```
-
+### Rule 3
+- Winter close at 09:00
+```
+Rule3
+ON Time#Minute=540 DO Backlog event smrc=%timestamp% ENDON
+ON event#smrc$|-01- ShutterClose ENDON
+ON event#smrc$|-02- ShutterClose ENDON
+ON event#smrc$|-03- ShutterClose ENDON
+ON event#smrc$|-04- ShutterClose ENDON
+ON event#smrc$|-05- ShutterClose ENDON
+ON event#smrc$|-09- ShutterClose ENDON
+ON event#smrc$|-10- ShutterClose ENDON
+ON event#smrc$|-11- ShutterClose ENDON
+ON event#smrc$|-12- ShutterClose ENDON
+```
 ## Commands
 ```
 Publish tasmota/cmnd/tasmota_XXXXXX/ShutterStop
