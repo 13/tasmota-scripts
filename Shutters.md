@@ -73,19 +73,19 @@ ON event#smro$|-07- DO ShutterOpen ENDON
 ON event#smro$|-08- DO ShutterOpen ENDON
 ```
 ### Rule 3
-- Winter close at 09:00
+- Winter close at 09:00 (shutter door)
 ```
 Rule3
-ON Time#Minute=540 DO Backlog event smrc=%timestamp% ENDON
-ON event#smrc$|-01- ShutterClose ENDON
-ON event#smrc$|-02- ShutterClose ENDON
-ON event#smrc$|-03- ShutterClose ENDON
-ON event#smrc$|-04- ShutterClose ENDON
-ON event#smrc$|-05- ShutterClose ENDON
-ON event#smrc$|-09- ShutterClose ENDON
-ON event#smrc$|-10- ShutterClose ENDON
-ON event#smrc$|-11- ShutterClose ENDON
-ON event#smrc$|-12- ShutterClose ENDON
+ON Time#Minute=540 DO Backlog event sdwc=%timestamp% ENDON
+ON event#sdwc$|-01- ShutterPosition 4 ENDON
+ON event#sdwc$|-02- ShutterPosition 4 ENDON
+ON event#sdwc$|-03- ShutterPosition 4 ENDON
+ON event#sdwc$|-04- ShutterPosition 4 ENDON
+ON event#sdwc$|-05- ShutterPosition 4 ENDON
+ON event#sdwc$|-09- ShutterPosition 4 ENDON
+ON event#sdwc$|-10- ShutterPosition 4 ENDON
+ON event#sdwc$|-11- ShutterPosition 4 ENDON
+ON event#sdwc$|-12- ShutterPosition 4 ENDON
 ```
 ## Commands
 ```
