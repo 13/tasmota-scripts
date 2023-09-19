@@ -49,11 +49,13 @@ ShutterSetHalfway 72
 Rule1
 ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
 ON Time#Minute=%sunrise% DO ShutterOpen ENDON
+// Window close complete
 ON Time#Minute=%sunset% DO ShutterClose ENDON
+// Door close 75%
 ON Time#Minute=%sunset% DO Backlog event scs=%timestamp% ENDON
 ON event#scs$|-06- DO ShutterPosition 25 ENDON
-ON event#scs$|-07- DO ShutterPosition 25 ENDIF ENDON
-ON event#scs$|-08- DO ShutterPosition 25 ENDIF ENDON
+ON event#scs$|-07- DO ShutterPosition 25 ENDON
+ON event#scs$|-08- DO ShutterPosition 25 ENDON
 ON event#scs$|-09- DO ShutterPosition 25 ENDON
 ```
 ### Rule 2
