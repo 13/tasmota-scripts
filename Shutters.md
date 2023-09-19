@@ -79,9 +79,9 @@ ON event#smro$|-08- DO ShutterOpen ENDON
 ```
 Rule3
 ON Time#Minute=540 DO Backlog event sdwc=%timestamp% ENDON
-ON event#sdwc$^-06- ShutterPosition 4 ENDON
-ON event#sdwc$^-07- ShutterPosition 4 ENDON
-ON event#sdwc$^-08- ShutterPosition 4 ENDON
+ON event#sdwc$^-06- DO ShutterPosition 4 ENDON
+ON event#sdwc$^-07- DO ShutterPosition 4 ENDON
+ON event#sdwc$^-08- DO ShutterPosition 4 ENDON
 ```
 ## Commands
 ```
