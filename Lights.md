@@ -55,7 +55,7 @@ ON event#chckss2>%sunset% DO IF (var1==1) Power1 1; RuleTimer1 300 ENDIF ENDON
 ### Settings
 Momentary switch
 ```
-Backlog SwitchMode 5; SetOption1 1; SetOption32 30
+Backlog SwitchMode 5; SetOption1 1; SetOption32 30; Sunrise 0
 ```
 ### Rules
 #### Rule1
