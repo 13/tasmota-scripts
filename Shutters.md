@@ -54,6 +54,7 @@ ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
 ON Time#Minute=360 DO ShutterOpen ENDON
 ON Time#Minute=%sunrise% DO ShutterOpen ENDON
 ON Time#Minute=%sunset% DO ShutterClose ENDON
+
 ON Time#Minute=%sunset% DO Backlog event scs=%timestamp% ENDON
 ON event#scs$|-06- DO ShutterPosition 25 ENDON
 ON event#scs$|-07- DO ShutterPosition 25 ENDON
