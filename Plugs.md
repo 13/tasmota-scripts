@@ -56,15 +56,19 @@ Rule2
 ON Time#Minute=360 DO Backlog event brfon=%timestamp% ENDON
 ON event#brfon$|-05- DO Power 1 ENDON
 ON event#brfon$|-09- DO Power 1 ENDON
+ON event#brfon$|-10- DO Power 1 ENDON
 ON Time#Minute=1140 DO Backlog event brfon=%timestamp% ENDON
 ON event#brfon$|-05- DO Power 1 ENDON
 ON event#brfon$|-09- DO Power 1 ENDON
+ON event#brfon$|-10- DO Power 1 ENDON
 ON Time#Minute=420 DO Backlog event brfoff=%timestamp% ENDON
 ON event#brfoff$|-05- DO Power 0 ENDON
 ON event#brfoff$|-09- DO Power 0 ENDON
+ON event#brfoff$|-10- DO Power 0 ENDON
 ON Time#Minute=1200 DO Backlog event brfoff=%timestamp% ENDON
 ON event#brfoff$|-05- DO Power 0 ENDON
 ON event#brfoff$|-09- DO Power 0 ENDON
+ON event#brfoff$|-10- DO Power 0 ENDON
 
 Rule3
 ON Time#Minute=420 DO Backlog event brwon=%timestamp% ENDON
@@ -72,7 +76,6 @@ ON event#brwon$|-01- DO Power 1 ENDON
 ON event#brwon$|-02- DO Power 1 ENDON
 ON event#brwon$|-03- DO Power 1 ENDON
 ON event#brwon$|-04- DO Power 1 ENDON
-ON event#brwon$|-10- DO Power 1 ENDON
 ON event#brwon$|-11- DO Power 1 ENDON
 ON event#brwon$|-12- DO Power 1 ENDON
 ON Time#Minute=1380 DO Backlog event brwoff=%timestamp% ENDON
@@ -80,7 +83,6 @@ ON event#brwoff$|-01- DO Power 0 ENDON
 ON event#brwoff$|-02- DO Power 0 ENDON
 ON event#brwoff$|-03- DO Power 0 ENDON
 ON event#brwoff$|-04- DO Power 0 ENDON
-ON event#brwoff$|-10- DO Power 0 ENDON
 ON event#brwoff$|-11- DO Power 0 ENDON
 ON event#brwoff$|-12- DO Power 0 ENDON
 ```
