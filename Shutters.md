@@ -16,7 +16,7 @@ ShutterOpenDuration 18; ShutterCloseDuration 18;
 MqttWifiTimeout 1000
 ```
 ## Calibration
-- ROLLERK1 (RIGHT)
+- ROLLERK1 DOOR (RIGHT)
 ```
 ShutterSetClose
 shutteropenduration 29
@@ -28,7 +28,7 @@ shuttermotordelay 0.35
 shuttercalibration 29 72 125 192 202
 ShutterSetHalfway 65
 ```
-- ROLLERK2 (LEFT)
+- ROLLERK2 WINDOW (LEFT)
 ```
 ShutterSetClose
 shutteropenduration 18
@@ -54,12 +54,14 @@ ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
 ON Time#Minute=360 DO ShutterOpen ENDON
 ON Time#Minute=%sunrise% DO ShutterOpen ENDON
 ON Time#Minute=%sunset% DO ShutterClose ENDON
-
+// BIG
 ON Time#Minute=%sunset% DO Backlog event scs=%timestamp% ENDON
+ON event#scs$|-05- DO ShutterPosition 25 ENDON
 ON event#scs$|-06- DO ShutterPosition 25 ENDON
 ON event#scs$|-07- DO ShutterPosition 25 ENDON
 ON event#scs$|-08- DO ShutterPosition 25 ENDON
 ON event#scs$|-09- DO ShutterPosition 25 ENDON
+ON event#scs$|-10- DO ShutterPosition 25 ENDON
 ```
 ### Rule 2
 - Summer close/open at 11:00/18:00 if HOT (heat protection)
