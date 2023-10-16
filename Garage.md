@@ -1,0 +1,22 @@
+# Garage
+
+## Template
+```
+{"NAME":"Shelly Plus 1 ADDON","GPIO":[288,1,0,1,192,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,32,224,0,0,0,0,0,4736,4705,0,0,0,0,0,0],"FLAG":0,"BASE":1}
+```
+## Settings
+```
+Backlog DeviceName GARAGE; FriendlyName1 GARAGE; 
+SetOption114 1; SwitchMode2 2;
+SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
+PulseTime3 6; PulseTime1 2; PulseTime2 0;
+```
+
+## Garage
+- Publish switch
+```
+Rule1
+ON Switch2#Boot DO var2 %value% ENDON
+ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/G/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
+ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem6 %timestamp%; Publish2 muh/portal/G/json {"state": %value%, "time": "%timestamp%"} ENDON
+```
