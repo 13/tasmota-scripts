@@ -4,6 +4,13 @@
 ```
 {"NAME":"Shelly Plus 1 ADDON","GPIO":[288,1,0,1,192,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,32,224,0,0,0,0,0,4736,4705,0,0,0,0,0,0],"FLAG":0,"BASE":1}
 ```
+## Table
+| GPIO | NAME |
+|--:|:--|
+| 1 | DATA |
+| 3 | ANALOG IN |
+| 19 | DIGITAL IN |
+
 ## Settings
 ```
 Backlog DeviceName GARAGE; FriendlyName1 GARAGE; 
@@ -12,8 +19,8 @@ SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime1 6; 
 ```
 
-## Rules
-### Rule 1
+### Rules
+#### Rule 1
 - Publish switch
 - Event HTTP for relays
 - Event MQTT for relays
