@@ -13,7 +13,10 @@ PulseTime1 6;
 ```
 
 ## Rules
+### Rule 1
 - Publish switch
+- Event HTTP for relays
+- Event MQTT for relays
 ```
 Rule1
 ON Switch2#Boot DO var2 %value% ENDON
