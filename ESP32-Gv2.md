@@ -98,7 +98,6 @@ ON Event#RLY=GD_L DO Power1 1 ENDON
 ON Event#RLY=GD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
 ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/G/json {"state": %mem1%, "time": "%mem5%"} ENDON
 
 ON event#GD_L=1 DO Power1 1 ENDON
 ON event#GD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
