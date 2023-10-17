@@ -3,7 +3,7 @@
 ## Template
 
 ```
-{"NAME":"ESP32-GARAGE","GPIO":[0,0,0,0,7776,0,0,0,0,3616,0,0,160,161,162,163,0,640,608,164,0,258,7840,7808,0,0,0,0,256,257,0,0,0,0,0,0],"FLAG":0,"BASE":1}
+{"NAME":"ESP32-GARAGEDOOR","GPIO":[0,0,0,0,7776,0,0,0,0,3616,0,0,160,161,162,163,0,640,608,164,0,258,7840,7808,0,0,0,0,256,257,0,0,0,0,0,0],"FLAG":0,"BASE":1}
 ```
 
 ## Table
@@ -29,7 +29,7 @@
 ```
 Backlog IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
 Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
-Backlog DeviceName GARAGE; FriendlyName1 GARAGE; 
+Backlog DeviceName GARAGEDOOR; FriendlyName1 GARAGEDOOR; 
 SetOption114 1; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime1 2; PulseTime2 0;
