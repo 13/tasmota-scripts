@@ -10,6 +10,7 @@
 | 1 | DATA |
 | 3 | ANALOG IN |
 | 19 | DIGITAL IN |
+
 Set GPIO19 to Switch2
 
 ## Settings
