@@ -32,4 +32,5 @@ ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem6 %timestamp%; Publish2 muh
 ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
 ON Event#RLY=G_T DO Power1 1 ENDON
 ON event#G_T=1 DO Power1 1 ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/G/json {"state": %mem2%, "time": "%mem6%"} ENDON
 ```
