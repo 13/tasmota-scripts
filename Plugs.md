@@ -57,11 +57,11 @@ ON Time#Minute=1140 DO Backlog event brfon=%timestamp% ENDON
 ON event#brfon$|-05- DO Power 1 ENDON
 ON event#brfon$|-09- DO Power 1 ENDON
 ON event#brfon$|-10- DO Power 1 ENDON
-ON Time#Minute=420 DO Backlog event brfoff=%timestamp% ENDON
+ON Time#Minute=480 DO Backlog event brfoff=%timestamp% ENDON
 ON event#brfoff$|-05- DO Power 0 ENDON
 ON event#brfoff$|-09- DO Power 0 ENDON
 ON event#brfoff$|-10- DO Power 0 ENDON
-ON Time#Minute=1200 DO Backlog event brfoff=%timestamp% ENDON
+ON Time#Minute=1230 DO Backlog event brfoff=%timestamp% ENDON
 ON event#brfoff$|-05- DO Power 0 ENDON
 ON event#brfoff$|-09- DO Power 0 ENDON
 ON event#brfoff$|-10- DO Power 0 ENDON
