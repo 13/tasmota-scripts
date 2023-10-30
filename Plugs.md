@@ -13,23 +13,19 @@ PowerDelta 101
 Backlog DeviceName KMMR_PC; FriendlyName1 KMMR_PC; 
 ```
 ## Rules
-### Rule 1
-- Summermode
 - Zeitzone F1 MO-FR 08-19
 - Zeitzone F2/F3 MO-FR 19-08, SA-SO 0-24, FEIERTAGE
+### Rule 1
+- Summermode
 - At boot turn ON if Warmwater under 45
 - Summer check if <= 40 and turn on 19:00 and turn off 21:30
 ### Rule 2
-- Wintermode
-- Zeitzone F1 MO-FR 08-19
-- Zeitzone F2/F3 MO-FR 19-08, SA-SO 0-24, FEIERTAGE
-- 07-08 ON
-- 19-20 ON
+- Fallmode (Months 05,09,10)
+- 06:30-08:00 ON
+- 19:00-20:30 ON
 ### Rule 3
-- Wintermode
-- Zeitzone F1 MO-FR 08-19
-- Zeitzone F2/F3 MO-FR 19-08, SA-SO 0-24, FEIERTAGE
-- Turn Off from 23-05
+- Wintermode (Months 01,02,03,04,11,12)
+- Turn ON from 05:00 - 23:00
 ```
 Rule1
 ON mqtt#connected DO Subscribe WwTemp, shellies/HZ_WW/status/temperature:102, tC ENDON
@@ -71,7 +67,7 @@ ON event#brfoff$|-09- DO Power 0 ENDON
 ON event#brfoff$|-10- DO Power 0 ENDON
 
 Rule3
-ON Time#Minute=420 DO Backlog event brwon=%timestamp% ENDON
+ON Time#Minute=300 DO Backlog event brwon=%timestamp% ENDON
 ON event#brwon$|-01- DO Power 1 ENDON
 ON event#brwon$|-02- DO Power 1 ENDON
 ON event#brwon$|-03- DO Power 1 ENDON
