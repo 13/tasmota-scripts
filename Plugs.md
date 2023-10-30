@@ -13,8 +13,9 @@ PowerDelta 101
 Backlog DeviceName KMMR_PC; FriendlyName1 KMMR_PC; 
 ```
 ## Rules
-- Zeitzone F1 MO-FR 08-19
-- Zeitzone F2/F3 MO-FR 19-08, SA-SO 0-24, FEIERTAGE
+- F1: von Montag bis Freitag von 8:00 bis 19:00 Uhr, Feiertage ausgeschlossen
+- F2: von 7:00 bis 8:00 Uhr, von 19:00 bis 23:00 Uhr von Montag bis Freitag, sowie Samstag von 7:00 bis 23:00 Uhr, Feiertage ausgeschlossen
+- F3: von 00:00 bis 7:00 Uhr und von 23:00 bis 24:00 Uhr von Montag bis Samstag, Sonn- und Feiertage von 00:00 bis 24:00 Uhr.
 ### Rule 1
 - Summermode
 - At boot turn ON if Warmwater under 45
