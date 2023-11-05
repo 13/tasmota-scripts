@@ -30,9 +30,11 @@ Backlog ButtonTopic 0; SetOption73 1; SetOption32 20;
 /  BT2 Single = Toggle Open/Stop/Close
 /      Double = Open
 /      Hold = Close
+/      Triple = 10% Sunlight protection
 /  BT3 Single = Toggle Open/Stop/Close
 /      Double = Open
 /      Hold = Close
+/      Triple = 10% Sunlight protection
 */
 ```
 
@@ -74,5 +76,5 @@ ON event#ROLLER2==1 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterClose;
 ON event#ROLLER2==2 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterStop; mem3 %mem4% ENDON
 ON Button3#state=11 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterOpen; mem3 2; mem4 1 ENDON
 ON Button3#state=3 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterClose; mem3 2; mem4 0 ENDON
-ON Button3#state=11 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterPosition 4; mem3 2; mem4 1 ENDON
+ON Button3#state=12 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterPosition 4; mem3 2; mem4 1 ENDON
 ```
