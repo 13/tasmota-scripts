@@ -59,6 +59,7 @@ ON event#ROLLER1==1 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterClose;
 ON event#ROLLER1==2 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterStop; mem1 %mem2% ENDON
 ON Button2#state=11 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterOpen; mem1 2; mem2 1 ENDON
 ON Button2#state=3 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterClose; mem1 2; mem2 0 ENDON
+ON Button2#state=12 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterPosition 4; mem1 2; mem2 1 ENDON
 ```
 
 ```
@@ -73,4 +74,5 @@ ON event#ROLLER2==1 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterClose;
 ON event#ROLLER2==2 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterStop; mem3 %mem4% ENDON
 ON Button3#state=11 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterOpen; mem3 2; mem4 1 ENDON
 ON Button3#state=3 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterClose; mem3 2; mem4 0 ENDON
+ON Button3#state=11 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterPosition 4; mem3 2; mem4 1 ENDON
 ```
