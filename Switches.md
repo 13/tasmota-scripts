@@ -9,7 +9,7 @@
 ```
 Backlog DeviceName KMMR_SW1; FriendlyName1 KMMR_SW1;
 Backlog DeviceName KMMR_SW2; FriendlyName1 KMMR_SW2; 
-Backlog ButtonTopic 0;  SetOption73 1; SetOption32 20;
+Backlog ButtonTopic 0; SetOption73 1; SetOption32 20;
 ```
 
 ## Rules
@@ -23,12 +23,16 @@ Backlog ButtonTopic 0;  SetOption73 1; SetOption32 20;
 /  ---
 /  KommerDoorSwitch
 /  ---
-/  BT1 Single = Toggle NL
-/      Double = 15% NL
-/      Hold = 100% NL
-/      Quad = Toggle HZ
+/  BT1 Single = Toggle Nachtlicht
+/      Double = 15% Nachtlicht
+/      Hold = 100% Nachtlicht
+/      Quad = Toggle Heizung
 /  BT2 Single = Toggle Open/Stop/Close
+/      Double = Open
+/      Hold = Close
 /  BT3 Single = Toggle Open/Stop/Close
+/      Double = Open
+/      Hold = Close
 */
 ```
 
@@ -48,11 +52,13 @@ Rule2
 ON mqtt#connected DO Subscribe Pos1, tasmota/status/tasmota_6B07DC/pos ENDON
 ON Event#Pos1=0 DO mem1 0 ENDON
 ON Event#Pos1=100 DO mem1 1 ENDON
-ON Button2#state DO event ROLLER1=%mem1% ENDON
+ON Button2#state=10 DO event ROLLER1=%mem1% ENDON
 ON event#ROLLER1="" DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterOpen; mem1 2; mem2 1 ENDON
 ON event#ROLLER1==0 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterOpen; mem1 2; mem2 1 ENDON
 ON event#ROLLER1==1 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterClose; mem1 2; mem2 0 ENDON
 ON event#ROLLER1==2 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterStop; mem1 %mem2% ENDON
+ON Button2#state=11 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterOpen; mem1 2; mem2 1 ENDON
+ON Button2#state=3 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterClose; mem1 2; mem2 0 ENDON
 ```
 
 ```
@@ -60,9 +66,11 @@ Rule3
 ON mqtt#connected DO Subscribe Pos2, tasmota/status/tasmota_5FB259/pos ENDON
 ON Event#Pos2=0 DO mem3 0 ENDON
 ON Event#Pos2=100 DO mem3 1 ENDON
-ON Button3#state DO event ROLLER2=%mem3% ENDON
+ON Button3#state=10 DO event ROLLER2=%mem3% ENDON
 ON event#ROLLER2="" DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterOpen; mem3 2; mem4 1 ENDON
 ON event#ROLLER2==0 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterOpen; mem3 2; mem4 1 ENDON
 ON event#ROLLER2==1 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterClose; mem3 2; mem4 0 ENDON
 ON event#ROLLER2==2 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterStop; mem3 %mem4% ENDON
+ON Button3#state=11 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterOpen; mem3 2; mem4 1 ENDON
+ON Button3#state=3 DO Backlog Publish tasmota/cmnd/tasmota_5FB259/ShutterClose; mem3 2; mem4 0 ENDON
 ```
