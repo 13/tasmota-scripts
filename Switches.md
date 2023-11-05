@@ -1,4 +1,4 @@
-# ESP8285-Athom-SW013EU
+# Switches
 
 ## Template
 ```
