@@ -81,12 +81,21 @@ ON event#smro$|-08- DO ShutterOpen ENDON
 ```
 ### Rule 3
 - Winter close at 09:00 to (shutter door to 4% sun protection)
+- Winter close at 09:00 if UV Level (sun protection floor)
 ```
 Rule3
 ON Time#Minute=540 DO Backlog event sdwc=%timestamp% ENDON
 ON event#sdwc$^-06- DO ShutterPosition 4 ENDON
 ON event#sdwc$^-07- DO ShutterPosition 4 ENDON
 ON event#sdwc$^-08- DO ShutterPosition 4 ENDON
+
+ON mqtt#connected DO Subscribe SolarUv, muh/WStation/data/B327, uv ENDON
+ON Event#SolarUv>=1 DO Var2 1 ENDON
+ON Event#SolarUv<1 DO Var2 0 ENDON
+ON Time#Minute=540 DO Backlog event sdwc=%timestamp% ENDON
+ON event#sdwc$^-06- DO IF (Var2 == 1) ShutterPosition 4 ENDIF ENDON
+ON event#sdwc$^-07- DO IF (Var2 == 1) ShutterPosition 4 ENDIF ENDON
+ON event#sdwc$^-08- DO IF (Var2 == 1) ShutterPosition 4 ENDIF ENDON
 ```
 ## Commands
 ```
