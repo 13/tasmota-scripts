@@ -36,5 +36,5 @@ ON event#smr$|-12- DO Power1 1 ENDON
 ON event#smr$|-01- DO Power1 1 ENDON
 ON event#smr$|-02- DO Power1 1 ENDON
 ON event#smr$|-03- DO Power1 1 ENDON
-ON Time#Minute=480 DO Power1 0 ENDON
+ON Time#Minute=380 DO Power1 0 ENDON
 ```
