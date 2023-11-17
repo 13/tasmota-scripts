@@ -1,4 +1,5 @@
-# Shelly Plus 1 PM
+# Lights
+## Shelly Plus 1 PM
 
 ## Template
 ```
