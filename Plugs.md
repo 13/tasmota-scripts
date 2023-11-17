@@ -1,4 +1,5 @@
-# ESP8266EX Athom Plug V2
+# Plugs
+## ESP8266EX Athom Plug V2
 - Upgrade first Tasmota-Minimal/Lite then Tasmota
 ## Template
 ```
