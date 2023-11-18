@@ -34,3 +34,30 @@ ON Event#TEMPK2>=21 DO Power1 0 ENDON
 ON Event#TEMPK3>=21 DO Power1 0 ENDON
 ON Event#TEMPK4>=21 DO Power1 0 ENDON
 ```
+
+##### Shelly Script
+```
+let temp_max = 20.5;
+let tempk22;
+let tempk87;
+
+MQTT.subscribe("muh/sensors/22/json", function(topic, msg) {
+  let tempk222 = JSON.parse(msg).T2;
+  let tempk224 = JSON.parse(msg).T4;
+  tempk22 = (tempk222 + tempk224)/2;
+  print("22: ",tempk22);
+  if (tempk22 >= temp_max){
+    Shelly.call("Switch.set", {'id': 0, 'on': false});
+  }
+});
+
+MQTT.subscribe("muh/sensors/87/json", function(topic, msg) {
+  let tempk871 = JSON.parse(msg).T1;
+  let tempk872 = JSON.parse(msg).T2;
+  tempk87 = (tempk871 + tempk872)/2;
+  print("87: ",tempk87);
+  if (tempk87 >= temp_max){
+    Shelly.call("Switch.set", {'id': 0, 'on': false});
+  }
+});
+```
