@@ -23,7 +23,7 @@ ON event#upordown=- DO var1 + ENDON
 ```
 ### Rule 2
 - timer to turn off after 1.5 hours
-- winter sunrise emulator
+- Winter sunrise (ON at 06:00)
 ```
 Rule2
 ON Power1#state=1 DO RuleTimer1 5400 ENDON
@@ -31,10 +31,10 @@ ON Power1#state=0 DO RuleTimer1 0 ENDON
 ON Rules#timer=1 DO Power1 0 ENDON
 
 ON Time#Minute=360 DO Backlog event smr=%timestamp% ENDON
-ON event#smr$|-11- DO Power1 1 ENDON
-ON event#smr$|-12- DO Power1 1 ENDON
-ON event#smr$|-01- DO Power1 1 ENDON
-ON event#smr$|-02- DO Power1 1 ENDON
-ON event#smr$|-03- DO Power1 1 ENDON
+ON event#smr$|-11- DO Backlog Dimmer 10; Power1 1 ENDON
+ON event#smr$|-12- DO Backlog Dimmer 10; Power1 1 ENDON
+ON event#smr$|-01- DO Backlog Dimmer 10; Power1 1 ENDON
+ON event#smr$|-02- DO Backlog Dimmer 10; Power1 1 ENDON
+ON event#smr$|-03- DO Backlog Dimmer 10; Power1 1 ENDON
 ON Time#Minute=380 DO Power1 0 ENDON
 ```
