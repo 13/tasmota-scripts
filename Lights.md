@@ -116,6 +116,9 @@ Backlog SwitchMode 1
 ```
 Rule1
 ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
+ON System#Boot DO event readtimer ENDON
+ON Event#readtimer DO Backlog RuleTimer ENDON
+ON T1 DO Var10=Var10+%value% ENDON
 ON System#Boot DO var10 0; IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/HD_EXT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/HD_EXT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
