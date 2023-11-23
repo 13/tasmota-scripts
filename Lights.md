@@ -119,6 +119,8 @@ ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/HD_EXT/js
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/HD_EXT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
+
+Rule2
 ON mqtt#connected DO Subscribe MTN, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
 ON Event#MTN=true DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
 ON event#chcksr0<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
@@ -128,7 +130,7 @@ ON Event#CP=on DO Backlog event chcksr1=%time%; event chckss1=%time% ENDON
 ON event#chcksr1<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
 ON event#chckss1>%sunset% DO Backlog Power1 1; RuleTimer1 30 ENDON
 
-Rule2
+Rule3
 ON mqtt#connected DO Subscribe CPAI, cam2mqtt/camera/reolink_cam_1/event/reolink/aidetection/people/detected ENDON
 ON Event#CPAI=on DO Backlog event chcksr2=%time%; event chckss2=%time% ENDON
 ON event#chcksr2<%sunrise% DO Backlog Power1 1; RuleTimer1 30 ENDON
