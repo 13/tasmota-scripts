@@ -125,26 +125,26 @@ ON Rules#Timer=1 DO Backlog Var10 0; Power1 0 ENDON
 Rule2
 ON mqtt#connected DO Subscribe MTN, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
 ON Event#MTN=true DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
-ON event#chcksr0<%sunrise% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
-ON event#chckss0>%sunset% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
+ON event#chcksr0<%sunrise% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
+ON event#chckss0>%sunset% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
 ON mqtt#connected DO Subscribe CP, cam2mqtt/camera/reolink_cam_1/event/onvif/object/people/detected ENDON
 ON Event#CP=on DO Backlog event chcksr1=%time%; event chckss1=%time% ENDON
-ON event#chcksr1<%sunrise% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
-ON event#chckss1>%sunset% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
+ON event#chcksr1<%sunrise% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
+ON event#chckss1>%sunset% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
 
 Rule3
 ON mqtt#connected DO Subscribe CPAI, cam2mqtt/camera/reolink_cam_1/event/reolink/aidetection/people/detected ENDON
 ON Event#CPAI=on DO Backlog event chcksr2=%time%; event chckss2=%time% ENDON
-ON event#chcksr2<%sunrise% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
-ON event#chckss2>%sunset% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
+ON event#chcksr2<%sunrise% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
+ON event#chckss2>%sunset% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
 ON mqtt#connected DO Subscribe CPET, cam2mqtt/camera/reolink_cam_1/event/onvif/object/pet/detected ENDON
 ON Event#CPET=on DO Backlog event chcksr3=%time%; event chckss3=%time% ENDON
-ON event#chcksr3<%sunrise% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
-ON event#chckss3>%sunset% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
+ON event#chcksr3<%sunrise% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
+ON event#chckss3>%sunset% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
 ON mqtt#connected DO Subscribe CPETAI, cam2mqtt/camera/reolink_cam_1/event/reolink/aidetection/pet/detected ENDON
 ON Event#CPET=on DO Backlog event chcksr4=%time%; event chckss4=%time% ENDON
-ON event#chcksr4<%sunrise% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
-ON event#chckss4>%sunset% DO Backlog event readT1; IF (%var10%<30) Power1 1; RuleTimer1 30 ENDIF ENDON
+ON event#chcksr4<%sunrise% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
+ON event#chckss4>%sunset% DO Backlog event readT1; IF (%var10%<30) RuleTimer1 30; Power1 1 ENDIF ENDON
 ```
 ---
 ## STCK2_GANG
