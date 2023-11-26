@@ -40,22 +40,22 @@ ON Event#TEMPK4>=21 DO Power1 0 ENDON
 let temp_max = 20.5;
 let tempk22;
 let tempk87;
+let tempkAll;
+let switch0;
 
-function getSwitchStatus(){
-Shelly.call(
-  "switch.getstatus",
-  {
-    id: 0,
-  },
-  function (result, error_code, error_message) {
-    if (result.output === true) {
-      return true;
-    } else {
-      return false;
-    }
+Shelly.call("switch.getstatus",{id: 0,},function (result, error_code, error_message) {
+    //print(JSON.stringify(result));
+    switch0 = result.output;
+    print("Switch0: ", switch0);
   }
 );
-}
+
+Shelly.addStatusHandler(function (status) {
+  if (status.component === "switch:0") {
+    switch0 = status.delta.output;
+    print("Switch0: ", switch0);
+  }
+});
 
 MQTT.subscribe("muh/sensors/22/json", function(topic, msg) {
   let tempk222 = JSON.parse(msg).T2;
@@ -63,11 +63,17 @@ MQTT.subscribe("muh/sensors/22/json", function(topic, msg) {
   tempk22 = (tempk222 + tempk224)/2;
   print("22: ",tempk22);
   MQTT.publish("muh/sensors/KOMMER/22", JSON.stringify(tempk22), 0, true);
-  if (tempk22 >= temp_max && getSwitchStatus()){
+  if (tempk87 !== "undefined"){
+    tempkAll = (tempk87+tempk22)/2;
+    MQTT.publish("muh/sensors/KOMMER/ALL", JSON.stringify(tempkAll), 0, true);
+  } else {
+    MQTT.publish("muh/sensors/KOMMER/ALL", JSON.stringify(tempk22), 0, true);
+  }
+  /*if (tempk22 >= temp_max && switch0){
     print("HZ_DG: OFF 22 ",tempk22);
     Shelly.call("Switch.set", {'id': 0, 'on': false});
-    MQTT.publish("muh/telegram/msg", 'HZ_DG: OFF ' + JSON.stringify(tempk22) + '° (S22)', 0, false);
-  }
+    MQTT.publish("muh/telegram/msg", 'HZ_DG: OFF ' + JSON.stringify(tempk22) + '�� (S22)', 0, false);
+  }*/
 });
 
 MQTT.subscribe("muh/sensors/87/json", function(topic, msg) {
@@ -76,10 +82,26 @@ MQTT.subscribe("muh/sensors/87/json", function(topic, msg) {
   tempk87 = (tempk871 + tempk872)/2;
   print("87: ",tempk87);
   MQTT.publish("muh/sensors/KOMMER/87", JSON.stringify(tempk87), 0, true);
-  if (tempk87 >= temp_max && getSwitchStatus()){
+  if (tempk22 !== "undefined"){
+    tempkAll = (tempk87+tempk22)/2;
+    MQTT.publish("muh/sensors/KOMMER/ALL", JSON.stringify(tempkAll), 0, true);
+  } else {
+    MQTT.publish("muh/sensors/KOMMER/ALL", JSON.stringify(tempk87), 0, true);
+  }
+  /*if (tempk87 >= temp_max && switch0){
     print("HZ_DG: OFF 87 ",tempk87);
     Shelly.call("Switch.set", {'id': 0, 'on': false});
     MQTT.publish("muh/telegram/msg", 'HZ_DG: OFF ' + JSON.stringify(tempk87) + '° (S87)', 0, false);
+  }*/
+});
+
+MQTT.subscribe("muh/sensors/KOMMER/ALL", function(topic, msg) {
+  tempkAll = JSON.parse(msg)
+  print("K: ",tempkAll);
+  if (tempkAll >= temp_max && switch0){
+    print("HZ_DG: OFF ",tempkAll);
+    Shelly.call("Switch.set", {'id': 0, 'on': false});
+    MQTT.publish("muh/telegram/msg", 'HZ_DG: OFF ' + JSON.stringify(tempkAll) + '°', 0, false);
   }
 });
 ```
