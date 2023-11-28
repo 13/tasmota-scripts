@@ -34,7 +34,7 @@ ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_INT/jso
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_INT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state==1 DO Backlog var1 %value%; event readT1; IF (%var10%>300) RuleTimer1 1800 ENDIF ENDON
 ON Power1#state==0 DO Backlog var1 %value%; RuleTimer1 0 ENDON
-ON Switch1#state DO IF (%var1%==0) event readT1; RuleTimer1 1800; Power1 1 ELSE RuleTimer1 0; Power1 0 ENDIF ENDON
+ON Switch1#state DO IF (%var1%==0) RuleTimer1 1800; Power1 1 ELSE Power1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Backlog Var10 0; Power1 0 ENDON
 Rule2
 ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
