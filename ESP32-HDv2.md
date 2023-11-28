@@ -45,6 +45,7 @@ PulseTime3 4; PulseTime1 2; PulseTime2 0;
 - Button 2c G OPEN
 - Button 3c GD OPEN
 - Button 4c GD LOCK
+- HDL auto lock 23:30 and 00:30
 ```
 Rule1
 ON Switch1#Boot DO var1 %value% ENDON
@@ -60,6 +61,8 @@ ON Button2#state=10 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
 ON Button2#state=11 DO Publish muh/portal/RLY/cmnd G_T ENDON
 ON Button2#state=12 DO Publish muh/portal/RLY/cmnd GD_O ENDON
 ON Button2#state=13 DO Publish muh/portal/RLY/cmnd GD_L ENDON
+ON Time#Minute=1 DO IF (%var2%==0) Power1 1 ENDIF ENDON
+ON Time#Minute=1411 DO IF (%var2%==0) Power1 1 ENDIF ENDON
 ```
 ### Rule 2
 - HTTP Relay API
