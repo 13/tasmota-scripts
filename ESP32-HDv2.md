@@ -88,6 +88,9 @@ ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power4 1 E
 - Play sounds
 - Play Pendulum Clock
 - Play Christmas Easteregg sounds
+#### TODO
+- Normalize all sounds
+- if long click disable sounds for 10 minutes
 ```
 Rule3
 ON System#Boot DO i2sgain 40 ENDON
@@ -96,7 +99,7 @@ ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
 ON Event#G!=%mem11% DO Backlog mem11 %value%; i2splay +/G%value%.mp3 ENDON  
 ON mqtt#connected DO Subscribe GD, muh/portal/GD/json, state ENDON
 ON Event#GD!=%mem12% DO Backlog mem12 %value%; i2splay +/GD%value%.mp3 ENDIF ENDON
-ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
+ON Switch1#state DO Backlog i2sgain 30; i2splay +/HD%value%%Var16%.mp3 ENDON
 ON Button1#state=10 DO Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40 ENDON
 ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
 ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
