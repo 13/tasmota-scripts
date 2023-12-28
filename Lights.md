@@ -29,7 +29,7 @@ Backlog SwitchMode 0
 Rule1
 ON Power1#Boot DO Backlog var10 0; var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
 ON Event#readT1 DO Backlog RuleTimer ENDON
-ON T1 DO Backlog var10 %value%; IF (%var10%==0) Power1 0 ENDIF ENDON
+ON T1 DO var10 %value% ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_INT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_INT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state==1 DO Backlog var1 %value%; event readT1; IF (%var10%>300) RuleTimer1 1800 ENDIF ENDON
@@ -116,7 +116,7 @@ Backlog SwitchMode 1
 Rule1
 ON Power1#Boot DO Backlog var10 0; var1 %value%; IF (%value%==1) RuleTimer1 300 ENDIF ENDON
 ON Event#readT1 DO Backlog RuleTimer ENDON
-ON T1 DO Var10 %value% ENDON
+ON T1 DO Backlog var10 %value%; IF (%var10%==0) Power1 0 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/HD_EXT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/HD_EXT/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog event readT1; var1 %value%; IF ((%value%==1) AND (%var10%==0)) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
