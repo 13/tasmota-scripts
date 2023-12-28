@@ -48,9 +48,12 @@ ShutterSetHalfway 72
 - // Window close complete
 - // Door close 75%
 - // Window open at 06:00
+- Set Nautical Sunrise and Civil Sunset
 ```
 Rule1
 ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
+ON Time#Minute=30 DO Sunrise 2 ENDON
+ON Time#Minute=720 DO Sunrise 1 ENDON
 ON Time#Minute=360 DO ShutterOpen ENDON
 ON Time#Minute=%sunrise% DO ShutterOpen ENDON
 ON Time#Minute=%sunset% DO ShutterClose ENDON
