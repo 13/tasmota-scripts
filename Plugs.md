@@ -109,7 +109,5 @@ Rule1
 ON Time#Initialized DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
 ON event#checksunset>%sunset% DO Power1 1 ENDON
 ON event#checksunrise<%sunrise% DO Power1 1 ENDON
-ON event#checksunset<%sunset% DO Power1 0 ENDON
-ON event#checksunrise>%sunrise% DO Power1 0 ENDON
 ON Time#Minute|5 DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
 ```
