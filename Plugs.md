@@ -85,3 +85,30 @@ ON event#brwoff$|-04- DO Power 0 ENDON
 ON event#brwoff$|-11- DO Power 0 ENDON
 ON event#brwoff$|-12- DO Power 0 ENDON
 ```
+
+## Shelly Plug S
+- Upgrade first Tasmota-Minimal/Lite then Tasmota
+## Template
+```
+{"NAME":"Shelly Plug S","GPIO":[56,255,158,255,255,134,0,0,131,17,132,21,255],"FLAG":2,"BASE":45}
+```
+## Settings
+```
+Backlog DeviceName BROLICHT; FriendlyName1 BROLICHT; 
+PowerOnState 3;
+```
+
+
+## Rules
+- on boot check last state
+- every minute check if sunset nautical on
+- sunrise off
+```
+Rule1
+ON Time#Initialized DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
+ON event#checksunset>%sunset% DO Power1 1 ENDON
+ON event#checksunrise<%sunrise% DO Power1 1 ENDON
+ON event#checksunset<%sunset% DO Power1 0 ENDON
+ON event#checksunrise>%sunrise% DO Power1 0 ENDON
+ON Time#Minute|5 DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
+```
