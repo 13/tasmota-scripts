@@ -93,9 +93,10 @@ ON event#brwoff$|-12- DO Power 0 ENDON
 {"NAME":"Shelly Plug S","GPIO":[56,255,158,255,255,134,0,0,131,17,132,21,255],"FLAG":2,"BASE":45}
 ```
 ## Settings
+- Sunrise/Sunset GPS Villach ~ -10 Mins
 ```
-Backlog DeviceName BROLICHT; FriendlyName1 BROLICHT; 
-PowerOnState 3;
+Backlog DeviceName BROLICHT; FriendlyName1 BROLICHT;
+Latitude 46.6086;  Longitude 13.8506;
 ```
 
 
