@@ -106,8 +106,21 @@ Latitude 46.6086;  Longitude 13.8506;
 - sunrise off
 ```
 Rule1
-ON Time#Initialized DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
-ON event#checksunset>%sunset% DO Power1 1 ENDON
-ON event#checksunrise<%sunrise% DO Power1 1 ENDON
-ON Time#Minute|5 DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
+ON Time#Initialized DO Backlog event checksunrise=%time%; event checksunset=%time%; event checkDark=%var1% ENDON
+ON event#checksunrise>%sunrise% DO Var1 0 ENDON
+ON event#checksunset<%sunset% DO Var2 0 ENDON
+ON event#checksunrise<%sunrise% DO Var1 1 ENDON
+ON event#checksunset>%sunset% DO Var2 1 ENDON
+ON event#checkDark==%var2% DO Power 1 ENDON
+ON event#checkDark!=%var2% DO Power 0 ENDON
+ON Time#Minute|5 DO Backlog event checksunrise=%time%; event checksunset=%time%; event checkDark=%var1% ENDON
+
+Rule1
+ON Time#Initialized DO Backlog event checksunrise=%time%; event checksunset=%time%; event checkDark ENDON
+ON event#checksunrise>%sunrise% DO Var1 0 ENDON
+ON event#checksunset<%sunset% DO Var2 0 ENDON
+ON event#checksunrise<%sunrise% DO Var1 1 ENDON
+ON event#checksunset>%sunset% DO Var2 1 ENDON
+ON event#checkDark DO IF (%var1%==%var2%) Power 0 ELSE Power 1 ENDIF ENDON
+ON Time#Minute|5 DO Backlog event checksunrise=%time%; event checksunset=%time%; event checkDark ENDON
 ```
