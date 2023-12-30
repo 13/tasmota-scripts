@@ -114,7 +114,7 @@ ON event#checksunrise<%var11% DO Var1 1 ENDON
 ON event#checksunset>%var12% DO Var2 1 ENDON
 ON event#checkDaylight==%var2% DO Power 0 ENDON
 ON event#checkDaylight!=%var2% DO Power 1 ENDON
-ON Time#Minute|5 DO Backlog event checksunrise=%time%; event checksunset=%time%; event checkDaylight=%var1% ENDON
+ON Time#Minute|10 DO Backlog event checksunrise=%time%; event checksunset=%time%; event checkDaylight=%var1% ENDON
 
 // ALTERNATIVE IF/ENDIF
 Rule1
