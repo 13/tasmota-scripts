@@ -105,6 +105,7 @@ Latitude 46.6086;  Longitude 13.8506;
 - every minute check if sunset nautical on
 - sunrise off
 - change sunrise/sunset +-Minutes
+- Under 10 Lux turn on Light
 ```
 Rule1
 ON Time#Initialized DO Backlog var11=%sunrise%+60; var12=%sunset%-30; event checksunrise=%time%; event checksunset=%time% ENDON
