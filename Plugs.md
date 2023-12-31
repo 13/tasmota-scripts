@@ -107,7 +107,7 @@ Latitude 46.6086;  Longitude 13.8506;
 - change sunrise/sunset +-Minutes
 ```
 Rule1
-ON Time#Initialized DO Backlog var11=%sunrise%+30; var12=%sunset%-30; event checksunrise=%time%; event checksunset=%time%; event checkDaylight=%var1% ENDON
+ON Time#Initialized DO Backlog var11=%sunrise%+60; var12=%sunset%-30; event checksunrise=%time%; event checksunset=%time%; event checkDaylight=%var1% ENDON
 ON event#checksunrise>%var11% DO Var1 0 ENDON
 ON event#checksunset<%var12% DO Var2 0 ENDON
 ON event#checksunrise<%var11% DO Var1 1 ENDON
