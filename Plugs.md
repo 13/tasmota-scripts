@@ -108,7 +108,7 @@ Latitude 46.6086;  Longitude 13.8506;
 - Under 10 Lux turn on Light
 ```
 Rule1
-ON Time#Initialized DO Backlog var11=%sunrise%+60; var12=%sunset%-30; event checksunrise=%time%; event checksunset=%time% ENDON
+ON Time#Initialized DO Backlog var11=%sunrise%; var12=%sunset%-30; event checksunrise=%time%; event checksunset=%time% ENDON
 ON event#checksunrise>%var11% DO Var1 0 ENDON
 ON event#checksunrise<%var11% DO Var1 1 ENDON
 ON event#checksunset<%var12% DO Var2 0 ENDON
@@ -118,7 +118,7 @@ ON var2#state!=%var1% DO Power 1 ENDON
 ON Time#Minute=%var11% DO Power 0 ENDON
 ON Time#Minute=%var12% DO Power 1 ENDON
 ON mqtt#connected DO Subscribe LightLux, muh/WStation/data/B327, light_klx ENDON
-ON Event#LightLux<10 DO Power 1 ENDON
+ON Event#LightLux<5 DO Power 1 ENDON
 
 ON Time#Minute|10 DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
 
