@@ -1,9 +1,9 @@
 # 
-- Athom Support
+- Athom Original
 ```
 {"NAME":"Athom Zigbee Bridge","GPIO":[32,0,0,0,0,0,0,0,3552,0,3584,544,0,0,5600,0,0,0,0,5568,0,0,0,0,0,0,0,1,5792,0,0,0,0,0,0,0],"FLAG":0,"BASE":1}
-
-- Blakadder
+```
+- Blakadder better
 ```
 {"NAME":"Athom Zigbee Bridge","GPIO":[32,0,0,0,0,0,0,0,5472,0,5504,544,0,0,5600,0,0,0,0,5568,0,0,0,0,0,0,0,1,5792,0,0,0,0,0,0,0],"FLAG":0,"BASE":1}
 ```
