@@ -77,7 +77,7 @@ ON Switch1#state=3 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
 ## G_TREPPE
 ### Settings
 ```
-Backlog SwitchMode 0
+Backlog SwitchMode 1
 ```
 ### Rules
 #### Rule1
