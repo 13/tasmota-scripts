@@ -89,6 +89,10 @@ ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_TREPPE/
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_TREPPE/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
+
+Rule2
+ON mqtt#connected DO Subscribe DOOR, shellies/shellydw2-C9B099/sensor/state ENDON
+ON Event#DOOR=open DO Power1 1 ENDON
 ```
 ---
 ## HD_INT
