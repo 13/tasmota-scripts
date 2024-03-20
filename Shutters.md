@@ -105,5 +105,45 @@ ON event#sdwc$^-08- DO IF (Var2 == 1) ShutterPosition 4 ENDIF ENDON
 Publish tasmota/cmnd/tasmota_XXXXXX/ShutterStop
 ```
 
-## TODO
+# Shelly Plus 2PM
+## Template
+```
+{}
+```
+## Settings
+```
+Backlog SerialLog 0; PowerOnState 0; SetOption80 1; ShutterRelay1 1; Interlock 1,2; Interlock ON;
 
+Backlog DeviceName ROLLERK1; FriendlyName1 ROLLERK1; 
+Backlog ShutterOpenDuration 28; ShutterCloseDuration 28;
+```
+## Calibration
+- ROLLERK1 DOOR (RIGHT)
+```
+close the shutter until endstop is reached (repeat: backlog shuttersetopen;shutterclose until closed) - interlock 1,2 - interlock on - shutterrelay1 1 - shuttersetup (shutter will start moving....)
+```
+## Rules
+### Rule 1
+- Open/Close at sunrise/sunset
+- Set shutter position MQTT
+- // Window close complete
+- // Door close 75%
+- // Window open at 06:00
+- Set Nautical Sunrise and Civil Sunset
+```
+Rule1
+ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
+ON Time#Minute=30 DO Sunrise 2 ENDON
+ON Time#Minute=720 DO Sunrise 1 ENDON
+ON Time#Minute=360 DO ShutterOpen ENDON
+ON Time#Minute=%sunrise% DO ShutterOpen ENDON
+ON Time#Minute=%sunset% DO ShutterClose ENDON
+// BIG
+ON Time#Minute=%sunset% DO Backlog event scs=%timestamp% ENDON
+ON event#scs$|-05- DO ShutterPosition 25 ENDON
+ON event#scs$|-06- DO ShutterPosition 25 ENDON
+ON event#scs$|-07- DO ShutterPosition 25 ENDON
+ON event#scs$|-08- DO ShutterPosition 25 ENDON
+ON event#scs$|-09- DO ShutterPosition 25 ENDON
+ON event#scs$|-10- DO ShutterPosition 25 ENDON
+```
