@@ -91,6 +91,8 @@ ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 300 ELSE Rul
 ON Rules#Timer=1 DO Power1 0 ENDON
 
 Rule2
+ON mqtt#connected DO Subscribe DOOR, muh/sensors/6a7/json, S1 ENDON
+ON Event#DOOR=open DO Power1 1 ENDON
 ON mqtt#connected DO Subscribe DOOR, shellies/shellydw2-C9B099/sensor/state ENDON
 ON Event#DOOR=open DO Power1 1 ENDON
 ```
