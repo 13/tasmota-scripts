@@ -93,6 +93,9 @@ ON Rules#Timer=1 DO Power1 0 ENDON
 Rule2
 ON mqtt#connected DO Subscribe DOOR, muh/sensors/6a7/json, S1 ENDON
 ON Event#DOOR=0 DO Power1 1 ENDON
+ON mqtt#connected DO Subscribe PIR, muh/sensors/33c/json, M1 ENDON
+ON Event#PIR=0 DO Power1 1 ENDON
+
 ON mqtt#connected DO Subscribe DOOR, shellies/shellydw2-C9B099/sensor/state ENDON
 ON Event#DOOR=open DO Power1 1 ENDON
 ```
