@@ -66,11 +66,15 @@ Backlog SwitchMode 5; SetOption1 1; SetOption32 30; Sunrise 0
 - ~Turn ON Garage LIGHT~
 ```
 Rule1
-ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 180 ENDIF ENDON
+ON Power1#Boot DO Backlog var10 1200; var1 %value%; IF (%value%==1) RuleTimer1 180 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_EXT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_EXT/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Power1#state=1 DO IF ((%time% > %sunrise%) AND (%time% < %sunset%)) RuleTimer1 5 ELSE RuleTimer1 1800 ENDIF ENDON
+ON Power1#state=1 DO IF ((%time% > %sunrise%) AND (%time% < %sunset%)) RuleTimer1 1 ELSE RuleTimer1 %var10%; var10 1200; ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
+
+Rule2
+ON mqtt#connected DO Subscribe PIR, muh/sensors/4f6/json, M1 ENDON
+ON Event#PIR=1 DO Backlog var10 30; Power1 1 ENDON
 
 ON Switch1#state=3 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
 ```
