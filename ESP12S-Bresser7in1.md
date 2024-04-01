@@ -13,11 +13,17 @@
 ### Settings
 - disable switch on 1
 - set 115200 bps
-- Tuya probe SerialSend5 55aa0001000000 
+- https://tasmota.github.io/docs/TuyaMCU/#tuyasend-command
+- SerialSend5 55aa000100000
 ```
 {"NAME":"Bresser7in1","GPIO":[1,1,1,1,1,1,0,0,1,1,1,1,1,0],"FLAG":0,"BASE":54,"CMND":"TelePeriod 10 | SO97 1 | weblog 4"}
 
-Backlog TelePeriod 10; SO97 1; TuyaMcu 99,1; weblog 4
+working
+{"NAME":"Bresser","GPIO":[1,1,1,1,1,1,0,0,1,1,1,1,1,0],"FLAG":0,"BASE":54,"CMND":"SO97 1 | TuyaMCU 73,2 | TuyaMCU 71,102"}
+
+Backlog TelePeriod 10; SO97 1; TuyaMcu 99,1
+
+
 ```
 
 ```
