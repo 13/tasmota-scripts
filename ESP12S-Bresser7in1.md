@@ -22,8 +22,6 @@ working
 {"NAME":"Bresser","GPIO":[1,1,1,1,1,1,0,0,1,1,1,1,1,0],"FLAG":0,"BASE":54,"CMND":"SO97 1 | TuyaMCU 73,2 | TuyaMCU 71,102"}
 
 Backlog TelePeriod 10; SO97 1; TuyaMcu 99,1
-
-
 ```
 
 ```
@@ -41,6 +39,8 @@ regenrate=0
 regenprotag=0
 uv=0
 licht=0
+>B
+print "Bresser Tuya 7in1 Script"
 >E
 tin=TuyaReceived#DpType2Id1/10
 hin=TuyaReceived#DpType2Id2
@@ -86,10 +86,14 @@ regenprotag=TuyaReceived#DpType2Id60/1000
 uv=TuyaReceived#DpType2Id62/10
 licht=TuyaReceived#DpType2Id63/1000
 >T
-if luftd>0 and hout>0 {
+print "Bresser Tuya SerialSend"
+=>SerialSend5 55aa000100000
+if luftd>0
+and hout>0 {
 =>publish2 muh/wsr/json {"temp_in":%1tin%, "hum_in":%0hin%, "temp_out":%1tout%, "hum_out":%0hout%, "wind_speed:%1wind%, "wind_dir":%0windr%, "pressure":%1luftd%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
 }
-if luftd<1 and hout>0 {
+if luftd<1
+and hout>0 {
 =>publish2 muh/wsr/json {"temp_out":%1tout%, "hum_out":%0hout%, "wind_speed:%1wind%, "wind_dir":%0windr%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
 }
 >WS
