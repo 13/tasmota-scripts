@@ -29,18 +29,18 @@ Backlog TelePeriod 10; SO97 1; TuyaMcu 99,1
 ```
 >D
 temp=""
-tin=tin
-hin=hin
-tout=tout
-hout=hout
-wind=wind
+tin=0
+hin=0
+tout=0
+hout=0
+wind=0
 windr=0
 winddirname=""
-luftd=luftd
-regenrate=regenrate
-regenprotag=regenprotag
-uv=uv
-licht=licht
+luftd=0
+regenrate=0
+regenprotag=0
+uv=0
+licht=0
 >E
 tin=TuyaReceived#DpType2Id1/10
 hin=TuyaReceived#DpType2Id2
@@ -85,10 +85,13 @@ regenrate=TuyaReceived#DpType2Id61/1000
 regenprotag=TuyaReceived#DpType2Id60/1000
 uv=TuyaReceived#DpType2Id62/10
 licht=TuyaReceived#DpType2Id63/1000
->G
-=>publish2 muh/wsr/json {"temp_in":%1tin%, "hum_in":%0hin%, "temp_out":%1tout%, "hum_out":%0hout%, "wind_speed:%1wind%, "wind_dir":%0windr%, "pressure":%1luftd%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
 >T
+if luftd>0 and hout>0 {
 =>publish2 muh/wsr/json {"temp_in":%1tin%, "hum_in":%0hin%, "temp_out":%1tout%, "hum_out":%0hout%, "wind_speed:%1wind%, "wind_dir":%0windr%, "pressure":%1luftd%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
+}
+if luftd<1 and hout>0 {
+=>publish2 muh/wsr/json {"temp_out":%1tout%, "hum_out":%0hout%, "wind_speed:%1wind%, "wind_dir":%0windr%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
+}
 >WS
 Temp In{m} %1tin% °C
 Hum In{m} %0hin% %%
