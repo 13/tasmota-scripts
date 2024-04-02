@@ -90,11 +90,11 @@ print "Bresser Tuya SerialSend"
 =>SerialSend5 55aa000100000
 if luftd>0
 and hout>0 {
-=>publish2 muh/wsr/json {"temp_in":%1tin%, "hum_in":%0hin%, "temp_out":%1tout%, "hum_out":%0hout%, "wind_speed:%1wind%, "wind_dir":%0windr%, "pressure":%1luftd%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
+=>publish2 muh/wsr/json {"temp_in":%1tin%, "hum_in":%0hin%, "temp_out":%1tout%, "hum_out":%0hout%, "wind_speed":%1wind%, "wind_dir":%0windr%, "pressure":%1luftd%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
 }
 if luftd<1
 and hout>0 {
-=>publish2 muh/wsr/json {"temp_out":%1tout%, "hum_out":%0hout%, "wind_speed:%1wind%, "wind_dir":%0windr%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
+=>publish2 muh/wsr/json {"temp_out":%1tout%, "hum_out":%0hout%, "wind_speed":%1wind%, "wind_dir":%0windr%, "rain_rate":%1regenrate%, "rain_day":%1regenprotag%, "uv":%1uv%, "illuminance":%1licht%}
 }
 >WS
 Temp In{m} %1tin% °C
