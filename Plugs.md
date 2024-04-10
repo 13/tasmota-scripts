@@ -117,9 +117,13 @@ ON var2#state==%var1% DO Power 0 ENDON
 ON var2#state!=%var1% DO Power 1 ENDON
 ON Time#Minute=%var11% DO Power 0 ENDON
 ON Time#Minute=%var12% DO Power 1 ENDON
+
+## < 5 || < 10
+Rule2
 ON mqtt#connected DO Subscribe LightLux, muh/WStation/data/B327, light_klx ENDON
 ON Event#LightLux<5 DO Power 1 ENDON
 
+###
 ON Time#Minute|10 DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
 
 // ALTERNATIVE IF/ENDIF
