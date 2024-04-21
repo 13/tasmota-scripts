@@ -80,16 +80,16 @@ ON System#Boot DO IF (%var3%!=%mem3%) mem3 %var3%; Publish2 muh/portal/GDW/json 
 ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
 
 Rule2
-ON Switch2#Boot=1 DO RuleTimer1 600 ENDON
-ON Switch3#Boot=1 DO RuleTimer1 0 ENDON
-ON Switch2#state=1 DO RuleTimer1 600 ENDON
-ON Switch2#state=0 DO RuleTimer1 0 ENDON
-ON Switch3#state=1 DO RuleTimer1 0 ENDON
+ON Switch1#Boot=1 DO RuleTimer1 600 ENDON
+ON Switch2#Boot=1 DO RuleTimer1 0 ENDON
+ON Switch1#state=1 DO RuleTimer1 600 ENDON
+ON Switch1#state=0 DO RuleTimer1 0 ENDON
+ON Switch2#state=1 DO RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 1 ENDON
 ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
 ON Event#RLY=GD_L DO Power1 1 ENDON
-ON Event#RLY=GD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
-ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
+ON Event#RLY=GD_U DO Backlog Power1 1; Delay 2; Power1 0 ENDON
+ON Event#RLY=GD_O DO Backlog Power1 1; Delay 10; Power1 0 ENDON
 ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
 
@@ -101,9 +101,9 @@ ON Event#HD!=%mem11% DO Backlog mem11 %value%; i2splay +/HD%value%.mp3 ENDON
 ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
 ON Event#HDB DO i2splay +/HDB.mp3 ENDON
 ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
-ON Switch3#state!=%mem3% DO Backlog mem3 %value%; mem7 %timestamp%; Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch4#state!=%mem4% DO Backlog mem4 %value%; mem8 %timestamp%; Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch5#state DO Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch3#state!=%mem3% DO Backlog mem3 %value%; mem8 %timestamp%; Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch4#state DO Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Time#Minute|1 DO Publish2 muh/portal/GD/json {"state": %mem2%, "time": "%mem6%"} ENDON
 ON Time#Minute|1 DO Publish2 muh/portal/GDL/json {"state": %mem3%, "time": "%mem7%"} ENDON
 ```
