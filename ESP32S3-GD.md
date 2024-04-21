@@ -56,9 +56,8 @@
 ## Settings
 ```
 Backlog IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
-Backlog0 Timezone 99; TimeStd 0,0,10,1,3,60; TimeDst 0,0,3,1,2,120
-Backlog DeviceName GARAGEDOOR; FriendlyName1 GARAGEDOOR; 
-SetOption114 1; SwitchMode2 2; SwitchMode3 2; SwitchMode4 2; SwitchMode5 1; SwitchTopic 0; SwitchDebounce 100;
+Backlog DeviceName GD; FriendlyName1 GD; 
+SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime1 2; PulseTime2 0;
 ```
@@ -72,13 +71,13 @@ PulseTime1 2; PulseTime2 0;
 - Publish RFID
 ```
 Rule1
+ON Switch1#Boot DO var1 %value% ENDON
 ON Switch2#Boot DO var2 %value% ENDON
 ON Switch3#Boot DO var3 %value% ENDON
-ON Switch4#Boot DO var4 %value% ENDON
-ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/GD/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
-ON System#Boot DO IF (%var3%!=%mem3%) mem3 %var3%; Publish2 muh/portal/GDL/json {"state": %var3%, "time": "%timestamp%"} ENDIF ENDON
-ON System#Boot DO IF (%var4%!=%mem4%) mem4 %var4%; Publish2 muh/portal/GDW/json {"state": %var4%, "time": "%timestamp%"} ENDIF ENDON
-ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/GD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/GDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
+ON System#Boot DO IF (%var3%!=%mem3%) mem3 %var3%; Publish2 muh/portal/GDW/json {"state": %var3%, "time": "%timestamp%"} ENDIF ENDON
+ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
 
 Rule2
 ON Switch2#Boot=1 DO RuleTimer1 600 ENDON
