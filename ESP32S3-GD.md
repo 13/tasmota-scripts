@@ -104,8 +104,8 @@ ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
 ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Switch3#state!=%mem3% DO Backlog mem3 %value%; mem8 %timestamp%; Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Switch4#state DO Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/GD/json {"state": %mem2%, "time": "%mem6%"} ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/GDL/json {"state": %mem3%, "time": "%mem7%"} ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/GD/json {"state": %mem1%, "time": "%mem6%"} ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/GDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
 ```
 #### Rule 2
 - Autolock after 10m
