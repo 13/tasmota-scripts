@@ -27,20 +27,29 @@
 
 | NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
 |--:|:--|:--|--:|:--|---|---|---|
-| 1 | | | 16 | RX2 | | | |
-| 2 | GD | Switch 2 | 17 | TX2 | | x | Garage Door Reed |
-| 3 | GDL | Switch 3 | 18 | D18 | x | x | Garage Door Lock Reed |
-| 4 | GDW | Switch 4 | 19 | D19 |   | x | Garage Door Window Reed |
-| 5 | GDP | Switch 5 | 23 | D23 | x | x | Garage Door PiR |
-| 6 | | | 25 | D25 | | | |
-| 7 | GD_L | Relay_i 1 | 32 | D32 | | | Relay |
-| 8 | GD_U | Relay_i 2 | 33 | D33 | | | Relay |
-| 9 | SDA | I2C SDA | 21 | D21 | x | x | RTC DS3231 |
-| 10 | SCL | I2C SCL | 22 | D22 | | | RTC DS3231 |
+| RTC |
+| 1 | SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
+| 2 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
+| REEDS |
+| 3 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
+| 4 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
+| 5 | GDW | Switch 3 | 11 | D11 |   | x | Garage Door Window Reed |
+| Relay |
+| 6 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
+| 7 | GD_U | Relay_i 2 | 49 | D49 | | | Relay |
+| i2s |
+| 4 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
+| 5 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
+| 6 | DIN | I2S_DOUT | 6 | D05 | | | i2s |
+
+
+| PIR |
+| 9 | GDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
+| RFID |
 | 11 | RFID | RDM6300 RX | 13 | D13 | x | x | RFID |
-| 12 | LRC | I2S_WS | 26 | D26 | x | x | i2s |
-| 13 | BCLK | I2S_BCLK | 27 | D27 | | | i2s |
-| 14 | DIN | I2S_DOUT | 4 | D4 | | | i2s |
+| Fingerprint |
+| 11 | RFID | RDM6300 RX | 13 | D13 | x | x | RFID |
+
 
 ## Settings
 ```
