@@ -4,39 +4,27 @@
 {"NAME":"ESP32-S3-DevKitC-GD","GPIO":[1,640,608,1,7840,7808,7776,1,1,160,161,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
 ```
 ## Table
-| NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
-|--:|:--|:--|--:|:--|---|---|---|
-
-| RTC | | | | | | |
+| NAME | MODULE | GPIO | PIN | + | - | DESC |
 |:--|:--|:--|--:|:--|---|---|
+| RTC | | | | | | |
 | SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
 | Reeds | | | | | | |
-|:--|:--|:--|--:|:--|---|---|
 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
 | GDW | Switch 3 | 11 | D11 |   | x | Garage Door Window Reed |
 | Relays | | | | | | |
-|:--|:--|:--|--:|:--|---|---|
 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
 | GD_U | Relay_i 2 | 49 | D49 | | | Relay |
-
 | I2S Audio | | | | | | |
-|:--|:--|:--|--:|:--|---|---|
 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
 | DIN | I2S_DOUT | 6 | D05 | | | i2s |
-
 | PIR | | | | | | |
-|:--|:--|:--|--:|:--|---|---|
 | GDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
-
 | RFID | | | | | | |
-|:--|:--|:--|--:|:--|---|---|
 | RFID | RDM6300 RX | 21 | D21 | x | x | RFID |
-
 | FPRINT | | | | | | |
-|:--|:--|:--|--:|:--|---|---|
 | FP | As608 TX | 7 | D07 | x | x | RFID |
 | FP | As608 RX | 15 | D15 | x | x | RFID |
 
