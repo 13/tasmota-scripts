@@ -11,13 +11,11 @@
 |:--|:--|:--|--:|:--|---|---|
 | SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
-
 | Reeds | | | | | | |
 |:--|:--|:--|--:|:--|---|---|
 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
 | GDW | Switch 3 | 11 | D11 |   | x | Garage Door Window Reed |
-
 | Relays | | | | | | |
 |:--|:--|:--|--:|:--|---|---|
 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
