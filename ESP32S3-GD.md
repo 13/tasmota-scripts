@@ -6,9 +6,12 @@
 ## Table
 | NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
 |--:|:--|:--|--:|:--|---|---|---|
+
 | RTC |
-| 1 | SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
-| 2 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
+|:--|:--|:--|--:|:--|---|---|---|
+| SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
+| SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
+
 | REEDS |
 | 3 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
 | 4 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
@@ -22,11 +25,13 @@
 | 10 | DIN | I2S_DOUT | 6 | D05 | | | i2s |
 | PIR |
 | 11 | GDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
+
 | RFID |
 | 12 | RFID | RDM6300 RX | 21 | D21 | x | x | RFID |
+
 | Fingerprint |
-| 13 | FP | RDM6300 RX | 13 | D13 | x | x | RFID |
-| 14 | FP | RDM6300 RX | 13 | D13 | x | x | RFID |
+| 13 | FP | As608 RX | 7 | D07 | x | x | RFID |
+| 14 | FP | As608 TX | 15 | D15 | x | x | RFID |
 
 
 ## Settings
