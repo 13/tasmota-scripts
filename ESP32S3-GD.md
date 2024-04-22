@@ -1,30 +1,9 @@
 # ESP32-S3 GARAGEDOOR
-
 ## Template
-
 ```
 {"NAME":"ESP32-S3-DevKitC-GD","GPIO":[1,640,608,1,7840,7808,7776,1,1,160,161,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
 ```
-
-# Wiring
-
-### RJ45
-
-```
-```
-
-## Diagram
-
-| Pin | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
-|:----|:-:|:-:|:-:|:-:|:-:|:--:|:-:|:-:|
-| Color | white/green | green | white/orange | blue | white/blue | orange | white/brown | brown |
-| T568A | ![white_green](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Wire_white_green_stripe.svg/90px-Wire_white_green_stripe.svg.png "white green") | ![green](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d9/Wire_green.svg/90px-Wire_green.svg.png "green") | ![white_orange](https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Wire_white_orange_stripe.svg/90px-Wire_white_orange_stripe.svg.png "white orange") | ![blue](https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Wire_blue.svg/90px-Wire_blue.svg.png "blue") | ![white_blue](https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Wire_white_blue_stripe.svg/90px-Wire_white_blue_stripe.svg.png "white blue") | ![orange](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Wire_orange.svg/90px-Wire_orange.svg.png "orange") | ![white_brown](https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Wire_white_brown_stripe.svg/90px-Wire_white_brown_stripe.svg.png "white brown") | ![brown](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Wire_brown.svg/90px-Wire_brown.svg.png "brown solid") |
-| G | G reed || VCC ||| GND ||| 
-| GD | GD reed | GDL reed | VCC ||| GND |||
-| HD | HD reed | HDL reed | VCC | B switch | LED | GND |||
-
 ## Table
-
 | NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
 |--:|:--|:--|--:|:--|---|---|---|
 | RTC |
@@ -38,17 +17,16 @@
 | 6 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
 | 7 | GD_U | Relay_i 2 | 49 | D49 | | | Relay |
 | i2s |
-| 4 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
-| 5 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
-| 6 | DIN | I2S_DOUT | 6 | D05 | | | i2s |
-
-
+| 8 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
+| 9 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
+| 10 | DIN | I2S_DOUT | 6 | D05 | | | i2s |
 | PIR |
-| 9 | GDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
+| 11 | GDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
 | RFID |
-| 11 | RFID | RDM6300 RX | 13 | D13 | x | x | RFID |
+| 12 | RFID | RDM6300 RX | 21 | D21 | x | x | RFID |
 | Fingerprint |
-| 11 | RFID | RDM6300 RX | 13 | D13 | x | x | RFID |
+| 13 | FP | RDM6300 RX | 13 | D13 | x | x | RFID |
+| 14 | FP | RDM6300 RX | 13 | D13 | x | x | RFID |
 
 
 ## Settings
