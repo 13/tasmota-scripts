@@ -52,6 +52,8 @@ PulseTime1 2; PulseTime2 0;
 - Event HTTP for relays
 - Event MQTT for relays
 - Publish RFID
+
+- Fingerprint
 ```
 Rule1
 ON Switch1#Boot DO var1 %value% ENDON
@@ -61,6 +63,8 @@ ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/GD/json {
 ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/GDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
 ON System#Boot DO IF (%var3%!=%mem3%) mem3 %var3%; Publish2 muh/portal/GDW/json {"state": %var3%, "time": "%timestamp%"} ENDIF ENDON
 ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON FPrint#Confidence>100 DO Power2 1 ENDON
+ON FPrint#Id DO Publish muh/portal/FPRINT/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 
 Rule2
 ON Switch1#Boot=1 DO RuleTimer1 600 ENDON
