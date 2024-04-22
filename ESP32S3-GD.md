@@ -7,7 +7,7 @@
 | NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
 |--:|:--|:--|--:|:--|---|---|---|
 
-| RTC | | | | | | | |
+| RTC | | | | | | |
 |:--|:--|:--|--:|:--|---|---|
 | SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
@@ -16,9 +16,11 @@
 | 3 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
 | 4 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
 | 5 | GDW | Switch 3 | 11 | D11 |   | x | Garage Door Window Reed |
+
 | Relay |
 | 6 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
 | 7 | GD_U | Relay_i 2 | 49 | D49 | | | Relay |
+
 | i2s |
 | 8 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
 | 9 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
