@@ -7,7 +7,7 @@
 | NO | NAME | MODULE | GPIO | PIN | + | - | DESC |
 |--:|:--|:--|--:|:--|---|---|---|
 
-| RTC |
+| RTC | | | | | | | |
 |:--|:--|:--|--:|:--|---|---|---|
 | SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
