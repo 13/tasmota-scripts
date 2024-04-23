@@ -71,8 +71,8 @@ ON Switch2#state=1 DO RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 1 ENDON
 ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
 ON Event#RLY=GD_L DO Power1 1 ENDON
-ON Event#RLY=GD_U DO Backlog Power1 1; Delay 2; Power1 0 ENDON
-ON Event#RLY=GD_O DO Backlog Power1 1; Delay 10; Power1 0 ENDON
+ON Event#RLY=GD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 ON FPrint#Confidence>100 DO Power2 1 ENDON
 ON FPrint#Id DO Publish muh/portal/FPRINT/json {"uid": %value%, "time": "%timestamp%", "source": "GD"}
 ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
@@ -234,8 +234,8 @@ tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/HDB.mp3") end)
 # HTTP CMDS
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
 tasmota.add_rule("Event#RLY=GD_L", def (value) tasmota.cmd("Power1 1") end)
-tasmota.add_rule("Event#RLY=GD_U", def (value) tasmota.cmd("Backlog Power1 1; Delay 2; Power1 0") end)
-tasmota.add_rule("Event#RLY=GD_O", def (value) tasmota.cmd("Backlog Power1 1; Delay 10; Power1 0") end)
+tasmota.add_rule("Event#RLY=GD_U", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
+tasmota.add_rule("Event#RLY=GD_O", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
 
 # FPRINT & RFID
 #ON FPrint#Confidence>100 DO Power2 1 ENDON
