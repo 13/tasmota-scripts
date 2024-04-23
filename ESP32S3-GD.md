@@ -172,6 +172,8 @@ tasmota.add_driver(d1)
 - Publish 
 ```
 
+ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
+
 import string
 import mqtt
 
@@ -179,24 +181,32 @@ var switch1 = 0
 var switch2 = 0
 var switch3 = 0
 
-def rule_boot(name, value, mem)
-  if value != tasmota.cmd(mem)[mem]
-    tasmota.cmd(string.format("%s %d", mem, value))
+def rule_mqtt_boot(name, value, mem_name_val)
+  if value != tasmota.cmd(mem_name_val)[mem_name_val]
+    tasmota.cmd(string.format("%s %d", mem_name_val, value))
     mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true)
   end
+end
+
+def rule_mqtt_changestate(name, value, mem_name_val, mem_tstamp)
+  if value != tasmota.cmd(mem_name_val)[mem_name_val]
+    tasmota.cmd(string.format("%s %d", mem_name_val, value))
+    tasmota.cmd(string.format("%s %s", mem_name_tstamp, tasmota.time_str(tasmota.rtc()['local']))
+    mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true)
+  end
+end
+
+def rule_mqtt_watchdog(name, mem_name_val, mem_tstamp)
+    mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", tasmota.cmd(mem_name_val)[mem_name_val], tasmota.cmd(mem_name_tstamp)[mem_name_tstamp]), true)
 end
 
 tasmota.add_rule("Switch1#Boot", def (value) switch1 = value rule_boot("GD",value,"Mem1") end )
 tasmota.add_rule("Switch2#Boot", def (value) switch2 = value rule_boot("GDL",value,"Mem2") end )
 
-tasmota.add_rule("mqtt#connected", def (value) stateSwitch1 = value mqtt.publish("muh/portal/GD/json", string.format("{'state': %d, 'tstamp': '%s'}", stateSwitch1, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-tasmota.add_rule("mqtt#connected", def (value) stateSwitch1 = value mqtt.publish("muh/portal/GDL/json", string.format("{'state': %d, 'tstamp': '%s'}", stateSwitch2, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-tasmota.add_rule("mqtt#connected", def (value) stateSwitch1 = value mqtt.publish("muh/portal/GDW/json", string.format("{'state': %d, 'tstamp': '%s'}", stateSwitch3, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-tasmota.add_rule("mqtt#connected", def (value) stateSwitch1 = value mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", stateSwitch4, tasmota.time_str(tasmota.rtc()['local'])), true) end )
+tasmota.add_rule("Switch1#state!=%mem1%", def (value) switch1 = value rule_mqtt_changestate("GD",value,"Mem1","Mem6") end )
+tasmota.add_rule("Switch2#state!=%mem2%", def (value) switch2 = value rule_mqtt_changestate("GDL",value,"Mem2","Mem7") end )
 
-tasmota.add_rule("Switch1#state", def (value) stateSwitch1 = value mqtt.publish("muh/portal/G/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-tasmota.add_rule("Switch2#state", def (value) stateSwitch2 = value mqtt.publish("muh/portal/GD/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-tasmota.add_rule("Switch3#state", def (value) stateSwitch3 = value mqtt.publish("muh/portal/GDL/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDW/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true) end )
-tasmota.add_rule("Switch5#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
+tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GD","Mem1","Mem6") end )
+tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GDL","Mem2","Mem7") end )
+
 ```
