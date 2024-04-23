@@ -172,7 +172,32 @@ tasmota.add_driver(d1)
 - Publish 
 ```
 
-ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
+Rule1
+ON FPrint#Confidence>100 DO Power2 1 ENDON
+ON FPrint#Id DO Publish muh/portal/FPRINT/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
+
+Rule2
+ON Switch1#Boot=1 DO RuleTimer1 600 ENDON
+ON Switch2#Boot=1 DO RuleTimer1 0 ENDON
+ON Switch1#state=1 DO RuleTimer1 600 ENDON
+ON Switch1#state=0 DO RuleTimer1 0 ENDON
+ON Switch2#state=1 DO RuleTimer1 0 ENDON
+ON Rules#Timer=1 DO Power1 1 ENDON
+ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
+ON Event#RLY=GD_L DO Power1 1 ENDON
+ON Event#RLY=GD_U DO Backlog Power1 1; Delay 2; Power1 0 ENDON
+ON Event#RLY=GD_O DO Backlog Power1 1; Delay 10; Power1 0 ENDON
+ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
+ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
+
+Rule3
+ON System#Boot DO i2sgain 100 ENDON
+ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
+ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
+ON Event#HD!=%mem11% DO Backlog mem11 %value%; i2splay +/HD%value%.mp3 ENDON
+ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
+ON Event#HDB DO i2splay +/HDB.mp3 ENDON
+ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
 
 import string
 import mqtt
@@ -188,7 +213,7 @@ def rule_mqtt_boot(name, value, mem_name_val)
   end
 end
 
-def rule_mqtt_changestate(name, value, mem_name_val, mem_tstamp)
+def rule_mqtt_changestate(name, value, mem_name_val, mem_name_tstamp)
   if value != tasmota.cmd(mem_name_val)[mem_name_val]
     tasmota.cmd(string.format("%s %d", mem_name_val, value))
     tasmota.cmd(string.format("%s %s", mem_name_tstamp, tasmota.time_str(tasmota.rtc()['local']))
@@ -196,17 +221,23 @@ def rule_mqtt_changestate(name, value, mem_name_val, mem_tstamp)
   end
 end
 
-def rule_mqtt_watchdog(name, mem_name_val, mem_tstamp)
+def rule_mqtt_watchdog(name, mem_name_val, mem_name_tstamp)
     mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", tasmota.cmd(mem_name_val)[mem_name_val], tasmota.cmd(mem_name_tstamp)[mem_name_tstamp]), true)
 end
 
+# MQTT BOOT publish & store
 tasmota.add_rule("Switch1#Boot", def (value) switch1 = value rule_boot("GD",value,"Mem1") end )
 tasmota.add_rule("Switch2#Boot", def (value) switch2 = value rule_boot("GDL",value,"Mem2") end )
 
+# MQTT publish & store
 tasmota.add_rule("Switch1#state!=%mem1%", def (value) switch1 = value rule_mqtt_changestate("GD",value,"Mem1","Mem6") end )
 tasmota.add_rule("Switch2#state!=%mem2%", def (value) switch2 = value rule_mqtt_changestate("GDL",value,"Mem2","Mem7") end )
 
+# MQTT states watchdog
 tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GD","Mem1","Mem6") end )
 tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GDL","Mem2","Mem7") end )
+
+# PIR
+tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
 
 ```
