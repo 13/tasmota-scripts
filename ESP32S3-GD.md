@@ -90,42 +90,6 @@ ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
 ON Event#HDB DO i2splay +/HDB.mp3 ENDON
 ON Time#Minute|30 DO IF (((%time%) % 60) == 30) i2splay +/PC.mp3 ELSE var10=%time%/60; i2splay +/PC%var10%.mp3 ENDIF ENDON
 ```
-#### Rule 2
-- Autolock after 10m
-- Event HTTP for relays
-- Event MQTT for relays
-- Publish RFID
-```
-Rule2
-ON Switch2#Boot=1 DO RuleTimer1 600 ENDON
-ON Switch3#Boot=1 DO RuleTimer1 0 ENDON
-ON Switch2#state=1 DO RuleTimer1 600 ENDON
-ON Switch2#state=0 DO RuleTimer1 0 ENDON
-ON Switch3#state=1 DO RuleTimer1 0 ENDON
-ON Rules#Timer=1 DO Power1 1 ENDON
-ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
-ON Event#RLY=GD_L DO Power1 1 ENDON
-ON Event#RLY=GD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
-ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
-ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
-
-ON event#GD_L=1 DO Power1 1 ENDON
-ON event#GD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
-ON event#GD_O=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
-ON RDM6300#UID=XXXX DO Power3 1 ENDON
-```
-#### Rule 3
-- Play sounds
-```
-Rule3
-ON System#Boot DO i2sgain 100 ENDON
-ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
-ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
-ON Event#HD!=%mem11% DO Backlog mem11 %value%; i2splay +/HD%value%.mp3 ENDON
-ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
-ON Event#HDB DO i2splay +/HDB.mp3 ENDON
-ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
-```
 ### Commands
 ```
 http://192.168.22.199/cm?cmnd=event%20G%5FT=1
