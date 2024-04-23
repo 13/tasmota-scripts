@@ -240,4 +240,11 @@ tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GDL","Mem2","M
 # PIR
 tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
 
+# AutoLock
+tasmota.add_rule("Switch1#Boot=1", def (value) tasmota.cmd("RuleTimer1 600") end )
+tasmota.add_rule("Switch2#Boot=1", def (value) tasmota.cmd("RuleTimer1 0") end )
+tasmota.add_rule("Switch1#State", def (value) if value == 1 tasmota.cmd("RuleTimer1 600") else tasmota.cmd("RuleTimer1 0") end end )
+tasmota.add_rule("Switch2#State=1", def (value) tasmota.cmd("RuleTimer1 0") end )
+tasmota.add_rule("Rules#Timer=1", def (value) tasmota.cmd("Power1 1") end )
+
 ```
