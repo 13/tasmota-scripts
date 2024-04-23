@@ -177,27 +177,12 @@ ON FPrint#Confidence>100 DO Power2 1 ENDON
 ON FPrint#Id DO Publish muh/portal/FPRINT/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 
 Rule2
-ON Switch1#Boot=1 DO RuleTimer1 600 ENDON
-ON Switch2#Boot=1 DO RuleTimer1 0 ENDON
-ON Switch1#state=1 DO RuleTimer1 600 ENDON
-ON Switch1#state=0 DO RuleTimer1 0 ENDON
-ON Switch2#state=1 DO RuleTimer1 0 ENDON
-ON Rules#Timer=1 DO Power1 1 ENDON
 ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
 ON Event#RLY=GD_L DO Power1 1 ENDON
 ON Event#RLY=GD_U DO Backlog Power1 1; Delay 2; Power1 0 ENDON
 ON Event#RLY=GD_O DO Backlog Power1 1; Delay 10; Power1 0 ENDON
 ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
-
-Rule3
-ON System#Boot DO i2sgain 100 ENDON
-ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
-ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
-ON Event#HD!=%mem11% DO Backlog mem11 %value%; i2splay +/HD%value%.mp3 ENDON
-ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
-ON Event#HDB DO i2splay +/HDB.mp3 ENDON
-ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
 
 import string
 import mqtt
@@ -226,25 +211,33 @@ def rule_mqtt_watchdog(name, mem_name_val, mem_name_tstamp)
 end
 
 # MQTT BOOT publish & store
-tasmota.add_rule("Switch1#Boot", def (value) switch1 = value rule_boot("GD",value,"Mem1") end )
-tasmota.add_rule("Switch2#Boot", def (value) switch2 = value rule_boot("GDL",value,"Mem2") end )
+tasmota.add_rule("Switch1#Boot", def (value) switch1 = value rule_boot("GD",value,"Mem1") end)
+tasmota.add_rule("Switch2#Boot", def (value) switch2 = value rule_boot("GDL",value,"Mem2") end)
 
 # MQTT publish & store
-tasmota.add_rule("Switch1#state!=%mem1%", def (value) switch1 = value rule_mqtt_changestate("GD",value,"Mem1","Mem6") end )
-tasmota.add_rule("Switch2#state!=%mem2%", def (value) switch2 = value rule_mqtt_changestate("GDL",value,"Mem2","Mem7") end )
+tasmota.add_rule("Switch1#state!=%mem1%", def (value) switch1 = value rule_mqtt_changestate("GD",value,"Mem1","Mem6") end)
+tasmota.add_rule("Switch2#state!=%mem2%", def (value) switch2 = value rule_mqtt_changestate("GDL",value,"Mem2","Mem7") end)
 
 # MQTT states watchdog
-tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GD","Mem1","Mem6") end )
-tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GDL","Mem2","Mem7") end )
+tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GD","Mem1","Mem6") end)
+tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GDL","Mem2","Mem7") end)
 
 # PIR
-tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end )
+tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 
 # AutoLock
-tasmota.add_rule("Switch1#Boot=1", def (value) tasmota.cmd("RuleTimer1 600") end )
-tasmota.add_rule("Switch2#Boot=1", def (value) tasmota.cmd("RuleTimer1 0") end )
-tasmota.add_rule("Switch1#State", def (value) if value == 1 tasmota.cmd("RuleTimer1 600") else tasmota.cmd("RuleTimer1 0") end end )
-tasmota.add_rule("Switch2#State=1", def (value) tasmota.cmd("RuleTimer1 0") end )
-tasmota.add_rule("Rules#Timer=1", def (value) tasmota.cmd("Power1 1") end )
+tasmota.add_rule("Switch1#Boot=1", def (value) tasmota.cmd("RuleTimer1 600") end)
+tasmota.add_rule("Switch2#Boot=1", def (value) tasmota.cmd("RuleTimer1 0") end)
+tasmota.add_rule("Switch1#State", def (value) if value == 1 tasmota.cmd("RuleTimer1 600") else tasmota.cmd("RuleTimer1 0") end end)
+tasmota.add_rule("Switch2#State=1", def (value) tasmota.cmd("RuleTimer1 0") end)
+tasmota.add_rule("Rules#Timer=1", def (value) tasmota.cmd("Power1 1") end)
 
+# Audio
+tasmota.add_rule("System#Boot", def (value) tasmota.cmd("i2sgain 100") end)
+tasmota.add_rule("Time#Minute|30", def (value) tasmota.cmd("i2splay +/PC.mp3") end)
+tasmota.add_rule("RDM6300#UID", def (value) tasmota.cmd("i2splay +/RFID1.mp3") end)
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HD, muh/portal/HD/json, state") end)
+tasmota.add_rule("Event#HD!=%mem11%", def (value) tasmota.cmd(string.format("Backlog mem11 %d; i2splay +/HD%d.mp3", value, value)) end)
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
+tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/HDB.mp3") end)
 ```
