@@ -44,8 +44,9 @@ PulseTime1 2; PulseTime2 0;
 - Event HTTP for relays
 - Event MQTT for relays
 - Publish RFID
-
 - Fingerprint
+#### Rule 3
+- Sounds
 ```
 Rule1
 ON Switch1#Boot DO var1 %value% ENDON
@@ -58,10 +59,10 @@ ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh
 ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Switch3#state!=%mem3% DO Backlog mem3 %value%; mem8 %timestamp%; Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Switch4#state DO Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/GD/json {"state": %mem1%, "time": "%mem6%"} ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/GDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
 
 Rule2
+ON Time#Minute|1 DO Publish2 muh/portal/GD/json {"state": %mem1%, "time": "%mem6%"} ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/GDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
 ON Switch1#Boot=1 DO RuleTimer1 600 ENDON
 ON Switch2#Boot=1 DO RuleTimer1 0 ENDON
 ON Switch1#state=1 DO RuleTimer1 600 ENDON
@@ -72,14 +73,16 @@ ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
 ON Event#RLY=GD_L DO Power1 1 ENDON
 ON Event#RLY=GD_U DO Backlog Power1 1; Delay 2; Power1 0 ENDON
 ON Event#RLY=GD_O DO Backlog Power1 1; Delay 10; Power1 0 ENDON
+ON FPrint#Confidence>100 DO Power2 1 ENDON
+ON FPrint#Id DO Publish muh/portal/FPRINT/json {"uid": %value%, "time": "%timestamp%", "source": "GD"}
 ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
-ON FPrint#Confidence>100 DO Power2 1 ENDON
-ON FPrint#Id DO Publish muh/portal/FPRINT/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
+ENDON
 
 Rule3
 ON System#Boot DO i2sgain 100 ENDON
 ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
+ON FPrint#Confidence>100 DO i2splay +/RFID1.mp3 ENDON
 ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
 ON Event#HD!=%mem11% DO Backlog mem11 %value%; i2splay +/HD%value%.mp3 ENDON
 ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
