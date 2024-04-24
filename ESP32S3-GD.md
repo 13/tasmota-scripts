@@ -9,13 +9,17 @@
 | **RTC** | | | | | | |
 | SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
-| **Reeds** | | | | | | |
+| **Reeds, Buttons & LEDS** | | | | | | |
 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
 | GDW | Switch 3 | 11 | D11 |   | x | Garage Door Window Reed |
+| GD_BTN | Button | 12 | D12 |   | x | Garage Door Button |
+| GD_LEDHDL | Relay 1 | 13 | D13 |   | x | Garage Door LED for HDL |
+| G | Switch 4 | ?? | D?? |   | x | Garage Switch |
 | **Relays** | | | | | | |
 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
 | GD_U | Relay_i 2 | 49 | D49 | | | Relay |
+| G_T | Relay_i 3 | 14 | D14 | | | Relay |
 | **I2S Audio** | | | | | | |
 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
@@ -27,6 +31,14 @@
 | **FPRINT** | | | | | | |
 | FPrint | As608 TX | 7 | D07 | x | x | RFID |
 | FPrint | As608 RX | 15 | D15 | x | x | RFID |
+
+```
+        ~~~~~
+i2s     ----- rtc
+fprint  -ESP- relay
+pir     -+ -- rfid
+sensors 
+```
 
 ## Settings
 ```
