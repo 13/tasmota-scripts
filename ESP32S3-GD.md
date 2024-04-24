@@ -15,7 +15,7 @@
 | GDW | Switch 3 | 11 | D11 |   | x | Garage Door Window Reed |
 | GD_BTN | Button | 12 | D12 |   | x | Garage Door Button |
 | GD_LEDHDL | Relay 1 | 13 | D13 |   | x | Garage Door LED for HDL |
-| G | Switch 4 | ?? | D?? |   | x | Garage Switch |
+| G | Switch 4 | 38 | D38 |   | x | Garage Switch |
 | **Relays** | | | | | | |
 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
 | GD_U | Relay_i 2 | 49 | D49 | | | Relay |
