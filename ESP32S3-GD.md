@@ -87,7 +87,7 @@ ON Event#RLY=GD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
 ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 ON FPrint#Id DO var9 %value% ENDON
 ON FPrint#Confidence>100 DO Publish muh/portal/RLY/cmnd G_T ENDON
-ON FPrint#Confidence>100 DO Publish muh/portal/FPRINT/json {"uid": %value%, "confidence": %var9%, "time": "%timestamp%", "source": "GD"} ENDON
+ON FPrint#Confidence>100 DO Publish muh/portal/FPRINT/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 
 ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
