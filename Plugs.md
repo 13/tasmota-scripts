@@ -4,7 +4,7 @@
 - VoltageSet = 225 (Multimeter + Lightbulb)
 - CurrentSet = 1000*(60.0/225) = 266.66
 ```
-Backlog PowerSet 60.0; VoltageSet 225; Currentset 
+Backlog PowerSet 60.0; VoltageSet 225; Currentset 266.66
 ```
 ## ESP8266EX Athom Plug V2
 - Upgrade first Tasmota-Minimal/Lite then Tasmota
