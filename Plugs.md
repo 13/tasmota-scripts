@@ -9,8 +9,12 @@ PowerDelta 101
 - VoltageSet = 225 (Multimeter + Lightbulb)
 - CurrentSet = 1000*(60.0/225) = 266.66
 ```
-Backlog PowerSet 60.0; VoltageSet 225; Currentset 266.66
+Backlog PowerSet 60.0; VoltageSet 225; CurrentSet 266.67
+Backlog PowerSet 60.0; VoltageSet 226; CurrentSet 265.49
+Backlog PowerSet 60.0; VoltageSet 227; CurrentSet 264.32
 ```
+### 227
+- A33929
 ## ESP8266EX Athom Plug V2
 - Upgrade first Tasmota-Minimal/Lite then Tasmota
 ## Template
