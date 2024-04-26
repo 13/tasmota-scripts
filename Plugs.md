@@ -1,4 +1,11 @@
 # Plugs
+## Calibrate
+- PowerSet = 60.0 (Lightbulb)
+- VoltageSet = 225 (Multimeter + Lightbulb)
+- CurrentSet = 1000*(60.0/225) = 266.66
+```
+Backlog PowerSet 60.0; VoltageSet 225; Currentset 
+```
 ## ESP8266EX Athom Plug V2
 - Upgrade first Tasmota-Minimal/Lite then Tasmota
 ## Template
