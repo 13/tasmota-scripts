@@ -1,4 +1,9 @@
 # Plugs
+## All
+- Tele 1w change
+```
+PowerDelta 101
+```
 ## Calibrate
 - PowerSet = 60.0 (Lightbulb)
 - VoltageSet = 225 (Multimeter + Lightbulb)
