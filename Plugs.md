@@ -4,6 +4,10 @@
 ```
 PowerDelta 101
 ```
+- Power always ON
+```
+PowerOnState 1
+```
 ## Calibrate
 - PowerSet = 60.0 (Lightbulb)
 - VoltageSet = 225 (Multimeter + Lightbulb)
