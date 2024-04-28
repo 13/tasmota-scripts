@@ -1,3 +1,4 @@
+```
 RTC
 GPIO4 -> SDA
 GPIO5 -> SCL
@@ -6,8 +7,9 @@ TM1637
 GPIO0 -> CLK
 GPIO2 -> DIO
 
-GPIO16 -> BTN
-GPIO13 -> DHT22
+GPIO12 -> BTN
+GPIO14 -> DHT22
+```
 ## Features
 - TM1637
 - RTC DS3231 (i2c SDA/SCL(4))
