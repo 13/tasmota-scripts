@@ -156,3 +156,13 @@ ON event#checksunrise<%sunrise% DO Var1 1 ENDON
 ON event#checksunset>%sunset% DO Var2 1 ENDON
 ON event#checkDark DO IF (%var1%==%var2%) Power 0 ELSE Power 1 ENDIF ENDON
 ```
+
+###
+- ping and turn of dvbt and switch
+```
+Rule1
+ON Time#Minute=0 DO ping4 192.168.22.18 ENDON
+ON Time#Minute=420 DO Power1 1 ENDON
+ON Ping#192.168.22.18#Reachable=false DO Power1 0 ENDON
+ON Ping#192.168.22.18#Reachable=true DO Power1 1 ENDON 
+```
