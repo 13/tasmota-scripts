@@ -26,7 +26,7 @@ GPIO14 -> DHT22
 {"NAME":"AnnaUhr","GPIO":[0,0,0,0,1216,0,0,0,0,32,0,0,0,0,0,0,0,640,608,0,0,0,0,0,0,0,0,0,7104,7136,0,0,0,0,0,0],"FLAG":0,"BASE":1}
 
 Rule1
-  ON system#init DO Backlog DisplayClock 2; Event ShowTemp ENDON
+  ON system#init DO Backlog DisplayDimmer 13; DisplayScrollText Hello, 2; DisplayClock 2; Event ShowTemp ENDON
 
   ON am2301#Temperature DO var1 %value% ENDON
   ON Event#ShowTemp DO Backlog DisplayText %var1%^; RuleTimer1 5 ENDON
@@ -34,11 +34,11 @@ Rule1
   ON Rules#Timer=2 Do Event ShowTemp ENDON
 
   ON button1#state DO IF (%var10% > 1) var10 0 ELSEIF (%var10% > 0) var10 2 ELSE var10 0 ENDIF ENDON
-  ON var10#state DO IF (%var10% > 1) var11 0 ELSEIF (%var10% > 0) var11 2 ELSE var11 100 ENDIF ENDON
-  ON var11#state DO DisplayLevel %var11% ENDON
+  ON var10#state DO IF (%var10% > 1) var11 0 ELSEIF (%var10% > 0) var11 13 ELSE var11 100 ENDIF ENDON
+  ON var11#state DO DisplayDimmer %var11% ENDON
   
   ON Minute=1140 DO DisplayDimmer 13 ENDON
   ON Minute=390 DO DisplayDimmer 100 ENDON
-  ON Minute=420 DO DisplayScrollText guten morgen, 2 ENDON
-  ON Minute=1200 DO DisplayScrollText guten nacht, 2 ENDON
+  ON Minute=420 DO DisplayScrollText Guten Morgen, 2 ENDON
+  ON Minute=1200 DO DisplayScrollText Gute Nacht, 2 ENDON
 ```
