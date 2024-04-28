@@ -164,5 +164,11 @@ Rule1
 ON Time#Minute=0 DO ping4 192.168.22.18 ENDON
 ON Time#Minute=420 DO Power1 1 ENDON
 ON Ping#192.168.22.18#Reachable=false DO Power1 0 ENDON
-ON Ping#192.168.22.18#Reachable=true DO Power1 1 ENDON 
+ON Ping#192.168.22.18#Reachable=true DO Power1 1 ENDON
+
+Rule1 on Time#Minute|5 do backlog var1 0;ping4 8.8.8.8;ping4 1.1.1.1;ping4 208.67.222.222; RuleTimer1 60 endon
+          on Ping#8.8.8.8#Reachable=true do var1 1 endon 
+          on Ping#1.1.1.1#Reachable=true do var1 1 endon 
+          on Ping#208.67.222.222#Reachable=true do var1 1 endon 
+          on Rules#Timer=1 do Power %var1% endon
 ```
