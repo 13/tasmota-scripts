@@ -172,3 +172,66 @@ Rule1 on Time#Minute|5 do backlog var1 0;ping4 8.8.8.8;ping4 1.1.1.1;ping4 208.6
           on Ping#208.67.222.222#Reachable=true do var1 1 endon 
           on Rules#Timer=1 do Power %var1% endon
 ```
+
+## Shelly 3EM
+```
+{"NAME":"Shelly 3EM","GPIO":[1,1,288,1,32,8065,0,0,640,8064,608,224,8096,0],"FLAG":0,"BASE":18}
+```
+- http://{ip}:8050/setMaxPower?p=800
+```
+Rule2
+  ON Energy#Power DO var1 %value% ENDON
+  ON var1#state>=800 DO WebSend 192.168.22.1:8050 /setMaxPower?p=800 ENDON
+  ON var1#state<800 DO WebSend 192.168.22.1:8050 /setMaxPower?p=%var1% ENDON
+```
+
+```
+Rule3
+  ON file#calib.dat DO {"state":0,"rms":{"current_a":3211982,"current_b":3189648,"current_c":3199282,"current_n":-1399975513,"current_s":266717838,"voltage_a":-731348,"voltage_b":-719234,"voltage_c":-732765},"angles":{"angle0":184,"angle1":172,"angle2":192},"powers":{"totactive":{"a":-1345486,"b":-1347556,"c":-1352447},"apparent":{"a":214497,"b":214494,"c":214496}},"energies":{"totactive":{"a":8731,"b":8730,"c":8730},"apparent":{"a":40353,"b":40352,"c":40361}}} ENDON
+```
+
+### calib.dat
+```
+{
+  "state": 0,
+  "rms": {
+    "current_a": 3211982,
+    "current_b": 3189648,
+    "current_c": 3199282,
+    "current_n": -1399975513,
+    "current_s": 266717838,
+    "voltage_a": -731348,
+    "voltage_b": -719234,
+    "voltage_c": -732765
+  },
+  "angles": {
+    "angle0": 184,
+    "angle1": 172,
+    "angle2": 192
+  },
+  "powers": {
+    "totactive": {
+      "a": -1345486,
+      "b": -1347556,
+      "c": -1352447
+    },
+    "apparent": {
+      "a": 214497,
+      "b": 214494,
+      "c": 214496
+    }
+  },
+  "energies": {
+    "totactive": {
+      "a": 8731,
+      "b": 8730,
+      "c": 8730
+    },
+    "apparent": {
+      "a": 40353,
+      "b": 40352,
+      "c": 40361
+    }
+  }
+}
+```
