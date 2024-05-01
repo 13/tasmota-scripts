@@ -235,3 +235,22 @@ Rule3
   }
 }
 ```
+### Compiling tasmota-4M
+```
+#define USE_I2C
+#define USE_ENERGY_SENSOR
+#define USE_ADE7880
+#define ADE7880_AIGAIN_INIT 3211982 // rms, current_a
+#define ADE7880_BIGAIN_INIT 3189648 // rms, current_b
+#define ADE7880_CIGAIN_INIT 3199282 // rms, current_c
+#define ADE7880_NIGAIN_INIT 266717838 // rms, current_s !!
+#define ADE7880_AVGAIN_INIT -731348 // rms, voltage_a
+#define ADE7880_BVGAIN_INIT -719234 // rms, voltage_b
+#define ADE7880_CVGAIN_INIT -732765 // rms, voltage_c
+#define ADE7880_APHCAL_INIT 184 // angles, angle0
+#define ADE7880_BPHCAL_INIT 172 // angles, angle1
+#define ADE7880_CPHCAL_INIT 192 // angles, angle2
+#define ADE7880_APGAIN_INIT -1345486 // powers, totactive, a
+#define ADE7880_BPGAIN_INIT -1347556 // powers, totactive, b
+#define ADE7880_CPGAIN_INIT -1352447 // powers, totactive, c
+```
