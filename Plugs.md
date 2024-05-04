@@ -24,6 +24,8 @@ Backlog PowerSet 60.0; VoltageSet 227; CurrentSet 264.32
 ## Template
 ```
 {"NAME":"Athom Plug V2","GPIO":[0,0,0,3104,0,32,0,0,224,576,0,0,0,0],"FLAG":0,"BASE":18}
+
+{"NAME":"Athom Plug V3","GPIO":[0,0,0,32,0,224,576,0,0,0,0,0,0,0,0,0,0,0,0,0,3104,0],"FLAG":0,"BASE":1}
 ```
 ## Settings
 - Send MQTT on every 1 watt change
