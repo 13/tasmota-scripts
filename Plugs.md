@@ -16,6 +16,8 @@ PowerOnState 1
 Backlog PowerSet 60.0; VoltageSet 225; CurrentSet 266.67
 Backlog PowerSet 60.0; VoltageSet 226; CurrentSet 265.49
 Backlog PowerSet 60.0; VoltageSet 227; CurrentSet 264.32
+
+Backlog PowerSet 60.0; VoltageSet 231; CurrentSet 259.74
 ```
 ### 227
 - A33929
