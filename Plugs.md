@@ -183,6 +183,9 @@ Rule1 on Time#Minute|5 do backlog var1 0;ping4 8.8.8.8;ping4 1.1.1.1;ping4 208.6
 ```
 - http://{ip}:8050/setMaxPower?p=800
 ```
+
+Rule1
+  ON Energy#Power[1] DO Publish muh/power/3em/json {"total": %value%} ENDON
 - var1 Power_Total
 - var2 Power_Inverter + Power_Total/2
 - (var1 + var2) / 2
@@ -199,14 +202,15 @@ Rule2
 - var1 = Total Watt 3EM
 - var2 = Total Watt Inv
 - var3 = Total Watt to Operate
+
 Rule1
   ON System#Boot DO Backlog var1 0; var2 200; var3 0; ENDON
   ON Energy#Power DO var1 %value% ENDON
   ON var2#state>=800 DO IF (%var3%==0) var3 800 ENDIF ENDON
   ON var2#state<800 DO WebSend [192.168.22.59:8050] /setMaxPower?p=%var2% ENDON
   ON var3#state==800 DO Backlog WebSend [192.168.22.59:8050] /setMaxPower?p=800; var3 0 ENDON
-  ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR, ENERGY ENDON
-  ON Event#PowerTotal#Power[1] DO Backlog CalcRes 0; var2 = (var1 + %value%)*2; ADD2 0 ENDON
+  ON mqtt#connected DO Subscribe PowerTotal, muh/power/3em/json, total ENDON
+  ON Event#PowerTotal DO Backlog CalcRes 0; var2 = (var1 + %value%)*2; ADD2 0 ENDON
 
 Subscribe PowerTotalx, tasmota/tele/tasmota_5FF8B2/SENSOR, ENERGY.Power
 Rule3
