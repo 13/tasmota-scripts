@@ -200,12 +200,13 @@ Rule2
 - var2 = Total Watt Inv
 - var3 = Total Watt to Operate
 Rule1
-  ON System#Boot DO Backlog var1 200; var2 0; var3 200 ENDON
-  ON Energy#Power DO var2 %value% ENDON
-  ON mqtt#connected DO Subscribe PowerEM, tasmota/tele/tasmota_5FF8B2/SENSOR, ENERGY.Power[1] ENDON
-  ON Event#PowerEM DO Backlog CalcRes 0; var3 = (var2 + %value%)*2; ADD3 0 ENDON
-  ON var3#state>=800 DO WebSend [192.168.22.59:8050] /setMaxPower?p=800 ENDON
-  ON var3#state<800 DO WebSend [192.168.22.59:8050] /setMaxPower?p=%var3% ENDON
+  ON System#Boot DO Backlog var1 0; var2 200; var3 0; ENDON
+  ON Energy#Power DO var1 %value% ENDON
+  ON var2#state>=800 DO var3 800 ENDON
+  ON var2#state<800 DO WebSend [192.168.22.59:8050] /setMaxPower?p=%var2% ENDON
+  ON var3#state==800 DO WebSend [192.168.22.59:8050] /setMaxPower?p=800 ENDON
+  ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR, ENERGY.Power ENDON
+  ON Event#PowerTotal[1] DO Backlog CalcRes 0; var2 = (var1 + %value%)*2; ADD2 0 ENDON
 
 
 
