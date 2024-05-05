@@ -189,7 +189,7 @@ Rule1 on Time#Minute|5 do backlog var1 0;ping4 8.8.8.8;ping4 1.1.1.1;ping4 208.6
 
 Rule2
   ON System#Boot DO Backlog var1 0; var2 200; ENDON
-  ON Energy#Power DO var1 %value% ENDON
+  ON Energy#Power[1] DO var1 %value% ENDON
   ON var1#state>=800 DO WebSend 192.168.22.59:8050 /setMaxPower?p=800 ENDON
   ON var1#state<800 DO WebSend 192.168.22.59:8050 /setMaxPower?p=%var2% ENDON
   ON mqtt#connected DO Subscribe PowerInv, tasmota/tele/tasmota_0C6423/SENSOR, ENERGY.Power ENDON
