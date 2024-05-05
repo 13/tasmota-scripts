@@ -183,10 +183,17 @@ Rule1 on Time#Minute|5 do backlog var1 0;ping4 8.8.8.8;ping4 1.1.1.1;ping4 208.6
 ```
 - http://{ip}:8050/setMaxPower?p=800
 ```
+- var1 Power_Total
+- var2 Power_Inverter + Power_Total/2
+- (var1 + var2) / 2
+
 Rule2
+  ON System#Boot DO Backlog var1 0; var2 200; ENDON
   ON Energy#Power DO var1 %value% ENDON
-  ON var1#state>=800 DO WebSend 192.168.22.1:8050 /setMaxPower?p=800 ENDON
-  ON var1#state<800 DO WebSend 192.168.22.1:8050 /setMaxPower?p=%var1% ENDON
+  ON var1#state>=800 DO WebSend 192.168.22.59:8050 /setMaxPower?p=800 ENDON
+  ON var1#state<800 DO WebSend 192.168.22.59:8050 /setMaxPower?p=%var2% ENDON
+  ON mqtt#connected DO Subscribe PowerInv, tasmota/tele/tasmota_0C6423/SENSOR, ENERGY.Power ENDON
+  ON Event#PowerInv DO var2 = (var1 + %value%)/2 ENDON
 ```
 
 ```
