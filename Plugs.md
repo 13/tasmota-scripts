@@ -202,11 +202,17 @@ Rule2
 Rule1
   ON System#Boot DO Backlog var1 0; var2 200; var3 0; ENDON
   ON Energy#Power DO var1 %value% ENDON
-  ON var2#state>=800 DO var3 800 ENDON
+  ON var2#state>=800 DO IF (%var3%==0) var3 800 ENDIF ENDON
   ON var2#state<800 DO WebSend [192.168.22.59:8050] /setMaxPower?p=%var2% ENDON
-  ON var3#state==800 DO WebSend [192.168.22.59:8050] /setMaxPower?p=800 ENDON
-  ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR, ENERGY.Power ENDON
-  ON Event#PowerTotal[1] DO Backlog CalcRes 0; var2 = (var1 + %value%)*2; ADD2 0 ENDON
+  ON var3#state==800 DO Backlog WebSend [192.168.22.59:8050] /setMaxPower?p=800; var3 0 ENDON
+  ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR, ENERGY ENDON
+  ON Event#PowerTotal#Power[1] DO Backlog CalcRes 0; var2 = (var1 + %value%)*2; ADD2 0 ENDON
+
+Subscribe PowerTotalx, tasmota/tele/tasmota_5FF8B2/SENSOR, ENERGY.Power
+Rule3
+ON Event#PowerTotalx#Power DO var10 %value% ENDON
+ON Event#PowerTotalx#Power[1] DO var11 %value% ENDON
+
 
 
 
