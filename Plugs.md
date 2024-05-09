@@ -27,7 +27,8 @@ Backlog PowerSet 60.0; VoltageSet 231; CurrentSet 259.74
 ## Template
 ```
 {"NAME":"Athom Plug V2","GPIO":[0,0,0,3104,0,32,0,0,224,576,0,0,0,0],"FLAG":0,"BASE":18}
-
+```
+```
 {"NAME":"Athom Plug V3","GPIO":[0,0,0,32,0,224,576,0,0,0,0,0,0,0,0,0,0,0,0,0,3104,0],"FLAG":0,"BASE":1}
 ```
 ## Settings
@@ -186,7 +187,8 @@ Rule1 on Time#Minute|5 do backlog var1 0;ping4 8.8.8.8;ping4 1.1.1.1;ping4 208.6
 ```
 
 Rule1
-  ON Energy#Power[1] DO Publish muh/power/3em/json {"total": %value%} ENDON
+  ON Energy#Power[1]>0 DO Publish muh/power/3em/json {"total": %value%, "total_zero": %value%} ENDON
+  ON Energy#Power[1]<=0 DO Publish muh/power/3em/json {"total": %value%, "total_zero": 0} ENDON
 
 - var1 Power_Total
 - var2 Power_Inverter + Power_Total/2
