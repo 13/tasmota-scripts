@@ -12,10 +12,12 @@
 | **Reeds** | | | | | | |
 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
-| GDW | Switch 3 | 11 | D11 |   | x | Garage Door Window Reed |
+| HDB | Button 1 | 11 | D11 |   | x | HD Bell |
+| HDBTN | Button 2 | 12 | D12 |   | x | HD Button (G_INT,G) |
 | **Relays** | | | | | | |
 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
 | GD_U | Relay_i 2 | 49 | D49 | | | Relay |
+| HD_LED | Relay 5 | 13 | D13 | | | Relay |
 | **I2S Audio** | | | | | | |
 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
@@ -32,7 +34,7 @@
 ```
 Backlog IPAddress1 192.168.22.92; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
 Backlog DeviceName HD; FriendlyName1 HD; 
-SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
+SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime1 2; PulseTime2 0;
 ```
@@ -49,6 +51,21 @@ PulseTime1 2; PulseTime2 0;
 - Sounds
 ```
 Rule1
+ON Switch1#Boot DO var1 %value% ENDON
+ON Switch2#Boot DO var2 %value% ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/HD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/HDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
+ON Switch1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch2#state!=%mem2% DO Backlog mem2 %value%; Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch3#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} ENDON
+
+ON Button1#state DO Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Button2#state DO Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Button2#state=10 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
+ON Button2#state=11 DO Publish muh/portal/RLY/cmnd G_T ENDON
+ON Button2#state=12 DO Publish muh/portal/RLY/cmnd GD_O ENDON
+ON Button2#state=13 DO Publish muh/portal/RLY/cmnd GD_L ENDON
+
 ON Switch1#Boot DO var1 %value% ENDON
 ON Switch2#Boot DO var2 %value% ENDON
 ON Switch3#Boot DO var3 %value% ENDON
