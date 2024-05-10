@@ -70,8 +70,8 @@ ON Switch1#state DO var1 %value% ENDON
 ON Switch2#state DO var2 %value% ENDON
 ON Time#Minute|1 DO Publish2 muh/portal/HD/json {"state": %mem1%, "time": "%mem6%"} ENDON
 ON Time#Minute|1 DO Publish2 muh/portal/HDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
-ON Time#Minute=1 DO IF ((%var1%==1) && (%var2%==0)) Power1 1 ENDIF ENDON
-ON Time#Minute=1411 DO IF ((%var1%==1) && (%var2%==0)) Power1 1 ENDIF ENDON
+ON Time#Minute=1 DO IF ((%var1%==1) AND (%var2%==0)) Power1 1 ENDIF ENDON
+ON Time#Minute=1411 DO IF ((%var1%==1) AND (%var2%==0)) Power1 1 ENDIF ENDON
 ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
 ON Event#RLY=HD_L DO Power1 1 ENDON
 ON Event#RLY=HD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
