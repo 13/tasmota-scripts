@@ -81,9 +81,9 @@ ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
 ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
 ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON
 ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON
+ON System#Boot DO i2sgain 40 ENDON
 
 Rule3
-ON System#Boot DO i2sgain 40 ENDON
 ON FPrint#Id DO var9 %value% ENDON
 ON FPrint#Confidence>20 DO IF (%var2%==1) Power2 1; Delay 10; Power2 0 ELSE Power1 1 ENDIF ENDON
 ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/HD/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "HD"} ENDON
