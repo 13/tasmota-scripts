@@ -77,9 +77,6 @@ ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
 ON Event#RLY=HD_L DO Power1 1 ENDON
 ON Event#RLY=HD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
 ON Event#RLY=HD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
-ON FPrint#Id DO var9 %value% ENDON
-ON FPrint#Confidence>20 DO Publish muh/portal/RLY/cmnd G_T ENDON
-ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
 ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
 ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON
@@ -87,6 +84,9 @@ ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power4 1 E
 
 Rule3
 ON System#Boot DO i2sgain 40 ENDON
+ON FPrint#Id DO var9 %value% ENDON
+ON FPrint#Confidence>20 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
+ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "GD"} ENDON
 ON FPrint#Confidence>20 DO i2splay +/RFID1.mp3 ENDON
 ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
 ON Event#G!=%mem11% DO Backlog mem11 %value%; i2splay +/G%value%.mp3 ENDON  
