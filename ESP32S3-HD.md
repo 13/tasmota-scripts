@@ -79,8 +79,8 @@ ON Event#RLY=HD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
 ON Event#RLY=HD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
 ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
-ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON
-ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON
+ON Event#LEDG DO Backlog var3 %value%; IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF ENDON
+ON Event#LEDGDL DO Backlog var4 %value%; IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF ENDON
 ON System#Boot DO i2sgain 40 ENDON
 
 Rule3
