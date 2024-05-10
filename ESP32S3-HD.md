@@ -55,10 +55,9 @@ ON Switch1#Boot DO var1 %value% ENDON
 ON Switch2#Boot DO var2 %value% ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/HD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/HDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
-ON Switch1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch2#state!=%mem2% DO Backlog mem2 %value%; Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch3#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} ENDON
-
+ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch4#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button1#state DO Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button2#state DO Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button2#state=10 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
@@ -66,47 +65,40 @@ ON Button2#state=11 DO Publish muh/portal/RLY/cmnd G_T ENDON
 ON Button2#state=12 DO Publish muh/portal/RLY/cmnd GD_O ENDON
 ON Button2#state=13 DO Publish muh/portal/RLY/cmnd GD_L ENDON
 
-ON Switch1#Boot DO var1 %value% ENDON
-ON Switch2#Boot DO var2 %value% ENDON
-ON Switch3#Boot DO var3 %value% ENDON
-ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/GD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
-ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/GDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
-ON System#Boot DO IF (%var3%!=%mem3%) mem3 %var3%; Publish2 muh/portal/GDW/json {"state": %var3%, "time": "%timestamp%"} ENDIF ENDON
-ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch3#state!=%mem3% DO Backlog mem3 %value%; mem8 %timestamp%; Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch4#state DO Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} ENDON
-
 Rule2
-ON Time#Minute|1 DO Publish2 muh/portal/GD/json {"state": %mem1%, "time": "%mem6%"} ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/GDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
-ON Switch1#Boot=1 DO RuleTimer1 600 ENDON
-ON Switch2#Boot=1 DO RuleTimer1 0 ENDON
-ON Switch1#state=1 DO RuleTimer1 600 ENDON
-ON Switch1#state=0 DO RuleTimer1 0 ENDON
-ON Switch2#state=1 DO RuleTimer1 0 ENDON
-ON Rules#Timer=1 DO Power1 1 ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/HD/json {"state": %mem1%, "time": "%mem6%"} ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/HDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
+ON Time#Minute=1 DO IF (%var2%==0) Power1 1 ENDIF ENDON
+ON Time#Minute=1411 DO IF (%var2%==0) Power1 1 ENDIF ENDON
+ON event#HD_L=1 DO Power1 1 ENDON
+ON event#HD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+ON event#HD_O=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
-ON Event#RLY=GD_L DO Power1 1 ENDON
-ON Event#RLY=GD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
-ON Event#RLY=GD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
+ON Event#RLY=HD_L DO Power1 1 ENDON
+ON Event#RLY=HD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
+ON Event#RLY=HD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 ON FPrint#Id DO var9 %value% ENDON
-ON FPrint#Confidence>100 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
-ON FPrint#Confidence>100 DO Publish muh/portal/FPRINT/json {"uid": %value%, "confidence": %var9%, "time": "%timestamp%", "source": "GD"} ENDON
-ON RDM6300#UID DO Publish muh/portal/RFID/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
-
-ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
-ENDON
+ON FPrint#Confidence>20 DO Publish muh/portal/RLY/cmnd G_T ENDON
+ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "GD"} ENDON
+ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
+ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
+ON Event#LEDG DO Backlog var3 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON
+ON Event#LEDGDL DO Backlog var4 %value%; IF ((var3==1) AND (var4==1)) Power4 1 ELSEIF ((var3==0) AND (var4==0)) Power4 0 ELSE Power4 3 ENDIF ENDON
 
 Rule3
-ON System#Boot DO i2sgain 100 ENDON
-ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
-ON FPrint#Confidence>100 DO i2splay +/RFID1.mp3 ENDON
-ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
-ON Event#HD!=%mem11% DO Backlog mem11 %value%; i2splay +/HD%value%.mp3 ENDON
-ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
-ON Event#HDB DO i2splay +/HDB.mp3 ENDON
-ON Time#Minute|30 DO IF (((%time%) % 60) == 30) i2splay +/PC.mp3 ELSE var10=%time%/60; i2splay +/PC%var10%.mp3 ENDIF ENDON
+ON System#Boot DO i2sgain 40 ENDON
+ON FPrint#Confidence>20 DO i2splay +/RFID1.mp3 ENDON
+ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
+ON Event#G!=%mem11% DO Backlog mem11 %value%; i2splay +/G%value%.mp3 ENDON  
+ON mqtt#connected DO Subscribe GD, muh/portal/GD/json, state ENDON
+ON Event#GD!=%mem12% DO Backlog mem12 %value%; i2splay +/GD%value%.mp3 ENDIF ENDON
+ON Switch1#state DO Backlog i2sgain 30; i2splay +/HD%value%%Var16%.mp3 ENDON
+ON Button1#state=10 DO Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40 ENDON
+ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
+ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
+ON event#checkdate$|-12-24T DO Var16 X ENDON
+ON event#checkdate$|-12-25T DO Var16 X ENDON
+ON event#checkdate$|-12-26T DO Var16 " ENDON
 ```
 ### Commands
 ```
