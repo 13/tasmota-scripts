@@ -1,7 +1,7 @@
 # ESP32-S3 HD
 ## Template
 ```
-{"NAME":"ESP32-S3-DevKitC-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,1,1,1,1,6016,1,1,1,1,1,3616,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
+{"NAME":"ESP32-S3-DevKitC-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,32,33,228,1,6016,1,1,1,1,1,3616,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
 ```
 ## Table
 | NAME | MODULE | GPIO | PIN | + | - | DESC |
@@ -10,20 +10,20 @@
 | SDA | I2C SDA | 1 | D01 | x | x | RTC DS3231 |
 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
 | **Reeds** | | | | | | |
-| GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
-| GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
+| HD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
+| HDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
 | HDB | Button 1 | 11 | D11 |   | x | HD Bell |
 | HDBTN | Button 2 | 12 | D12 |   | x | HD Button (G_INT,G) |
 | **Relays** | | | | | | |
-| GD_L | Relay_i 1 | 48 | D48 | | | Relay |
-| GD_U | Relay_i 2 | 49 | D49 | | | Relay |
+| HD_L | Relay_i 1 | 48 | D48 | | | Relay |
+| HD_U | Relay_i 2 | 49 | D49 | | | Relay |
 | HD_LED | Relay 5 | 13 | D13 | | | Relay |
 | **I2S Audio** | | | | | | |
 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
 | DIN | I2S_DOUT | 6 | D05 | | | i2s |
 | **PIR** | | | | | | |
-| GDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
+| HDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
 | **RFID** | | | | | | |
 | RFID | RDM6300 RX | 21 | D21 | x | x | RFID |
 | **FPRINT** | | | | | | |
@@ -59,7 +59,7 @@ ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh
 ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Switch4#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button1#state DO Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Button2#state DO Publish muh/portal/HDG/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Button2#state DO Publish muh/portal/HDBTN/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button2#state=10 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
 ON Button2#state=11 DO Publish muh/portal/RLY/cmnd G_T ENDON
 ON Button2#state=12 DO Publish muh/portal/RLY/cmnd GD_O ENDON
