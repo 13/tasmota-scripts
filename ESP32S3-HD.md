@@ -80,7 +80,7 @@ ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
 ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
 ON Event#LEDG DO Backlog var3 %value%; IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF ENDON
 ON Event#LEDGDL DO Backlog var4 %value%; IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF ENDON
-ON System#Boot DO i2sgain 40 ENDON
+ON System#Boot DO i2sgain 30 ENDON
 
 Rule3
 ON FPrint#Id DO var9 %value% ENDON
@@ -90,8 +90,8 @@ ON FPrint#Confidence>20 DO i2splay +/RFID1.mp3 ENDON
 ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
 ON Event#G!=%mem11% DO Backlog mem11 %value%; i2splay +/G%value%.mp3 ENDON  
 ON mqtt#connected DO Subscribe GD, muh/portal/GD/json, state ENDON
-ON Event#GD!=%mem12% DO Backlog mem12 %value%; i2splay +/GD%value%.mp3 ENDIF ENDON
-ON Switch1#state DO Backlog i2sgain 30; i2splay +/HD%value%%Var16%.mp3 ENDON
+ON Event#GD!=%mem12% DO Backlog mem12 %value%; i2splay +/GD%value%.mp3 ENDON
+ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
 ON Button1#state=10 DO Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40 ENDON
 ON Time#Minute|30 DO i2splay +/PC.mp3 ENDON
 ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
