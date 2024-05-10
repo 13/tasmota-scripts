@@ -57,6 +57,8 @@ ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/HD/json {
 ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/HDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
 ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch1#state DO var1 %value% ENDON
+ON Switch2#state DO var2 %value% ENDON
 ON Switch4#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button1#state DO Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button2#state DO Publish muh/portal/HDBTN/json {"state": %value%, "time": "%timestamp%"} ENDON
@@ -68,8 +70,8 @@ ON Button2#state=13 DO Publish muh/portal/RLY/cmnd GD_L ENDON
 Rule2
 ON Time#Minute|1 DO Publish2 muh/portal/HD/json {"state": %mem1%, "time": "%mem6%"} ENDON
 ON Time#Minute|1 DO Publish2 muh/portal/HDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
-ON Time#Minute=1 DO IF (%var2%==0) Power1 1 ENDIF ENDON
-ON Time#Minute=1411 DO IF (%var2%==0) Power1 1 ENDIF ENDON
+ON Time#Minute=1 DO IF ((%var1%==1) && (%var2%==0)) Power1 1 ENDIF ENDON
+ON Time#Minute=1411 DO IF ((%var1%==1) && (%var2%==0)) Power1 1 ENDIF ENDON
 ON event#HD_L=1 DO Power1 1 ENDON
 ON event#HD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
 ON event#HD_O=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
