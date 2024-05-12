@@ -276,10 +276,10 @@ import mqtt
 tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDBTN/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 tasmota.add_rule("Button1#state=10", def (value) tasmota.cmd("Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40") end)
-tasmota.add_rule("Button2#state=10", def (value) mqtt.publish("muh/portal/HDB/json", "tasmota/cmnd/tasmota_9521A4/POWER 2") end)
-tasmota.add_rule("Button2#state=11", def (value) tasmota.cmd("Backlog i2splay +/click.mp3; Publish muh/portal/RLY/cmnd G_T") end)
-tasmota.add_rule("Button2#state=12", def (value) tasmota.cmd("Publish muh/portal/RLY/cmnd GD_O") end)
-tasmota.add_rule("Button2#state=13", def (value) tasmota.cmd("Publish muh/portal/RLY/cmnd GD_L") end)
+tasmota.add_rule("Button2#state=10", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish tasmota/cmnd/tasmota_9521A4/POWER 2") end)
+tasmota.add_rule("Button2#state=11", def (value) tasmota.cmd("Backlog i2splay +/click1.mp3; Publish muh/portal/RLY/cmnd G_T") end)
+tasmota.add_rule("Button2#state=12", def (value) tasmota.cmd("Backlog i2splay +/click2.mp3; Publish muh/portal/RLY/cmnd GD_O") end)
+tasmota.add_rule("Button2#state=13", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish muh/portal/RLY/cmnd GD_L") end)
 
 # MQTT & HTTP API
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
