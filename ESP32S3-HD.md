@@ -165,38 +165,6 @@ muh/portal/RLY/cmnd GD_O
 ## Berry
 autoexec.be
 
-- Show Buttons
-```
-import string
-import webserver 
-
-class relayButtonsMethods : Driver
-
-  def runRelay(numRelay, openDoor)
-    var numDelay = 2
-    if openDoor
-      numDelay = 10
-    end
-    tasmota.cmd(string.format("Backlog Power%d 1; Delay %d; Power%d 0", numRelay, numDelay, numRelay))
-  end
-
-  def web_add_main_button()
-    webserver.content_send("<p></p><button onclick='la(\"&o=3\");'>GARAGE</button><table style=\"width:100%\"><tbody><tr><td style=\"width:33%\"><button onclick='la(\"&o=1\");'>GD LOCK</button></td><td style=\"width:33%\"><button onclick='la(\"&rly=2&opendoor=0\");'>UNLOCK</button></td><td style=\"width:33%\"><button onclick='la(\"&rly=2&opendoor=1\");'>OPEN</button></td></tr></tbody></table><p></p>")
-  end
-
-  def web_sensor()
-    if webserver.has_arg("rly") && webserver.has_arg("opendoor")
-      var numRelay = int(webserver.arg("rly"))
-      var openDoor = bool(webserver.arg("opendoor"))
-      self.runRelay(numRelay, openDoor)
-    end
-  end
-end
-d1 = relayButtonsMethods()
-tasmota.add_driver(d1)
-```
-# Not longer used
-#
 - Publish 
 ```
 import string
@@ -255,15 +223,6 @@ tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HD, muh/po
 tasmota.add_rule("Event#HD!=%mem11%", def (value) tasmota.cmd(string.format("Backlog mem11 %d; i2splay +/HD%d.mp3", value, value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
 tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/HDB.mp3") end)
-
-# FPRINT & RFID
-#ON FPrint#Confidence>100 DO Power2 1 ENDON
-#ON FPrint#Id DO Publish muh/portal/FPRINT/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
-
-tasmota.add_rule(["FPrint#Id","FPrint#Confidence>100"], def (values) rule_adc_in_range(1,values) end )
-
-tasmota.add_rule("RDM6300#UID", def (value) mqtt.publish("muh/portal/RFID/json", string.format("{'uid': %d, 'tstamp': '%s', 'source': 'GD'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-# ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
 
 # 2024
 tasmota.add_cron("0 30 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "summer_on")
