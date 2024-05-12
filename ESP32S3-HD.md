@@ -229,4 +229,14 @@ tasmota.add_rule(["FPrint#Id","FPrint#Confidence>100"], def (values) rule_adc_in
 
 tasmota.add_rule("RDM6300#UID", def (value) mqtt.publish("muh/portal/RFID/json", string.format("{'uid': %d, 'tstamp': '%s', 'source': 'GD'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 # ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
+
+# 2024
+tasmota.add_cron("0 30 9 * 6-9 *", def (values) tasmota.set_power(0, true) end, "summer_on")
+tasmota.add_cron("0 0 23 * 6-9 *", def (values) tasmota.set_power(0, false) end, "summer_off")
+tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (values) tasmota.set_power(0, false) end, "winter_off")
+
+# pendeluhr
+tasmota.add_cron("58 29 * * * *", def (values) i2splay +/PC.mp3 end, "pndluhr_halb")
+tasmota.add_cron("58 59 * * * *", def (values) i2splay +/PC2.mp3 end, "pndluhr_voll")
+
 ```
