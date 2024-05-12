@@ -61,7 +61,7 @@ ON Switch4#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%tim
 ON Button1#state DO Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button2#state DO Publish muh/portal/HDBTN/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button2#state=10 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
-ON Button2#state=11 DO Backlog i2splay +/click.mp3; Publish muh/portal/RLY/cmnd G_T ENDON
+ON Button2#state=11 DO Publish muh/portal/RLY/cmnd G_T ENDON
 ON Button2#state=12 DO Publish muh/portal/RLY/cmnd GD_O ENDON
 ON Button2#state=13 DO Publish muh/portal/RLY/cmnd GD_L ENDON
 
@@ -109,6 +109,46 @@ ON Event#RLY=HD_L DO Power1 1 ENDON
 ON Event#RLY=HD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
 ON Event#RLY=HD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 ```
+```
+Berry mix
+Rule1
+ON Switch1#Boot DO var1 %value% ENDON
+ON Switch2#Boot DO var2 %value% ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/HD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/HDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
+ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch4#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} ENDON
+
+Rule2
+ON Switch1#state DO var1 %value% ENDON
+ON Switch2#state DO var2 %value% ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/HD/json {"state": %mem1%, "time": "%mem6%"} ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/HDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
+ON Time#Minute=1 DO IF ((%var1%==1) AND (%var2%==0)) Power1 1 ENDIF ENDON
+ON Time#Minute=1411 DO IF ((%var1%==1) AND (%var2%==0)) Power1 1 ENDIF ENDON
+ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
+ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
+ON Event#LEDG DO Backlog var3 %value%; IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF ENDON
+ON Event#LEDGDL DO Backlog var4 %value%; IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF ENDON
+ON System#Boot DO i2sgain 30 ENDON
+
+Rule3
+ON FPrint#Id DO var9 %value% ENDON
+ON FPrint#Confidence>20 DO IF (%var2%==1) Power2 1; Delay 10; Power2 0 ELSE Power1 1 ENDIF ENDON
+ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/HD/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "HD"} ENDON
+ON FPrint#Confidence>20 DO i2splay +/RFID1.mp3 ENDON
+ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
+ON Event#G!=%mem11% DO Backlog mem11 %value%; i2splay +/G%value%.mp3 ENDON  
+ON mqtt#connected DO Subscribe GD, muh/portal/GD/json, state ENDON
+ON Event#GD!=%mem12% DO Backlog mem12 %value%; i2splay +/GD%value%.mp3 ENDON
+ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
+ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
+ON event#checkdate$|-12-24T DO Var16 X ENDON
+ON event#checkdate$|-12-25T DO Var16 X ENDON
+ON event#checkdate$|-12-26T DO Var16 " ENDON
+```
+
 ### Commands
 ```
 http://192.168.22.199/cm?cmnd=event%20G%5FT=1
@@ -229,6 +269,18 @@ tasmota.add_cron("0 30 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "
 tasmota.add_cron("0 0 23 * 6-9 *", def (value) tasmota.set_power(0, false) end, "summer_off")
 tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (value) tasmota.set_power(0, false) end, "winter_off")
 
+import string
+import mqtt
+
+# BUTTONS
+tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDBTN/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Button1#state=10", def (value) tasmota.cmd("Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40") end)
+tasmota.add_rule("Button2#state=10", def (value) mqtt.publish("muh/portal/HDB/json",tasmota/cmnd/tasmota_9521A4/POWER 2") end)
+tasmota.add_rule("Button2#state=11", def (value) tasmota.cmd("Backlog i2splay +/click.mp3; Publish muh/portal/RLY/cmnd G_T") end)
+tasmota.add_rule("Button2#state=12", def (value) tasmota.cmd("Publish muh/portal/RLY/cmnd GD_O") end)
+tasmota.add_rule("Button2#state=13", def (value) tasmota.cmd("Publish muh/portal/RLY/cmnd GD_L") end)
+
 # MQTT & HTTP API
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
 tasmota.add_rule("Event#RLY=HD_L", def (value) tasmota.cmd("Power1 1") end)
@@ -237,12 +289,6 @@ tasmota.add_rule("Event#RLY=HD_O", def (value) tasmota.cmd("Backlog Power2 1; De
 tasmota.add_rule("Event#HD_L=1", def (value) tasmota.cmd("Power1 1") end)
 tasmota.add_rule("Event#HD_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
 tasmota.add_rule("Event#HD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
-
-# FINGERPRINT
-ON FPrint#Id DO var9 %value% ENDON
-ON FPrint#Confidence>20 DO IF (%var2%==1) Power2 1; Delay 10; Power2 0 ELSE Power1 1 ENDIF ENDON
-ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/HD/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "HD"} ENDON
-ON FPrint#Confidence>20 DO i2splay +/RFID1.mp3 ENDON
 
 # pendeluhr
 tasmota.add_cron("58 29 * * * *", def (value) i2splay +/PC.mp3 end, "pndluhr_halb")
