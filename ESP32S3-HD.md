@@ -238,6 +238,12 @@ tasmota.add_rule("Event#HD_L=1", def (value) tasmota.cmd("Power1 1") end)
 tasmota.add_rule("Event#HD_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
 tasmota.add_rule("Event#HD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
 
+# FINGERPRINT
+ON FPrint#Id DO var9 %value% ENDON
+ON FPrint#Confidence>20 DO IF (%var2%==1) Power2 1; Delay 10; Power2 0 ELSE Power1 1 ENDIF ENDON
+ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/HD/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "HD"} ENDON
+ON FPrint#Confidence>20 DO i2splay +/RFID1.mp3 ENDON
+
 # pendeluhr
 tasmota.add_cron("58 29 * * * *", def (value) i2splay +/PC.mp3 end, "pndluhr_halb")
 tasmota.add_cron("58 59 * * * *", def (value) i2splay +/PC2.mp3 end, "pndluhr_voll")
