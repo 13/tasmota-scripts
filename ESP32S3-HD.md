@@ -61,7 +61,7 @@ ON Switch4#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%tim
 ON Button1#state DO Publish muh/portal/HDB/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button2#state DO Publish muh/portal/HDBTN/json {"state": %value%, "time": "%timestamp%"} ENDON
 ON Button2#state=10 DO Publish tasmota/cmnd/tasmota_9521A4/POWER 2 ENDON
-ON Button2#state=11 DO Publish muh/portal/RLY/cmnd G_T ENDON
+ON Button2#state=11 DO Backlog i2splay +/click.mp3; Publish muh/portal/RLY/cmnd G_T ENDON
 ON Button2#state=12 DO Publish muh/portal/RLY/cmnd GD_O ENDON
 ON Button2#state=13 DO Publish muh/portal/RLY/cmnd GD_L ENDON
 
