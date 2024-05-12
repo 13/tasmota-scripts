@@ -215,12 +215,6 @@ tasmota.add_rule("Event#HD!=%mem11%", def (value) tasmota.cmd(string.format("Bac
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
 tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/HDB.mp3") end)
 
-# HTTP CMDS
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
-tasmota.add_rule("Event#RLY=GD_L", def (value) tasmota.cmd("Power1 1") end)
-tasmota.add_rule("Event#RLY=GD_U", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
-tasmota.add_rule("Event#RLY=GD_O", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
-
 # FPRINT & RFID
 #ON FPrint#Confidence>100 DO Power2 1 ENDON
 #ON FPrint#Id DO Publish muh/portal/FPRINT/json {"uid": %value%, "time": "%timestamp%", "source": "GD"} ENDON
@@ -231,12 +225,21 @@ tasmota.add_rule("RDM6300#UID", def (value) mqtt.publish("muh/portal/RFID/json",
 # ON RDM6300#UID=XXXXXXXX DO Power3 1 ENDON
 
 # 2024
-tasmota.add_cron("0 30 9 * 6-9 *", def (values) tasmota.set_power(0, true) end, "summer_on")
-tasmota.add_cron("0 0 23 * 6-9 *", def (values) tasmota.set_power(0, false) end, "summer_off")
-tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (values) tasmota.set_power(0, false) end, "winter_off")
+tasmota.add_cron("0 30 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "summer_on")
+tasmota.add_cron("0 0 23 * 6-9 *", def (value) tasmota.set_power(0, false) end, "summer_off")
+tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (value) tasmota.set_power(0, false) end, "winter_off")
+
+# MQTT & HTTP API
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
+tasmota.add_rule("Event#RLY=HD_L", def (value) tasmota.cmd("Power1 1") end)
+tasmota.add_rule("Event#RLY=HD_U", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
+tasmota.add_rule("Event#RLY=HD_O", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
+tasmota.add_rule("Event#HD_L=1", def (value) tasmota.cmd("Power1 1") end)
+tasmota.add_rule("Event#HD_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
+tasmota.add_rule("Event#HD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
 
 # pendeluhr
-tasmota.add_cron("58 29 * * * *", def (values) i2splay +/PC.mp3 end, "pndluhr_halb")
-tasmota.add_cron("58 59 * * * *", def (values) i2splay +/PC2.mp3 end, "pndluhr_voll")
+tasmota.add_cron("58 29 * * * *", def (value) i2splay +/PC.mp3 end, "pndluhr_halb")
+tasmota.add_cron("58 59 * * * *", def (value) i2splay +/PC2.mp3 end, "pndluhr_voll")
 
 ```
