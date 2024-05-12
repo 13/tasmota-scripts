@@ -138,6 +138,7 @@ ON FPrint#Id DO var9 %value% ENDON
 ON FPrint#Confidence>20 DO IF (%var2%==1) Power2 1; Delay 10; Power2 0 ELSE Power1 1 ENDIF ENDON
 ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/HD/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "HD"} ENDON
 ON FPrint#Confidence>20 DO i2splay +/RFID1.mp3 ENDON
+ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
 ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
 ON Event#G!=%mem11% DO Backlog mem11 %value%; i2splay +/G%value%.mp3 ENDON  
 ON mqtt#connected DO Subscribe GD, muh/portal/GD/json, state ENDON
@@ -275,7 +276,6 @@ import mqtt
 # BUTTONS
 tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDBTN/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Button1#state=10", def (value) tasmota.cmd("Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40") end)
 tasmota.add_rule("Button2#state=10", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish tasmota/cmnd/tasmota_9521A4/POWER 2") end)
 tasmota.add_rule("Button2#state=11", def (value) tasmota.cmd("Backlog i2splay +/click1.mp3; Publish muh/portal/RLY/cmnd G_T") end)
 tasmota.add_rule("Button2#state=12", def (value) tasmota.cmd("Backlog i2splay +/click2.mp3; Publish muh/portal/RLY/cmnd GD_O") end)
