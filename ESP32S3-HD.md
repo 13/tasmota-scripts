@@ -276,7 +276,7 @@ import mqtt
 tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDBTN/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 tasmota.add_rule("Button1#state=10", def (value) tasmota.cmd("Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40") end)
-tasmota.add_rule("Button2#state=10", def (value) mqtt.publish("muh/portal/HDB/json",tasmota/cmnd/tasmota_9521A4/POWER 2") end)
+tasmota.add_rule("Button2#state=10", def (value) mqtt.publish("muh/portal/HDB/json", "tasmota/cmnd/tasmota_9521A4/POWER 2") end)
 tasmota.add_rule("Button2#state=11", def (value) tasmota.cmd("Backlog i2splay +/click.mp3; Publish muh/portal/RLY/cmnd G_T") end)
 tasmota.add_rule("Button2#state=12", def (value) tasmota.cmd("Publish muh/portal/RLY/cmnd GD_O") end)
 tasmota.add_rule("Button2#state=13", def (value) tasmota.cmd("Publish muh/portal/RLY/cmnd GD_L") end)
@@ -291,7 +291,7 @@ tasmota.add_rule("Event#HD_U=1", def (value) tasmota.cmd("Backlog Power2 1; Dela
 tasmota.add_rule("Event#HD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
 
 # pendeluhr
-tasmota.add_cron("58 29 * * * *", def (value) i2splay +/PC.mp3 end, "pndluhr_halb")
-tasmota.add_cron("58 59 * * * *", def (value) i2splay +/PC2.mp3 end, "pndluhr_voll")
+tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/PC.mp3") end, "pndluhr_halb")
+tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/PC2.mp3") end, "pndluhr_voll")
 
 ```
