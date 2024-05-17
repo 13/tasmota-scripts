@@ -187,9 +187,9 @@ Rule1 on Time#Minute|5 do backlog var1 0;ping4 8.8.8.8;ping4 1.1.1.1;ping4 208.6
 ```
 
 Rule1
+  ON System#Boot DO var1 0 ENDON
   ON System#Init DO Event SendPower ENDON
-  ON Energy#Power[1]>0 DO var1 %value% ENDON
-  ON Energy#Power[1]<=0 DO var1 0 ENDON
+  ON Energy#Power[1]>0 DO IF (%value% > 0) var1 %value% ELSE var1 0 ENDIF ENDON
   ON Event#SendPower DO Backlog Publish muh/power/3em/json {"total": %var1%, "total_zero": %var1%}; RuleTimer1 1 ENDON
   ON Rules#Timer=1 DO Event SendPower ENDON
 
