@@ -191,6 +191,14 @@ tasmota.add_rule("Event#HD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Dela
 # Pendeluhr
 tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/PC.mp3") end, "pndluhr_halb")
 tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/PC2.mp3") end, "pndluhr_voll")
+
+# LED
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe LEDG, muh/portal/G/json, state") end)
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe LEDGDL, muh/portal/GDL/json, state") end)
+tasmota.add_rule("Event#LEDG", def (value) tasmota.cmd("var3 %value%") end)
+tasmota.add_rule("Event#LEDGDL", def (value) tasmota.cmd("var4 %value%") end)
+tasmota.add_rule("var3#state", def (value) tasmota.cmd("IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF") end)
+tasmota.add_rule("var4#state", def (value) tasmota.cmd("IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF") end)
 ```
 
 - Publish 
