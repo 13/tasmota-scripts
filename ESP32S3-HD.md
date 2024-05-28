@@ -1,7 +1,7 @@
 # ESP32-S3 HD
 ## Template
 ```
-{"NAME":"ESP32-S3-DevKitC-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,32,33,228,1,6016,1,1,1,1,1,3616,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
+{"NAME":"ESP32-S3-DevKitC-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,32,33,226,1,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
 ```
 ## Table
 | NAME | MODULE | GPIO | PIN | + | - | DESC |
@@ -163,7 +163,35 @@ muh/portal/RLY/cmnd GD_O
 ```
 
 ## Berry
-autoexec.be
+### autoexec.be
+- Button Rules
+- MQTT & HTTP API
+- Pendeluhr
+```
+import string
+import mqtt
+
+# BUTTONS
+tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDBTN/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Button2#state=10", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish tasmota/cmnd/tasmota_9521A4/POWER 2") end)
+tasmota.add_rule("Button2#state=11", def (value) tasmota.cmd("Backlog i2splay +/click1.mp3; Publish muh/portal/RLY/cmnd G_T") end)
+tasmota.add_rule("Button2#state=12", def (value) tasmota.cmd("Backlog i2splay +/click2.mp3; Publish muh/portal/RLY/cmnd GD_O") end)
+tasmota.add_rule("Button2#state=13", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish muh/portal/RLY/cmnd GD_L") end)
+
+# MQTT & HTTP API
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
+tasmota.add_rule("Event#RLY=HD_L", def (value) tasmota.cmd("Power1 1") end)
+tasmota.add_rule("Event#RLY=HD_U", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
+tasmota.add_rule("Event#RLY=HD_O", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
+tasmota.add_rule("Event#HD_L=1", def (value) tasmota.cmd("Power1 1") end)
+tasmota.add_rule("Event#HD_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
+tasmota.add_rule("Event#HD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
+
+# Pendeluhr
+tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/PC.mp3") end, "pndluhr_halb")
+tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/PC2.mp3") end, "pndluhr_voll")
+```
 
 - Publish 
 ```
