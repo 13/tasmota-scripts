@@ -59,6 +59,46 @@ PulseTime1 2; PulseTime2 0;
 - Fingerprint
 #### Rule 3
 - Sounds
+
+```
+Rule1
+ON Switch1#Boot DO var1 %value% ENDON
+ON Switch2#Boot DO var2 %value% ENDON
+ON Switch3#Boot DO var3 %value% ENDON
+ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/GD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
+ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/GDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
+ON System#Boot DO IF (%var3%!=%mem3%) mem3 %var3%; Publish2 muh/portal/GDW/json {"state": %var3%, "time": "%timestamp%"} ENDIF ENDON
+ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch3#state!=%mem3% DO Backlog mem3 %value%; mem8 %timestamp%; Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Switch4#state DO Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} ENDON
+
+Rule2
+ON Time#Minute|1 DO Publish2 muh/portal/GD/json {"state": %mem1%, "time": "%mem6%"} ENDON
+ON Time#Minute|1 DO Publish2 muh/portal/GDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
+ON Switch1#Boot=1 DO RuleTimer1 600 ENDON
+ON Switch2#Boot=1 DO RuleTimer1 0 ENDON
+ON Switch1#state=1 DO RuleTimer1 600 ENDON
+ON Switch1#state=0 DO RuleTimer1 0 ENDON
+ON Switch2#state=1 DO RuleTimer1 0 ENDON
+ON Rules#Timer=1 DO Power1 1 ENDON
+ON FPrint#Id DO var9 %value% ENDON
+ON FPrint#Confidence>20 DO Publish muh/portal/RLY/cmnd G_T ENDON
+ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "GD"} ENDON
+ENDON
+
+Rule3
+ON System#Boot DO i2sgain 100 ENDON
+ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
+ON FPrint#Confidence>100 DO i2splay +/RFID1.mp3 ENDON
+ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
+ON Event#HD!=%mem11% DO Backlog mem11 %value%; i2splay +/HD%value%.mp3 ENDON
+ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
+ON Event#HDB DO i2splay +/HDB.mp3 ENDON
+```
+
+-----
+
 ```
 Rule1
 ON Switch1#Boot DO var1 %value% ENDON
@@ -127,6 +167,28 @@ muh/portal/RLY/cmnd G_T
 muh/portal/RLY/cmnd GD_L
 muh/portal/RLY/cmnd GD_U
 muh/portal/RLY/cmnd GD_O
+```
+
+## Berry
+### autoexec.be
+- MQTT & HTTP API
+- Pendeluhr
+```
+import string
+import mqtt
+
+# MQTT & HTTP API
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
+tasmota.add_rule("Event#RLY=GD_L", def (value) tasmota.cmd("Power1 1") end)
+tasmota.add_rule("Event#RLY=GD_U", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
+tasmota.add_rule("Event#RLY=GD_O", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
+tasmota.add_rule("Event#GD_L=1", def (value) tasmota.cmd("Power1 1") end)
+tasmota.add_rule("Event#GD_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
+tasmota.add_rule("Event#GD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
+
+# Pendeluhr
+tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/PC.mp3") end, "pndluhr_halb")
+tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/PC2.mp3") end, "pndluhr_voll")
 ```
 
 ## Berry
