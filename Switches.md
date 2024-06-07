@@ -64,6 +64,22 @@ ON Button2#state=3 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterClose; 
 ON Button2#state=12 DO Backlog Publish tasmota/cmnd/tasmota_6B07DC/ShutterPosition 4; mem1 2; mem2 1 ENDON
 ```
 
+- Shelly 2PM with ShellyOS
+```
+Rule2
+ON mqtt#connected DO Subscribe Pos1, shellies/rollerk1/status/cover:0, current_pos ENDON
+ON Event#Pos1=0 DO mem1 0 ENDON
+ON Event#Pos1=100 DO mem1 1 ENDON
+ON Button2#state=10 DO event ROLLER1=%mem1% ENDON
+ON event#ROLLER1="" DO Backlog Publish shellies/rollerk1/rpc { "method":"Cover.Open","params": { "id":0 }}; mem1 2; mem2 1 ENDON
+ON event#ROLLER1==0 DO Backlog Publish shellies/rollerk1/rpc { "method":"Cover.Open","params": { "id":0 }}; mem1 2; mem2 1 ENDON
+ON event#ROLLER1==1 DO Backlog Publish shellies/rollerk1/rpc { "method":"Cover.Close","params": { "id":0 }}; mem1 2; mem2 0 ENDON
+ON event#ROLLER1==2 DO Backlog Publish shellies/rollerk1/rpc { "method":"Cover.Stop","params": { "id":0 }}; mem1 %mem2% ENDON
+ON Button2#state=11 DO Backlog Publish shellies/rollerk1/rpc { "method":"Cover.Open","params": { "id":0 }}; mem1 2; mem2 1 ENDON
+ON Button2#state=3 DO Backlog Publish shellies/rollerk1/rpc { "method":"Cover.Close","params": { "id":0 }}; mem1 2; mem2 0 ENDON
+ON Button2#state=12 DO Backlog Publish shellies/rollerk1/rpc { "method":"Cover.Open","params": { "id":0, "pos":5 }}; mem1 2; mem2 1 ENDON
+```
+
 ```
 Rule3
 ON mqtt#connected DO Subscribe Pos2, tasmota/status/tasmota_5FB259/pos ENDON
