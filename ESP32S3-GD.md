@@ -131,72 +131,43 @@ muh/portal/RLY/cmnd GD_O
 import string
 import mqtt
 
-var initBoot = true
 var devicename = tasmota.cmd("DeviceName")['DeviceName']
-
 var switch1 = 0
 var switch2 = 0
 var switch3 = 0
-var switch4 = 0
+var LEDG = 0
+var LEDGDL = 0
+var xmas = ""
 
 # MQTT Publish & Store Status
 def handleSwitch(name, value, memNameVal, memNameTstamp)
-  if value != tasmota.cmd(memNameVal)[memNameVal]
+  if number(value) != number(tasmota.cmd(memNameVal)[memNameVal])
     var tstamp = tasmota.time_str(tasmota.rtc()['local'])
     tasmota.cmd(string.format("%s %d", memNameVal, value))
     if memNameTstamp != nil
       tasmota.cmd(string.format("%s %s", memNameTstamp, tstamp))
     end
-    tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", value, tstamp), true)
+    tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", value, tstamp), true)
   end
 end
 
+# MQTT Publish only
 def publishSwitch(name, memNameVal, memNameTstamp)
   var value = tasmota.cmd(memNameVal)[memNameVal]
   var tstamp = tasmota.cmd(memNameTstamp)[memNameTstamp]
-  tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", value, tstamp), true)
-end
-
-# AutoLock
-def handleLock(value, setTimer)
-  var timer_name = "timerLock"
-  if setTimer == nil
-    setTimer = value
-  end
-  if value == 1 && setTimer == 1
-      tasmota.set_timer(60000, tasmota.set_power(0, true), timer_name)
-  else
-    tasmota.remove_timer(timer_name)
-  end
-end
-
-# MQTT Publish Status WatchDog
-if devicename == "GD"
-  tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("GD","Mem1","Mem6") end, "wd_GD")
-  tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("GDL","Mem2","Mem7") end, "wd_GDL")
-end
-
-## GD
-if devicename == "GD"
-  tasmota.add_rule("Switch1#Boot", def (value) switch1 = value handleLock(value,1) end)
-  tasmota.add_rule("Switch2#Boot", def (value) switch2 = value handleLock(value,0) end)
-  tasmota.add_rule("Switch3#Boot", def (value) switch3 = value end)
-  tasmota.add_rule("System#Boot", def (value) handleSwitch("GD",switch1,"Mem1") end)
-  tasmota.add_rule("System#Boot", def (value) handleSwitch("GDL",switch2,"Mem2") end)
-  #tasmota.add_rule("System#Boot", def (value) handleSwitch("GDW",switch3,"Mem3") end)
-  tasmota.add_rule("Switch1#state", def (value) handleSwitch("GD",value,"Mem1","Mem6") handleLock(value) end)
-  tasmota.add_rule("Switch2#state", def (value) handleSwitch("GDL",value,"Mem2","Mem7") handleLock(value,0) end)
-  #tasmota.add_rule("Switch3#state", def (value) handleSwitch("GDW",value,"Mem3","Mem8") end)
-  tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+  tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", value, tstamp), true)
 end
 
 # FPrint
 def handleFprint(values)
+ if devicename == "HD"
+   tasmota.cmd("Power2 1; Delay 10; Power2 0 ELSE Power1 1")
+ end
  if devicename == "GD"
    tasmota.publish("muh/portal/RLY/cmnd", "G_T")
  end
  tasmota.cmd("i2splay +/RFID1.mp3")
- tasmota.publish("muh/portal/FPRINT/json", string.format("{'uid': %d, 'confidence': %d, 'tstamp': '%s', 'source': '%s'}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+ tasmota.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
 end
 tasmota.add_rule(["FPrint#Id","FPrint#Confidence>20"], def (values) handleFprint(values) end)
 
@@ -209,33 +180,57 @@ tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) tasmota.cmd("Power
 tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
 tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
 
-# AUDIO
-tasmota.add_rule("System#Boot", def (value) tasmota.cmd("i2sgain 90") end)
-## HD
-var hd = tasmota.cmd("Mem11")['Mem11']
-def handleHD(value)
-  if value != hd
-    hd = value
-    #tasmota.cmd(string.format("Backlog mem11 %s; i2splay +/HD%s.mp3", value, value))
-    if initBoot
-      tasmota.cmd(string.format("Backlog mem11 %s; i2splay +/HD%s.mp3", value, value))
-    else
-      tasmota.cmd(string.format("i2splay +/HD%s.mp3", value))
-    end
+## MQTT Remote
+def handlePortal(name,memName,value)
+  var memNameValue = tasmota.cmd(string.format("%s", memName))[memName]
+  if number(value) != number(memNameValue)
+    tasmota.cmd(string.format("Backlog %s %s; i2splay +/%s%s.mp3", memName, value, name, value))
   end
 end
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HD, muh/portal/HD/json, state") end)
-tasmota.add_rule("Event#HD", def (value) handleHD(value) end)
-## HDB
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
-tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/HDB.mp3") end)
 
 # Pendeluhr
 tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/PC.mp3") end, "pndluhr_halb")
 tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/PC2.mp3") end, "pndluhr_voll")
+```
 
-# boot
-if initBoot
-  initBoot = false
+```
+## GD
+
+# AutoLock after 10m
+def handleLock(value, setTimer)
+  var timer_name = "timerLock"
+  if setTimer == nil
+    setTimer = value
+  end
+  if number(value) == 1 && number(setTimer) == 1
+      tasmota.set_timer(60000, def (value) tasmota.set_power(0, true) end, timer_name)
+  else
+    tasmota.remove_timer(timer_name)
+  end
 end
+
+# MQTT Publish Status WatchDog
+tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("GD","Mem1","Mem6") end, "wd_GD")
+tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("GDL","Mem2","Mem7") end, "wd_GDL")
+
+# Switches
+tasmota.add_rule("Switch1#Boot", def (value) switch1 = value handleLock(value,1) end)
+tasmota.add_rule("Switch2#Boot", def (value) switch2 = value handleLock(value,0) end)
+tasmota.add_rule("Switch3#Boot", def (value) switch3 = value end)
+tasmota.add_rule("System#Boot", def (value) switch1 = value handleSwitch("GD",value,"Mem1") end)
+tasmota.add_rule("System#Boot", def (value) switch2 = value handleSwitch("GDL",value,"Mem2") end)
+#tasmota.add_rule("System#Boot", def (value) handleSwitch("GDW",switch3,"Mem3") end)
+tasmota.add_rule("Switch1#state", def (value) switch1 = value handleSwitch("GD",value,"Mem1","Mem6") handleLock(value) end)
+tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitch("GDL",value,"Mem2","Mem7") handleLock(value,0) end)
+#tasmota.add_rule("Switch3#state", def (value) switch3 = value handleSwitch("GDW",value,"Mem3","Mem8") end)
+tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/GDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+
+# Audio Volume
+tasmota.add_rule("System#Boot", def (value) tasmota.cmd("i2sgain 90") end)
+
+# MQTT Remote
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HD, muh/portal/HD/json, state") end)
+tasmota.add_rule("Event#HD", def (value) handlePortal("HD","Mem11",value) end)
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
+tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/HDB.mp3") end)
 ```

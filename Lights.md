@@ -46,8 +46,8 @@ ON Event#GD=0 DO Backlog event chcksr1=%time%; event chckss1=%time% ENDON
 ON event#chcksr1<%sunrise% DO IF (var2==0) event readT1; RuleTimer1 300; Power1 1 ENDIF ENDON
 ON event#chckss1>%sunset% DO IF (var2==0) event readT1; RuleTimer1 300; Power1 1 ENDIF ENDON
 ON mqtt#connected DO Subscribe GDP, muh/portal/GDP/json, state ENDON
-ON Event#GDP=1 DO Backlog event chcksr2=%time%; event readT1; event chckss2=%time% ENDON
 ON Event#GDP DO var2 %value% ENDON
+ON Event#GDP=1 DO Backlog event chcksr2=%time%; event readT1; event chckss2=%time% ENDON
 ON event#chcksr2<%sunrise% DO IF (var1==1) event readT1; RuleTimer1 300; Power1 1 ENDIF ENDON
 ON event#chckss2>%sunset% DO IF (var1==1) event readT1; RuleTimer1 300; Power1 1 ENDIF ENDON
 ```

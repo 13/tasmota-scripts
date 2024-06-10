@@ -99,8 +99,6 @@ ON event#checkdate$|-12-24T DO Var16 X ENDON
 ON event#checkdate$|-12-25T DO Var16 X ENDON
 ON event#checkdate$|-12-26T DO Var16 " ENDON
 
-
-
 ON event#HD_L=1 DO Power1 1 ENDON
 ON event#HD_U=1 DO Backlog Power2 1; Delay 2; Power2 0 ENDON
 ON event#HD_O=1 DO Backlog Power2 1; Delay 10; Power2 0 ENDON
@@ -108,46 +106,6 @@ ON mqtt#connected DO Subscribe RLY, muh/portal/RLY/cmnd ENDON
 ON Event#RLY=HD_L DO Power1 1 ENDON
 ON Event#RLY=HD_U DO Backlog Power2 1; Delay 2; Power2 0 ENDON
 ON Event#RLY=HD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
-```
-```
-Berry mix
-Rule1
-ON Switch1#Boot DO var1 %value% ENDON
-ON Switch2#Boot DO var2 %value% ENDON
-ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/HD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
-ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/HDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
-ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/HD/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/HDL/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch4#state DO Publish muh/portal/HDP/json {"state": %value%, "time": "%timestamp%"} ENDON
-
-Rule2
-ON Switch1#state DO var1 %value% ENDON
-ON Switch2#state DO var2 %value% ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/HD/json {"state": %mem1%, "time": "%mem6%"} ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/HDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
-ON Time#Minute=1 DO IF ((%var1%==1) AND (%var2%==0)) Power1 1 ENDIF ENDON
-ON Time#Minute=1411 DO IF ((%var1%==1) AND (%var2%==0)) Power1 1 ENDIF ENDON
-ON mqtt#connected DO Subscribe LEDG, muh/portal/G/json, state ENDON
-ON mqtt#connected DO Subscribe LEDGDL, muh/portal/GDL/json, state ENDON
-ON Event#LEDG DO Backlog var3 %value%; IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF ENDON
-ON Event#LEDGDL DO Backlog var4 %value%; IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF ENDON
-ON System#Boot DO i2sgain 30 ENDON
-
-Rule3
-ON FPrint#Id DO var9 %value% ENDON
-ON FPrint#Confidence>20 DO IF (%var2%==1) Power2 1; Delay 10; Power2 0 ELSE Power1 1 ENDIF ENDON
-ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/HD/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "HD"} ENDON
-ON FPrint#Confidence>20 DO i2splay +/RFID1.mp3 ENDON
-ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
-ON Event#G!=%mem11% DO Backlog mem11 %value%; i2splay +/G%value%.mp3 ENDON  
-ON mqtt#connected DO Subscribe GD, muh/portal/GD/json, state ENDON
-ON Event#GD!=%mem12% DO Backlog mem12 %value%; i2splay +/GD%value%.mp3 ENDON
-ON Switch1#state DO i2splay +/HD%value%%Var16%.mp3 ENDON
-ON Button1#state=10 DO Backlog i2sgain 100; i2splay +/HDB%Var16%.mp3; i2sgain 40 ENDON
-ON Time#Minute=60 DO Backlog event checkdate=%timestamp% ENDON
-ON event#checkdate$|-12-24T DO Var16 X ENDON
-ON event#checkdate$|-12-25T DO Var16 X ENDON
-ON event#checkdate$|-12-26T DO Var16 " ENDON
 ```
 
 ### Commands
@@ -168,126 +126,76 @@ muh/portal/RLY/cmnd GD_O
 - MQTT & HTTP API
 - Pendeluhr
 ```
-import string
-import mqtt
-
-# BUTTONS
-tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDBTN/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Button2#state=10", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish tasmota/cmnd/tasmota_9521A4/POWER 2") end)
-tasmota.add_rule("Button2#state=11", def (value) tasmota.cmd("Backlog i2splay +/click1.mp3; Publish muh/portal/RLY/cmnd G_T") end)
-tasmota.add_rule("Button2#state=12", def (value) tasmota.cmd("Backlog i2splay +/click2.mp3; Publish muh/portal/RLY/cmnd GD_O") end)
-tasmota.add_rule("Button2#state=13", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish muh/portal/RLY/cmnd GD_L") end)
-
-# MQTT & HTTP API
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
-tasmota.add_rule("Event#RLY=HD_L", def (value) tasmota.cmd("Power1 1") end)
-tasmota.add_rule("Event#RLY=HD_U", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
-tasmota.add_rule("Event#RLY=HD_O", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
-tasmota.add_rule("Event#HD_L=1", def (value) tasmota.cmd("Power1 1") end)
-tasmota.add_rule("Event#HD_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
-tasmota.add_rule("Event#HD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
-
-# Pendeluhr
-tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/PC.mp3") end, "pndluhr_halb")
-tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/PC2.mp3") end, "pndluhr_voll")
-
-# LED
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe LEDG, muh/portal/G/json, state") end)
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe LEDGDL, muh/portal/GDL/json, state") end)
-tasmota.add_rule("Event#LEDG", def (value) tasmota.cmd("var3 %value%") end)
-tasmota.add_rule("Event#LEDGDL", def (value) tasmota.cmd("var4 %value%") end)
-tasmota.add_rule("var3#state", def (value) tasmota.cmd("IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF") end)
-tasmota.add_rule("var4#state", def (value) tasmota.cmd("IF ((%var3%==1) AND (%var4%==1)) Power3 1 ELSEIF ((%var3%==0) AND (%var4%==0)) Power3 0 ELSE Power3 3 ENDIF") end)
 ```
 
 - Publish 
-```
-import string
-import mqtt
-
-var switch1 = 0
-var switch2 = 0
-var switch3 = 0
-
-def rule_mqtt_boot(name, value, mem_name_val)
-  if value != tasmota.cmd(mem_name_val)[mem_name_val]
-    tasmota.cmd(string.format("%s %d", mem_name_val, value))
-    mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true)
-  end
-end
-
-def rule_mqtt_changestate(name, value, mem_name_val, mem_name_tstamp)
-  if value != tasmota.cmd(mem_name_val)[mem_name_val]
-    tasmota.cmd(string.format("%s %d", mem_name_val, value))
-    tasmota.cmd(string.format("%s %s", mem_name_tstamp, tasmota.time_str(tasmota.rtc()['local']))
-    mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), true)
-  end
-end
-
-def rule_mqtt_watchdog(name, mem_name_val, mem_name_tstamp)
-    mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{'state': %d, 'tstamp': '%s'}", tasmota.cmd(mem_name_val)[mem_name_val], tasmota.cmd(mem_name_tstamp)[mem_name_tstamp]), true)
-end
-
-# MQTT BOOT publish & store
-tasmota.add_rule("Switch1#Boot", def (value) switch1 = value rule_boot("GD",value,"Mem1") end)
-tasmota.add_rule("Switch2#Boot", def (value) switch2 = value rule_boot("GDL",value,"Mem2") end)
-
-# MQTT publish & store
-tasmota.add_rule("Switch1#state!=%mem1%", def (value) switch1 = value rule_mqtt_changestate("GD",value,"Mem1","Mem6") end)
-tasmota.add_rule("Switch2#state!=%mem2%", def (value) switch2 = value rule_mqtt_changestate("GDL",value,"Mem2","Mem7") end)
-
-# MQTT states watchdog
-tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GD","Mem1","Mem6") end)
-tasmota.add_rule("Time#Minute|1", def (value) rule_mqtt_watchdog("GDL","Mem2","Mem7") end)
-
-# PIR
-tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-
-# AutoLock
-tasmota.add_rule("Switch1#Boot=1", def (value) tasmota.cmd("RuleTimer1 600") end)
-tasmota.add_rule("Switch2#Boot=1", def (value) tasmota.cmd("RuleTimer1 0") end)
-tasmota.add_rule("Switch1#State", def (value) if value == 1 tasmota.cmd("RuleTimer1 600") else tasmota.cmd("RuleTimer1 0") end end)
-tasmota.add_rule("Switch2#State=1", def (value) tasmota.cmd("RuleTimer1 0") end)
-tasmota.add_rule("Rules#Timer=1", def (value) tasmota.cmd("Power1 1") end)
-
-# Audio
-tasmota.add_rule("System#Boot", def (value) tasmota.cmd("i2sgain 100") end)
-tasmota.add_rule("Time#Minute|30", def (value) tasmota.cmd("i2splay +/PC.mp3") end)
-tasmota.add_rule("RDM6300#UID", def (value) tasmota.cmd("i2splay +/RFID1.mp3") end)
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HD, muh/portal/HD/json, state") end)
-tasmota.add_rule("Event#HD!=%mem11%", def (value) tasmota.cmd(string.format("Backlog mem11 %d; i2splay +/HD%d.mp3", value, value)) end)
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
-tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/HDB.mp3") end)
 
 # 2024
-# Hittl Plug
+### Hittl Plug
+```
 tasmota.add_cron("0 30 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "summer_on")
 tasmota.add_cron("0 0 23 * 6-9 *", def (value) tasmota.set_power(0, false) end, "summer_off")
 tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (value) tasmota.set_power(0, false) end, "winter_off")
+```
 
-import string
-import mqtt
+```
+## HD
 
-# BUTTONS
-tasmota.add_rule("Button1#state", def (value) mqtt.publish("muh/portal/HDB/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Button2#state", def (value) mqtt.publish("muh/portal/HDBTN/json", string.format("{'state': %d, 'tstamp': '%s'}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Button2#state=10", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish tasmota/cmnd/tasmota_9521A4/POWER 2") end)
-tasmota.add_rule("Button2#state=11", def (value) tasmota.cmd("Backlog i2splay +/click1.mp3; Publish muh/portal/RLY/cmnd G_T") end)
-tasmota.add_rule("Button2#state=12", def (value) tasmota.cmd("Backlog i2splay +/click2.mp3; Publish muh/portal/RLY/cmnd GD_O") end)
-tasmota.add_rule("Button2#state=13", def (value) tasmota.cmd("Backlog i2splay +/click0.mp3; Publish muh/portal/RLY/cmnd GD_L") end)
+# LED
+def handleLED(name, value)
+  if name == "LEDG"
+    LEDG = value
+  end
+  if name == "LEDGDL"
+    LEDGDL = value
+  end
+  if LEDG == 1 && LEDGDL == 1
+    tasmota.cmd("Power3 1")
+  elif LEDG == 0 && LEDGDL == 0
+    tasmota.cmd("Power3 0")
+  else
+    tasmota.cmd("Power3 3")
+  end
+end
 
-# MQTT & HTTP API
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
-tasmota.add_rule("Event#RLY=HD_L", def (value) tasmota.cmd("Power1 1") end)
-tasmota.add_rule("Event#RLY=HD_U", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
-tasmota.add_rule("Event#RLY=HD_O", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
-tasmota.add_rule("Event#HD_L=1", def (value) tasmota.cmd("Power1 1") end)
-tasmota.add_rule("Event#HD_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
-tasmota.add_rule("Event#HD_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
+# MQTT Publish Status WatchDog
+tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("HD","Mem1","Mem6") end, "wd_HD")
+tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("HDL","Mem2","Mem7") end, "wd_HDL")
 
-# pendeluhr
-tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/PC.mp3") end, "pndluhr_halb")
-tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/PC2.mp3") end, "pndluhr_voll")
+## Handle Sensors
+tasmota.add_rule("Switch1#Boot", def (value) switch1 = value end)
+tasmota.add_rule("Switch2#Boot", def (value) switch2 = value end)
+tasmota.add_rule("System#Boot", def (value) switch1 = value handleSwitch("HD",value,"Mem1") end)
+tasmota.add_rule("System#Boot", def (value) switch2 = value handleSwitch("HDL",value,"Mem2") end)
+tasmota.add_rule("Switch1#state", def (value) switch1 = value tasmota.cmd(string.format("i2splay +/HD%s%s.mp3", value, xmas)) handleSwitch("HD",value,"Mem1","Mem6") end)
+tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitch("HDL",value,"Mem2","Mem7") end)
+tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/HDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 
+# Audio Volume
+tasmota.add_rule("System#Boot", def (value) tasmota.cmd("i2sgain 30") end)
+
+# MQTT
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe G, muh/portal/G/json, state") end)
+tasmota.add_rule("Event#G", def (value) handlePortal("G","Mem12",value) handleLED("LEDG",number(value)) end)
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GD, muh/portal/GD/json, state") end)
+tasmota.add_rule("Event#GD", def (value) handlePortal("GD","Mem11",value) end)
+# LED
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe LEDGDL, muh/portal/GDL/json, state") end)
+tasmota.add_rule("Event#LEDGDL", def (value) handleLED("LEDGDL",number(value)) end)
+
+# Buttons
+tasmota.add_rule("Button1#state", def (value) tasmota.publish("muh/portal/HDB/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Button1#state=10", def (value) tasmota.cmd(string.format("Backlog i2sgain 100; i2splay +/HDB%s.mp3; i2sgain 40", xmas)) end)
+tasmota.add_rule("Button2#state", def (value) tasmota.publish("muh/portal/HDBTN/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Button2#state=10", def (value) tasmota.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2") tasmota.cmd("i2splay +/click0.mp3") end)
+tasmota.add_rule("Button2#state=11", def (value) tasmota.publish("muh/portal/RLY/cmnd", "G_T") tasmota.cmd("i2splay +/click1.mp3") end)
+tasmota.add_rule("Button2#state=12", def (value) tasmota.publish("muh/portal/RLY/cmnd", "GD_O") tasmota.cmd("i2splay +/click2.mp3") end)
+tasmota.add_rule("Button2#state=13", def (value) tasmota.publish("muh/portal/RLY/cmnd", "GD_L") tasmota.cmd("i2splay +/click0.mp3") end)
+
+# xmas
+tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
+tasmota.add_cron("0 0,30 * 27 12 *", def (value) xmas = "" end, "xmas_off")
+
+# AutoLock Night
+tasmota.add_cron("0 0 0,1 * * *", def (value) if switch1 == 1 && switch2 == 0 tasmota.set_power(0, true) end end, "autolock")
 ```
