@@ -203,7 +203,7 @@ def handleLock(value, setTimer)
     setTimer = value
   end
   if number(value) == 1 && number(setTimer) == 1
-      tasmota.set_timer(60000, def (value) tasmota.set_power(0, true) end, timer_name)
+      tasmota.set_timer(600000, def (value) tasmota.set_power(0, true) end, timer_name)
   else
     tasmota.remove_timer(timer_name)
   end
