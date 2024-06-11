@@ -85,13 +85,13 @@ Backlog SwitchMode 1
 ```
 ### Rules
 #### Rule1
-- Turn OFF after 30s
+- Turn OFF after 20s
 ```
 Rule1
-ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 30 ENDIF ENDON
+ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 20 ENDIF ENDON
 ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/G_TREPPE/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
 ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/G_TREPPE/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 30 ELSE RuleTimer1 0 ENDIF ENDON
+ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 20 ELSE RuleTimer1 0 ENDIF ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 
 Rule2
