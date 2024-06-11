@@ -139,8 +139,8 @@ tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (value) tasmota.set_power(0, fals
 ```
 
 ```
-## HD
-
+######## HD
+print(string.format("MUH: Loading custom %s...", devicename))
 # LED
 def handleLED(name, value)
   if name == "LEDG"
@@ -163,8 +163,6 @@ tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("HD","Mem1","Mem6")
 tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("HDL","Mem2","Mem7") end, "wd_HDL")
 
 ## Handle Sensors
-tasmota.add_rule("Switch1#Boot", def (value) switch1 = value end)
-tasmota.add_rule("Switch2#Boot", def (value) switch2 = value end)
 tasmota.add_rule("System#Boot", def (value) handleSwitch("HD",switch1,"Mem1") end)
 tasmota.add_rule("System#Boot", def (value) handleSwitch("HDL",switch2,"Mem2") end)
 tasmota.add_rule("Switch1#state", def (value) switch1 = value tasmota.cmd(string.format("i2splay +/HD%s%s.mp3", value, xmas)) handleSwitch("HD",value,"Mem1","Mem6") end)
@@ -197,5 +195,5 @@ tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
 tasmota.add_cron("0 0,30 * 27 12 *", def (value) xmas = "" end, "xmas_off")
 
 # AutoLock Night
-tasmota.add_cron("0 0 0,1 * * *", def (value) if switch1 == 1 && switch2 == 0 tasmota.set_power(0, true) end end, "autolock")
+tasmota.add_cron("0 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.set_power(0, true) end end, "autolock")
 ```
