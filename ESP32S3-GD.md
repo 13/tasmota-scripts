@@ -132,12 +132,14 @@ import string
 import mqtt
 
 var devicename = tasmota.cmd("DeviceName")['DeviceName']
-var switch1 = 0
-var switch2 = 0
-var switch3 = 0
+var switch1 = tasmota.get_switches()[0]
+var switch2 = tasmota.get_switches()[1]
+var switch3 = tasmota.get_switches()[2]
 var LEDG = 0
 var LEDGDL = 0
 var xmas = ""
+
+print(string.format("MUH: Loading %s...", devicename))
 
 # MQTT Publish & Store Status
 def handleSwitch(name, value, memNameVal, memNameTstamp)
@@ -195,11 +197,9 @@ end
 # Pendeluhr
 tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/PC.mp3") end, "pndluhr_halb")
 tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/PC2.mp3") end, "pndluhr_voll")
-```
 
-```
-## GD
-
+######## GD
+print(string.format("MUH: Loading custom %s...", devicename))
 # AutoLock after 10m
 def handleLock(value, setTimer)
   var timer_name = "timerLock"
@@ -218,9 +218,9 @@ tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("GD","Mem1","Mem6")
 tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("GDL","Mem2","Mem7") end, "wd_GDL")
 
 # Switches
-tasmota.add_rule("Switch1#Boot", def (value) switch1 = value handleLock(value,1) end)
-tasmota.add_rule("Switch2#Boot", def (value) switch2 = value handleLock(value,0) end)
-tasmota.add_rule("Switch3#Boot", def (value) switch3 = value end)
+print(string.format("MUH: Adding Switch Rules..."))
+tasmota.add_rule("Switch1#Boot", def (value) handleLock(switch1,1) end)
+tasmota.add_rule("Switch2#Boot", def (value) handleLock(switch2,0) end)
 tasmota.add_rule("System#Boot", def (value) handleSwitch("GD",switch1,"Mem1") end)
 tasmota.add_rule("System#Boot", def (value) handleSwitch("GDL",switch2,"Mem2") end)
 #tasmota.add_rule("System#Boot", def (value) handleSwitch("GDW",switch3,"Mem3") end)
