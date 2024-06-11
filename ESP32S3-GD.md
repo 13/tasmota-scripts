@@ -219,8 +219,8 @@ tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("GDL","Mem2","Mem7"
 
 # Switches
 print(string.format("MUH: Adding Switch Rules..."))
-tasmota.add_rule("Switch1#Boot", def (value) handleLock(switch1,1) end)
-tasmota.add_rule("Switch2#Boot", def (value) handleLock(switch2,0) end)
+tasmota.add_rule("System#Init", def (value) handleLock(switch1,1) end)
+tasmota.add_rule("System#Init", def (value) handleLock(switch2,0) end)
 tasmota.add_rule("System#Boot", def (value) handleSwitch("GD",switch1,"Mem1") end)
 tasmota.add_rule("System#Boot", def (value) handleSwitch("GDL",switch2,"Mem2") end)
 #tasmota.add_rule("System#Boot", def (value) handleSwitch("GDW",switch3,"Mem3") end)
