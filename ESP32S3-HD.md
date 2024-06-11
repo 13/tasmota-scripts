@@ -165,8 +165,8 @@ tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("HDL","Mem2","Mem7"
 ## Handle Sensors
 tasmota.add_rule("Switch1#Boot", def (value) switch1 = value end)
 tasmota.add_rule("Switch2#Boot", def (value) switch2 = value end)
-tasmota.add_rule("System#Boot", def (value) switch1 = value handleSwitch("HD",value,"Mem1") end)
-tasmota.add_rule("System#Boot", def (value) switch2 = value handleSwitch("HDL",value,"Mem2") end)
+tasmota.add_rule("System#Boot", def (value) handleSwitch("HD",switch1,"Mem1") end)
+tasmota.add_rule("System#Boot", def (value) handleSwitch("HDL",switch2,"Mem2") end)
 tasmota.add_rule("Switch1#state", def (value) switch1 = value tasmota.cmd(string.format("i2splay +/HD%s%s.mp3", value, xmas)) handleSwitch("HD",value,"Mem1","Mem6") end)
 tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitch("HDL",value,"Mem2","Mem7") end)
 tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/HDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
