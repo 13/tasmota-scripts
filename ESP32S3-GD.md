@@ -161,7 +161,11 @@ end
 # FPrint
 def handleFprint(values)
  if devicename == "HD"
-   tasmota.cmd("Power2 1; Delay 10; Power2 0 ELSE Power1 1")
+   if switch2 == 1
+     tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0")
+   else
+     tasmota.cmd("Power1 1")
+   end
  end
  if devicename == "GD"
    tasmota.publish("muh/portal/RLY/cmnd", "G_T")
