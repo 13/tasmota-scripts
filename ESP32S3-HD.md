@@ -185,10 +185,11 @@ tasmota.add_rule("Event#LEDGDL", def (value) handleLED("LEDGDL",number(value)) e
 tasmota.add_rule("Button1#state", def (value) tasmota.publish("muh/portal/HDB/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 tasmota.add_rule("Button1#state=10", def (value) tasmota.cmd(string.format("Backlog i2sgain 100; i2splay +/HDB%s.mp3; i2sgain 40", xmas)) end)
 tasmota.add_rule("Button2#state", def (value) tasmota.publish("muh/portal/HDBTN/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Button2#state=10", def (value) tasmota.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2") tasmota.cmd("i2splay +/click0.mp3") end)
-tasmota.add_rule("Button2#state=11", def (value) tasmota.publish("muh/portal/RLY/cmnd", "G_T") tasmota.cmd("i2splay +/click1.mp3") end)
-tasmota.add_rule("Button2#state=12", def (value) tasmota.publish("muh/portal/RLY/cmnd", "GD_O") tasmota.cmd("i2splay +/click2.mp3") end)
-tasmota.add_rule("Button2#state=13", def (value) tasmota.publish("muh/portal/RLY/cmnd", "GD_L") tasmota.cmd("i2splay +/click0.mp3") end)
+tasmota.add_rule("Button2#state=10", def (value) tasmota.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2") tasmota.cmd("i2splay +/sfx/click0.mp3") end)
+tasmota.add_rule("Button2#state=11", def (value) tasmota.publish("muh/portal/RLY/cmnd", "G_T") tasmota.cmd("i2splay +/say/G_T.mp3") end)
+tasmota.add_rule("Button2#state=12", def (value) tasmota.publish("muh/portal/RLY/cmnd", "GD_O") tasmota.cmd("i2splay +/say/GD_O.mp3") end)
+# HOLD
+tasmota.add_rule("Button2#state=4", def (value) if volume == tasmota.cmd(string.format("i2sgain %d", volume)) end)
 
 # xmas
 tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
