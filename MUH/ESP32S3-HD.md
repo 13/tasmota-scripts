@@ -35,7 +35,7 @@
 Backlog IPAddress1 192.168.22.92; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
 Backlog DeviceName HD; FriendlyName1 HD; 
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
-SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
+SetOption73 1; SetOption32 20; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime1 2; PulseTime2 0;
 ```
 ### Rules
@@ -125,10 +125,6 @@ muh/portal/RLY/cmnd GD_O
 - Button Rules
 - MQTT & HTTP API
 - Pendeluhr
-```
-```
-
-- Publish 
 
 # 2024
 ### Hittl Plug
@@ -136,65 +132,4 @@ muh/portal/RLY/cmnd GD_O
 tasmota.add_cron("0 30 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "summer_on")
 tasmota.add_cron("0 0 23 * 6-9 *", def (value) tasmota.set_power(0, false) end, "summer_off")
 tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (value) tasmota.set_power(0, false) end, "winter_off")
-```
-
-```
-######## HD
-print(string.format("MUH: Loading custom %s...", devicename))
-# LED
-def handleLED(name, value)
-  if name == "LEDG"
-    LEDG = value
-  end
-  if name == "LEDGDL"
-    LEDGDL = value
-  end
-  if LEDG == 1 && LEDGDL == 1
-    tasmota.cmd("Power3 1")
-  elif LEDG == 0 && LEDGDL == 0
-    tasmota.cmd("Power3 0")
-  else
-    tasmota.cmd("Power3 3")
-  end
-end
-
-# MQTT Publish Status WatchDog
-tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("HD","Mem1","Mem6") end, "wd_HD")
-tasmota.add_cron("*/59 * * * * *", def (value) publishSwitch("HDL","Mem2","Mem7") end, "wd_HDL")
-
-## Handle Sensors
-tasmota.add_rule("System#Boot", def (value) handleSwitch("HD",switch1,"Mem1") end)
-tasmota.add_rule("System#Boot", def (value) handleSwitch("HDL",switch2,"Mem2") end)
-tasmota.add_rule("Switch1#state", def (value) switch1 = value tasmota.cmd(string.format("i2splay +/HD%s%s.mp3", value, xmas)) handleSwitch("HD",value,"Mem1","Mem6") end)
-tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitch("HDL",value,"Mem2","Mem7") end)
-tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/HDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-
-# Audio Volume
-tasmota.add_rule("System#Boot", def (value) tasmota.cmd("i2sgain 30") end)
-
-# MQTT
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe G, muh/portal/G/json, state") end)
-tasmota.add_rule("Event#G", def (value) handlePortal("G","Mem12",value) handleLED("LEDG",number(value)) end)
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GD, muh/portal/GD/json, state") end)
-tasmota.add_rule("Event#GD", def (value) handlePortal("GD","Mem11",value) end)
-# LED
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe LEDGDL, muh/portal/GDL/json, state") end)
-tasmota.add_rule("Event#LEDGDL", def (value) handleLED("LEDGDL",number(value)) end)
-
-# Buttons
-tasmota.add_rule("Button1#state", def (value) tasmota.publish("muh/portal/HDB/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Button1#state=10", def (value) tasmota.cmd(string.format("Backlog i2sgain 100; i2splay +/HDB%s.mp3; i2sgain 40", xmas)) end)
-tasmota.add_rule("Button2#state", def (value) tasmota.publish("muh/portal/HDBTN/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Button2#state=10", def (value) tasmota.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2") tasmota.cmd("i2splay +/sfx/click0.mp3") end)
-tasmota.add_rule("Button2#state=11", def (value) tasmota.publish("muh/portal/RLY/cmnd", "G_T") tasmota.cmd("i2splay +/say/G_T.mp3") end)
-tasmota.add_rule("Button2#state=12", def (value) tasmota.publish("muh/portal/RLY/cmnd", "GD_O") tasmota.cmd("i2splay +/say/GD_O.mp3") end)
-# HOLD
-tasmota.add_rule("Button2#state=4", def (value) if volume == tasmota.cmd(string.format("i2sgain %d", volume)) end)
-
-# xmas
-tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
-tasmota.add_cron("0 0,30 * 27 12 *", def (value) xmas = "" end, "xmas_off")
-
-# AutoLock Night
-tasmota.add_cron("0 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.set_power(0, true) end end, "autolock")
 ```
