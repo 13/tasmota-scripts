@@ -21,7 +21,7 @@ tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3"
 # MQTT Switch Publish & Store Status
 def handleSwitchP(name, state, saveTimeOn)
   #print(string.format("MUH: handleSwitchP() %s %d,%s,%d...", name,state,saveTimeOn,int(persist.member(name))))
-  if state != int(persist.member(name))
+  if int(state) != int(persist.member(name))
     var tstamp = tasmota.time_str(tasmota.rtc()['local'])
     #print(string.format("MUH: handleSwitchP() %s write %d,%s...", name,state,tstamp))
     persist.setmember(string.format("%s",name),int(state))
@@ -43,8 +43,9 @@ end
 
 # MQTT Remote Switch
 def handleRemoteSwitchP(name,state)
-  if state != int(persist.member(name))
-    #print(string.format("MUH: handleRemoteSwitchP() %s write %d...", name,state))
+  #print(string.format("MUH: handleRemoteSwitchP() %s %d,%d...", name,state,persist.member(name)))
+  if int(state) != int(persist.member(name))
+    #print(string.format("MUH: handleRemoteSwitchP() write %s %d,%d...", name,state,persist.member(name)))
     persist.setmember(string.format("%s",name),int(state))
     tasmota.cmd(string.format("i2splay +/sfx/%s%d.mp3",name,state))
   end

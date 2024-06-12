@@ -97,8 +97,8 @@ tasmota.add_rule("Button2#state", def (value) handleButton("HDBTN",value) end)
 ## MQTT Subscribe Remote Switches
 ### say & led
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe G, muh/portal/G/json, state") end)
-tasmota.add_rule("Event#G", def (value) handleRemoteSwitchP("G",value) handleLED("G",int(value)) end)
+tasmota.add_rule("Event#G", def (value) handleRemoteSwitchP("G",int(value)) handleLED("G",int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GD, muh/portal/GD/json, state") end)
-tasmota.add_rule("Event#GD", def (value) handleRemoteSwitchP("GD",value) end)
+tasmota.add_rule("Event#GD", def (value) handleRemoteSwitchP("GD",int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GDL, muh/portal/GDL/json, state") end)
 tasmota.add_rule("Event#GDL", def (value) handleLED("GDL",int(value)) end)

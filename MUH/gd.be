@@ -47,6 +47,6 @@ tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/GDP/js
 ## MQTT Subscribe Remote Switches
 ### sfx
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HD, muh/portal/HD/json, state") end)
-tasmota.add_rule("Event#HD", def (value) handleRemoteSwitchP("HD",value) end)
+tasmota.add_rule("Event#HD", def (value) handleRemoteSwitchP("HD",int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
 tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/sfx/HDB.mp3") end)
