@@ -14,6 +14,7 @@ print(string.format("MUH: Loading autoexec.be %s...", devicename))
 # CRON
 ## Persist
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
+#tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
 ## Pendeluhr
 tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pndluhr_halb")
 tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pndluhr_voll")
