@@ -1,5 +1,6 @@
 import string
 import mqtt
+import persist
 
 var devicename = tasmota.cmd("DeviceName")['DeviceName']
 var switch1 = tasmota.get_switches()[0]
@@ -8,47 +9,54 @@ var switch3 = tasmota.get_switches()[2]
 
 var volume = 30
 
-print(string.format("MUH: Loading autoexec.be on %s...", devicename))
+print(string.format("MUH: Loading autoexec.be %s...", devicename))
 
 # CRON
+## Persist
+tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
 ## Pendeluhr
 tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pndluhr_halb")
 tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pndluhr_voll")
 
 # MQTT Switch Publish & Store Status
-def handleSwitch(name, value, memNameVal, memNameTstamp)
-  if number(value) != number(tasmota.cmd(memNameVal)[memNameVal])
+def handleSwitchP(name, state, saveTimeOn)
+  #print(string.format("MUH: handleSwitchP() %s %d,%s,%d...", name,state,saveTimeOn,int(persist.member(name))))
+  if state != int(persist.member(name))
     var tstamp = tasmota.time_str(tasmota.rtc()['local'])
-    tasmota.cmd(string.format("%s %d", memNameVal, value))
-    if memNameTstamp != nil
-      tasmota.cmd(string.format("%s %s", memNameTstamp, tstamp))
+    #print(string.format("MUH: handleSwitchP() %s write %d,%s...", name,state,tstamp))
+    persist.setmember(string.format("%s",name),int(state))
+    if !persist.has(string.format("%s_TIME",name)) || saveTimeOn != nil
+      #print(string.format("MUH: handleSwitchP() #2 %s write %s,%s...", name,state,tstamp))
+      persist.setmember(string.format("%s_TIME",name),string.format("%s",tstamp))
     end
-    tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", value, tstamp), true)
+    tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tstamp), true)
   end
 end
 
 # MQTT Publish only
-def publishSwitch(name, memNameVal, memNameTstamp)
-  var value = tasmota.cmd(memNameVal)[memNameVal]
-  var tstamp = tasmota.cmd(memNameTstamp)[memNameTstamp]
-  tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", value, tstamp), true)
+def publishSwitchP(name)
+  var state = int(persist.member(name))
+  var tstamp = persist.member(string.format("%s_TIME",name))
+  #print(string.format("MUH: publishSwitchP() %s %d,%s...", name,state,tstamp))
+  tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tstamp), true)
 end
 
 # MQTT Remote Switch
-def handleRemoteSwitch(name,memName,value)
-  var memNameValue = tasmota.cmd(string.format("%s", memName))[memName]
-  if number(value) != number(memNameValue)
-    tasmota.cmd(string.format("Backlog %s %s; i2splay +/sfx/%s%s.mp3", memName, value, name, value))
+def handleRemoteSwitchP(name,state)
+  if state != int(persist.member(name))
+    #print(string.format("MUH: handleRemoteSwitchP() %s write %d...", name,state))
+    persist.setmember(string.format("%s",name),int(state))
+    tasmota.cmd(string.format("i2splay +/sfx/%s%d.mp3",name,state))
   end
 end
 
 # Fingerprint
-def handleFPrint(values)
+def handleFPrint(values,sw1,sw2)
  var soundFPrint = 1
  if devicename == "HD"
-   if switch1 && switch2
+   if sw1 && sw2
      tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0")
-   elif switch1 && !switch2
+   elif sw1 && !sw2
      tasmota.cmd("Power1 1")
    else
      soundFPrint = 2
@@ -63,8 +71,6 @@ def handleFPrint(values)
 end
 
 # RULES
-## FPrint
-tasmota.add_rule(["FPrint#Id","FPrint#Confidence>20"], def (values) handleFPrint(values) end)
 ## MQTT & HTTP API
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
 tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) tasmota.cmd("Power1 1") end)
