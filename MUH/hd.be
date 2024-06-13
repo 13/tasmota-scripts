@@ -68,8 +68,8 @@ end
 
 # CRON
 ## MQTT Publish Status WatchDog
-tasmota.add_cron("*/59 * * * * *", def (value) publishSwitchP("HD") end, "wd_HD")
-tasmota.add_cron("*/59 * * * * *", def (value) publishSwitchP("HDL") end, "wd_HDL")
+tasmota.add_cron("0 */2 * * * *", def (value) publishSwitchP("HD") end, "wd_HD")
+tasmota.add_cron("0 */2 * * * *", def (value) publishSwitchP("HDL") end, "wd_HDL")
 ## AutoLock Night
 tasmota.add_cron("0 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.set_power(0, true) end end, "autolock")
 ## Xmas Easteregg

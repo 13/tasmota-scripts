@@ -27,8 +27,8 @@ end
 
 # CRON
 ## MQTT Publish Status WatchDog
-tasmota.add_cron("*/59 * * * * *", def (value) publishSwitchP("GD") end, "wd_GD")
-tasmota.add_cron("*/59 * * * * *", def (value) publishSwitchP("GDL") end, "wd_GDL")
+tasmota.add_cron("0 */2 * * * *", def (value) publishSwitchP("GD") end, "wd_GD")
+tasmota.add_cron("0 */2 * * * *", def (value) publishSwitchP("GDL") end, "wd_GDL")
 
 # RULES
 ## Audio Volume
