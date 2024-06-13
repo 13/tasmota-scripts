@@ -7,16 +7,17 @@ print(string.format("MUH: Loading %s.be...", devicename))
 
 var switch1 = tasmota.get_switches()[0] # GD
 var switch2 = tasmota.get_switches()[1] # GDL
-var timerMillis = 600000 # AutoLock Timer
-volume = 90 # Audio Volume
+
+var timerMillis = 600000      # AutoLock Timer
+volume = 90                   # Audio Volume
 
 # AutoLock
-def handleLock(switchState, timerOn)
+def handleLock(swState, timerOn)
   var timerName = "timerLock"
   if timerOn == nil
-    timerOn = switchState
+    timerOn = swState
   end
-  if switchState && timerOn
+  if swState && timerOn
     tasmota.remove_timer(timerName)
     tasmota.set_timer(timerMillis, def (value) tasmota.set_power(0, true) end, timerName)
   else

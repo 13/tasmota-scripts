@@ -3,9 +3,6 @@ import mqtt
 import persist
 
 var devicename = tasmota.cmd("DeviceName")['DeviceName']
-var switch1 = tasmota.get_switches()[0]
-var switch2 = tasmota.get_switches()[1]
-var switch3 = tasmota.get_switches()[2]
 
 var volume = 30
 

@@ -5,14 +5,13 @@ import mqtt
 
 print(string.format("MUH: Loading %s.be...", devicename))
 
-# {"GD":"1","HD_TIME":"2024-06-12T22:26:39","G":"1","HDL":0,"HDL_TIME":"2024-06-12T22:48:30","HD":1}
 var switch1 = tasmota.get_switches()[0] # HD
 var switch2 = tasmota.get_switches()[1] # HDL
 
 var gState = false
 var gdlState = false
 var ledChange = true
-var xmas = ""
+var xmas = ""           # Xmas Easteregg
 
 # Buttons
 def handleButton(name,state)
