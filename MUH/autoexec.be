@@ -16,6 +16,10 @@ tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
 tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pndluhr_halb")
 tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pndluhr_voll")
 
+#- MQTT Handler
+def mqtt_handler(topic, idx, payload_s, payload_b)
+  print("MUH: MQTT topic:",topic,", payload:",payload_s)
+end-#
 # MQTT Switch Publish & Store Status
 def handleSwitchP(name, state, saveTimeOn)
   #print(string.format("MUH: handleSwitchP() %s %d,%s,%d...", name,state,saveTimeOn,int(persist.member(name))))
