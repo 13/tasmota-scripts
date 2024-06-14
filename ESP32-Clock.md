@@ -38,7 +38,10 @@ Rule1
   ON var11#state DO DisplayDimmer %var11% ENDON
   
   ON Minute=1140 DO DisplayDimmer 13 ENDON
-  ON Minute=390 DO DisplayDimmer 100 ENDON
+  ON Minute=419 DO DisplayDimmer 100 ENDON
+
   ON Minute=420 DO DisplayScrollText Guten Morgen, 2 ENDON
-  ON Minute=1200 DO DisplayScrollText Gute Nacht, 2 ENDON
+  ON Minute=450 DO DisplayScrollText Guten Morgen, 2 ENDON
+  ON Minute=1320 DO DisplayScrollText Gute Nacht, 2 ENDON
+  ON Minute=1350 DO DisplayScrollText Gute Nacht, 2 ENDON
 ```
