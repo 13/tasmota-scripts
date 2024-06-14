@@ -47,9 +47,15 @@ IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPA
 DeviceName GD; FriendlyName1 GD_L; FriendlyName2 GD_U; 
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
-PulseTime1 2; PulseTime2 0
-
+PulseTime1 2; PulseTime2 0;
+TelePeriod 3600
 #SetOption56 1;
+```
+### Fingerprint
+```
+FPEnroll <x>
+FPDelete <x>
+FPCount
 ```
 ### Rules
 #### Rule 1

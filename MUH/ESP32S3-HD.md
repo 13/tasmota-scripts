@@ -34,10 +34,11 @@
 ```
 Backlog Template {"NAME":"ESP32S3-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,32,33,226,1,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}; Module 0;
 IPAddress1 192.168.22.92; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
-DeviceName HD; b
+DeviceName HD; FriendlyName1 HD_L; FriendlyName2 HD_U; FriendlyName3 HD_LED; 
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption32 20; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
-PulseTime1 2; PulseTime2 0
+PulseTime1 2; PulseTime2 0;
+TelePeriod 3600
 ```
 ### Rules
 #### Rule 1
