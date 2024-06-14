@@ -32,11 +32,12 @@
 
 ## Settings
 ```
-Backlog IPAddress1 192.168.22.92; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
-Backlog DeviceName HD; FriendlyName1 HD; 
+Backlog Template {"NAME":"ESP32S3-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,32,33,226,1,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}; Module 0;
+IPAddress1 192.168.22.92; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
+DeviceName HD; b
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption32 20; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
-PulseTime1 2; PulseTime2 0;
+PulseTime1 2; PulseTime2 0
 ```
 ### Rules
 #### Rule 1
@@ -110,26 +111,12 @@ ON Event#RLY=HD_O DO Backlog Power2 1; Delay 10; Power2 0 ENDON
 
 ### Commands
 ```
-http://192.168.22.199/cm?cmnd=event%20G%5FT=1
-http://192.168.22.199/cm?cmnd=event%20GD%5FL=1
-http://192.168.22.199/cm?cmnd=event%20GD%5FU=1
-http://192.168.22.199/cm?cmnd=event%20GD%5FO=1
+http://192.168.22.92/cm?cmnd=event%20G%5FT=1
+http://192.168.22.92/cm?cmnd=event%20GD%5FL=1
+http://192.168.22.92/cm?cmnd=event%20GD%5FU=1
+http://192.168.22.92/cm?cmnd=event%20GD%5FO=1
 muh/portal/RLY/cmnd G_T
 muh/portal/RLY/cmnd GD_L
 muh/portal/RLY/cmnd GD_U
 muh/portal/RLY/cmnd GD_O
-```
-
-## Berry
-### autoexec.be
-- Button Rules
-- MQTT & HTTP API
-- Pendeluhr
-
-# 2024
-### Hittl Plug
-```
-tasmota.add_cron("0 30 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "summer_on")
-tasmota.add_cron("0 0 23 * 6-9 *", def (value) tasmota.set_power(0, false) end, "summer_off")
-tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (value) tasmota.set_power(0, false) end, "winter_off")
 ```

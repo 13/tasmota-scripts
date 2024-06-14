@@ -1,7 +1,7 @@
 # ESP32-S3 GARAGEDOOR
 ## Template
 ```
-{"NAME":"ESP32-S3-DevKitC-GD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,1,1,1,1,6016,1,1,1,1,1,3616,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
+{"NAME":"ESP32-S3-DevKitC-GD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,1,1,1,1,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
 ```
 ## Table
 | NAME | MODULE | GPIO | PIN | + | - | DESC |
@@ -42,11 +42,14 @@ sensors
 
 ## Settings
 ```
-Backlog IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
-Backlog DeviceName GD; FriendlyName1 GD; 
+Backlog Template {"NAME":"ESP32S3-GD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,1,1,1,1,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}; Module 0;
+IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1
+DeviceName GD; FriendlyName1 GD_L; FriendlyName2 GD_U; 
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
-PulseTime1 2; PulseTime2 0;
+PulseTime1 2; PulseTime2 0
+
+#SetOption56 1;
 ```
 ### Rules
 #### Rule 1
@@ -96,23 +99,6 @@ ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
 ON Event#HDB DO i2splay +/HDB.mp3 ENDON
 ```
 
------
-## SpeakerBox
-```
-## SpeakerBox
-Rule1
-ON System#Boot DO i2sgain 100 ENDON
-ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
-ON Event#HDB DO i2splay +/HDB.mp3 ENDON
-
-Rule2
-ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
-ON Event#HD!=%mem10% DO Backlog mem10 %value%; i2splay +/HD%value%.mp3 ENDON
-ON mqtt#connected DO Subscribe G, muh/portal/G/json, state ENDON
-ON Event#G!=%mem11% DO Backlog mem11 %value%; i2splay +/G%value%.mp3 ENDON  
-ON mqtt#connected DO Subscribe GD, muh/portal/GD/json, state ENDON
-ON Event#GD!=%mem12% DO Backlog mem12 %value%; i2splay +/GD%value%.mp3 ENDIF ENDON
-```
 ### Commands
 ```
 http://192.168.22.91/cm?cmnd=event%20G%5FT=1

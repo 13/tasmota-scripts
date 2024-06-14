@@ -302,3 +302,10 @@ Rule3
 #define ADE7880_BPGAIN_INIT -1347556 // powers, totactive, b
 #define ADE7880_CPGAIN_INIT -1352447 // powers, totactive, c
 ```
+
+### Hittl Plug
+```
+tasmota.add_cron("0 30 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "summer_on")
+tasmota.add_cron("0 0 23 * 6-9 *", def (value) tasmota.set_power(0, false) end, "summer_off")
+tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (value) tasmota.set_power(0, false) end, "winter_off")
+```
