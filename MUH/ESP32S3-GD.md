@@ -12,10 +12,10 @@
 | **Reeds, Buttons & LEDS** | | | | | | |
 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
-| GDW | Switch 3 | 11 | D11 |   | x | Garage Door Window Reed |
+| G | Switch 3 | 11 | D11 |   | x | Garage Reed |
 | GD_BTN | Button | 12 | D12 |   | x | Garage Door Button |
 | GD_LEDHDL | Relay 1 | 13 | D13 |   | x | Garage Door LED for HDL |
-| G | Switch 4 | 38 | D38 |   | x | Garage Switch |
+| xxx | xxx | 38 | D38 |   | x | |
 | **Relays** | | | | | | |
 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
 | GD_U | Relay_i 2 | 49 | D49 | | | Relay |
@@ -27,7 +27,7 @@
 | **PIR** | | | | | | |
 | GDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
 | **RFID** | | | | | | |
-| RFID | RDM6300 RX | 21 | D21 | x | x | RFID |
+| xxx | RDM6300 RX | 21 | D21 | x | x | RFID |
 | **FPRINT** | | | | | | |
 | FPrint | As608 TX | 7 | D07 | x | x | RFID |
 | FPrint | As608 RX | 15 | D15 | x | x | RFID |

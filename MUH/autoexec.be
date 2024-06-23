@@ -1,3 +1,5 @@
+#- autoexec.be -#
+
 import string
 import mqtt
 import persist
@@ -66,6 +68,7 @@ def handleFPrint(values,sw1,sw2)
    end
  elif devicename == "GD"
    tasmota.publish("muh/portal/RLY/cmnd", "G_T")
+   #tasmota.cmd("Power3 1")
  else
    print(string.format("MUH: FPrint missing: %s", devicename))
  end

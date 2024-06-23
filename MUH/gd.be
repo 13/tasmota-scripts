@@ -7,6 +7,7 @@ print(string.format("MUH: Loading %s.be...", devicename))
 
 var switch1 = tasmota.get_switches()[0] # GD
 var switch2 = tasmota.get_switches()[1] # GDL
+#var switch3 = tasmota.get_switches()[2] # G
 
 var timerMillis = 600000      # AutoLock Timer
 volume = 90                   # Audio Volume
@@ -29,6 +30,7 @@ end
 ## MQTT Publish Status WatchDog
 tasmota.add_cron("0 */3 * * * *", def (value) publishSwitchP("GD") end, "wd_GD")
 tasmota.add_cron("0 */3 * * * *", def (value) publishSwitchP("GDL") end, "wd_GDL")
+#tasmota.add_cron("0 */3 * * * *", def (value) publishSwitchP("G") end, "wd_G")
 
 # RULES
 ## Audio Volume
@@ -41,8 +43,10 @@ handleLock(switch1,1)
 handleLock(switch2,0)
 handleSwitchP("GD",switch1)
 handleSwitchP("GDL",switch2)
+#handleSwitchP("G",switch3)
 tasmota.add_rule("Switch1#state", def (value) switch1 = value handleSwitchP("GD",value,1) handleLock(value) end)
 tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitchP("GDL",value,1) handleLock(value,0) end)
+#tasmota.add_rule("Switch3#state", def (value) switch3 = value handleSwitchP("G",value,1) end)
 tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/GDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 
 ## MQTT Subscribe Remote Switches
