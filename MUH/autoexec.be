@@ -15,8 +15,8 @@ print(string.format("MUH: Loading autoexec.be %s...", devicename))
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
 #tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
 ## PC
-tasmota.add_cron("58 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pcHalf")
-tasmota.add_cron("58 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC2.mp3") end, "pcFull")
+tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pcHalf")
+tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3") end, "pcFull")
 
 #- MQTT Handler
 def mqtt_handler(topic, idx, payload_s, payload_b)
