@@ -8,6 +8,10 @@ var devicename = tasmota.cmd("DeviceName")['DeviceName']
 
 var volume = 30
 
+var cmdLock = "Power1 1"
+var cmdUnlock = "Backlog Power2 1; Delay 2; Power2 0"
+var cmdOpen = "Backlog Power2 1; Delay 10; Power2 0"
+
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
 
 #- MQTT Handler
@@ -52,9 +56,9 @@ def handleFPrint(values,sw1,sw2)
  var soundFPrint = 1
  if devicename == "HD"
    if sw1 && sw2
-     tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0")
+     tasmota.cmd(str(cmdOpen))
    elif sw1 && !sw2
-     tasmota.cmd("Power1 1")
+     tasmota.cmd(str(cmdLock))
    else
      soundFPrint = 2
    end
@@ -80,12 +84,12 @@ tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3
 # RULES
 ## MQTT & HTTP API
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) tasmota.cmd("Power1 1") end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
-tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) tasmota.cmd("Power1 1") end)
-tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
-tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) tasmota.cmd(str(cmdLock)) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) tasmota.cmd(str(cmdUnlock)) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) tasmota.cmd(str(cmdOpen)) end)
+tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) tasmota.cmd(str(cmdLock)) end)
+tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) tasmota.cmd(str(cmdUnlock)) end)
+tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) tasmota.cmd(str(cmdOpen)) end)
 ## checkWifi 
 tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
 

@@ -1,8 +1,5 @@
 #- GD -#
 
-import string
-import mqtt
-
 print(string.format("MUH: Loading %s.be...", devicename))
 
 var switch1 = tasmota.get_switches()[0] # GD
@@ -28,8 +25,8 @@ end
 
 # CRON
 ## MQTT Publish Status WatchDog
-tasmota.add_cron("0 */3 * * * *", def (value) publishSwitchP("GD") end, "wd_GD")
-tasmota.add_cron("0 */3 * * * *", def (value) publishSwitchP("GDL") end, "wd_GDL")
+tasmota.add_cron("30 */3 * * * *", def (value) publishSwitchP("GD") end, "wd_GD")
+tasmota.add_cron("30 */3 * * * *", def (value) publishSwitchP("GDL") end, "wd_GDL")
 #tasmota.add_cron("0 */3 * * * *", def (value) publishSwitchP("G") end, "wd_G")
 
 # RULES
@@ -55,3 +52,4 @@ tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HD, muh/po
 tasmota.add_rule("Event#HD", def (value) handleRemoteSwitchP("HD",int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
 tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay +/sfx/HDB.mp3") end)
+

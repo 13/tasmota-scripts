@@ -1,8 +1,5 @@
 #- HD -#
 
-import string
-import mqtt
-
 print(string.format("MUH: Loading %s.be...", devicename))
 
 var switch1 = tasmota.get_switches()[0] # HD
@@ -68,10 +65,10 @@ end
 
 # CRON
 ## MQTT Publish Status WatchDog
-tasmota.add_cron("0 */3 * * * *", def (value) publishSwitchP("HD") end, "wd_HD")
-tasmota.add_cron("0 */3 * * * *", def (value) publishSwitchP("HDL") end, "wd_HDL")
+tasmota.add_cron("20 */3 * * * *", def (value) publishSwitchP("HD") end, "wd_HD")
+tasmota.add_cron("20 */3 * * * *", def (value) publishSwitchP("HDL") end, "wd_HDL")
 ## AutoLock Night
-tasmota.add_cron("0 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.set_power(0, true) end end, "autolock")
+tasmota.add_cron("10 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.set_power(0, true) end end, "autolock")
 ## Xmas Easteregg
 tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
 tasmota.add_cron("0 0,30 * 27 12 *", def (value) xmas = "" end, "xmas_off")
@@ -103,3 +100,4 @@ tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GD, muh/po
 tasmota.add_rule("Event#GD", def (value) handleRemoteSwitchP("GD",int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GDL, muh/portal/GDL/json, state") end)
 tasmota.add_rule("Event#GDL", def (value) handleLED("GDL",int(value)) end)
+
