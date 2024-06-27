@@ -39,6 +39,7 @@ SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode4 1; SwitchTopic 0; Swit
 SetOption73 1; SetOption32 20; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 PulseTime1 2; PulseTime2 0;
 TelePeriod 3600;
+Restart 1;
 ```
 ### Rules
 - Publish switches
