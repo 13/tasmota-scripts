@@ -10,14 +10,6 @@ var volume = 30
 
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
 
-# CRON
-## Persist
-tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
-#tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
-## PC
-tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pcHalf")
-tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3") end, "pcFull")
-
 #- MQTT Handler
 def mqtt_handler(topic, idx, payload_s, payload_b)
   print("MUH: MQTT topic:",topic,", payload:",payload_s)
@@ -76,6 +68,15 @@ def handleFPrint(values,sw1,sw2)
  tasmota.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
 end
 
+# CRON
+## Persist
+tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
+tasmota.add_cron("0 2 */1 * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
+#tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
+## PC
+tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pcHalf")
+tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3") end, "pcFull")
+
 # RULES
 ## MQTT & HTTP API
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
@@ -85,6 +86,8 @@ tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) tasmota.cmd("Bac
 tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) tasmota.cmd("Power1 1") end)
 tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 2; Power2 0") end)
 tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) tasmota.cmd("Backlog Power2 1; Delay 10; Power2 0") end)
+## checkWifi 
+tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
 
 # Load custom script
 if devicename == "HD"
