@@ -71,7 +71,7 @@ end
 # CRON
 ## Persist
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
-tasmota.add_cron("0 2 */1 * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
+tasmota.add_cron("8 */5 * * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
 #tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
 ## PC
 tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pcHalf")
