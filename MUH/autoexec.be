@@ -63,8 +63,14 @@ def handleFPrint(values,sw1,sw2)
      soundFPrint = 2
    end
  elif devicename == "GD"
-   tasmota.publish("muh/portal/RLY/cmnd", "G_T")
-   #tasmota.cmd("Power3 1")
+   #- RH TH,IF,MF,RF,LF [1,2,3,4,5] -#
+   #- LH TH,IF,MF,RF,LF [6,7,8,9,10] -#
+   if values[0] % 5 == 0
+     tasmota.cmd(str(cmdOpen))
+   else
+   #  tasmota.cmd("Power3 1")
+     tasmota.publish("muh/portal/RLY/cmnd", "G_T")
+   end
  else
    print(string.format("MUH: FPrint missing: %s", devicename))
  end
