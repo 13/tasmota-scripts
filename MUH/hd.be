@@ -56,8 +56,10 @@ def handleLED(name, value)
       tasmota.cmd("Power3 1")
     elif !gState && !gdlState
       tasmota.cmd("Power3 0")
+    elif gState && !gdlState
+      tasmota.cmd("Backlog BlinkTime 2; Power3 3")
     else
-      tasmota.cmd("Power3 3")
+      tasmota.cmd("Backlog BlinkTime 10; Power3 3")
     end
   end
   ledChange = false
