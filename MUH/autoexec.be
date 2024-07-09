@@ -10,7 +10,15 @@ var volume = 30
 
 var cmdLock = "Power1 1"
 var cmdUnlock = "Backlog Power2 1; Delay 2; Power2 0"
-var cmdOpen = "Backlog Power2 1; Delay 10; Power2 0"
+var cmdOpen = "Backlog Power2 1; Delay 10; Power2 0"    # Keymatic
+
+#- SmartLock -# 
+if devicename == "GD"
+  # ABUS
+  cmdOpen = cmdUnlock
+else
+  print(string.format("MUH: Unknown %s", devicename))
+end
 
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
 
@@ -65,6 +73,7 @@ def handleFPrint(values,sw1,sw2)
  elif devicename == "GD"
    #- RH TH,IF,MF,RF,LF [1,2,3,4,5] -#
    #- LH TH,IF,MF,RF,LF [6,7,8,9,10] -#
+   #- ben:1-10,ann:11-20,tre:31-40 -#
    if values[0] % 5 == 0
      tasmota.cmd(str(cmdOpen))
    else
