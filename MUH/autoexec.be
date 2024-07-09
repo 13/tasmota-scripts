@@ -16,8 +16,6 @@ var cmdOpen = "Backlog Power2 1; Delay 10; Power2 0"    # Keymatic
 if devicename == "GD"
   # ABUS
   cmdOpen = cmdUnlock
-else
-  print(string.format("MUH: Unknown %s", devicename))
 end
 
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
