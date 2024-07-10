@@ -53,9 +53,9 @@ def handleLED(name, value)
   end
   if ledChange
     if gState && gdlState
-      tasmota.cmd("Power3 1")
+      tasmota.set_power(3, true)
     elif !gState && !gdlState
-      tasmota.cmd("Power3 0")
+      tasmota.set_power(3, false)
     elif gState && !gdlState
       tasmota.cmd("Backlog BlinkTime 2; Power3 3")
     else
@@ -76,6 +76,11 @@ tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
 tasmota.add_cron("0 0,30 * 27 12 *", def (value) xmas = "" end, "xmas_off")
 
 # RULES
+## MQTT & HTTP API
+tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) powerCmd(1,200) end)
+tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) powerCmd(1,1000) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) powerCmd(1,200) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) powerCmd(1,1000) end)
 ## Audio Volume
 tasmota.cmd(string.format("i2sgain %d", volume))
 ## FPrint

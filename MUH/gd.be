@@ -30,6 +30,13 @@ tasmota.add_cron("30 */3 * * * *", def (value) publishSwitchP("GDL") end, "wd_GD
 tasmota.add_cron("30 */3 * * * *", def (value) publishSwitchP("G") end, "wd_G")
 
 # RULES
+## MQTT & HTTP API
+tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) powerCmd(1) end)
+tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) powerCmd(1) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) powerCmd(1) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) powerCmd(1) end)
+tasmota.add_rule("Event#G_T=1", def (value) powerCmd(2) end)
+tasmota.add_rule("Event#RLY=G_T", def (value) powerCmd(2) end)
 ## Audio Volume
 tasmota.cmd(string.format("i2sgain %d", volume))
 ## FPrint

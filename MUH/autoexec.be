@@ -8,18 +8,15 @@ var devicename = tasmota.cmd("DeviceName")['DeviceName']
 
 var volume = 30
 
-var cmdLock = "Power1 1"
-var cmdUnlock = "Backlog Power2 1; Delay 2; Power2 0"
-var cmdOpen = "Backlog Power2 1; Delay 10; Power2 0"    # Keymatic
-var cmdToggle = "Power3 1"
-
-#- SmartLock -# 
-if devicename == "GD"
-  # ABUS
-  cmdOpen = cmdUnlock
-end
-
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
+
+# Custom Relay Cmd
+def powerCmd(id,time)
+  tasmota.set_power(id, true)
+  if time != nil
+    tasmota.set_timer(time, def (value) tasmota.set_power(id, false) end)
+  end
+end
 
 #- MQTT Handler
 def mqtt_handler(topic, idx, payload_s, payload_b)
@@ -59,31 +56,37 @@ def handleRemoteSwitchP(name,state)
 end
 
 # Fingerprint
+#- RH:TH,IF,MF,RF,LF:[1,2,3,4,5] -#
+#- LH:TH,IF,MF,RF,LF:[6,7,8,9,10] -#
+#- ben:1-10,ann:11-20,mem:21:30,tre:31-40 -#
 def handleFPrint(values,sw1,sw2)
  var soundFPrint = 1
  if devicename == "HD"
    if sw1 && sw2
-     tasmota.cmd(str(cmdOpen))
+     powerCmd(1,1000)
    elif sw1 && !sw2
-     tasmota.cmd(str(cmdLock))
+     powerCmd(0)
    else
      soundFPrint = 2
    end
  elif devicename == "GD"
-   #- RH TH,IF,MF,RF,LF [1,2,3,4,5] -#
-   #- LH TH,IF,MF,RF,LF [6,7,8,9,10] -#
-   #- ben:1-10,ann:11-20,mem:21:30,tre:31-40 -#
    if values[0] % 5 == 0
-     tasmota.cmd(str(cmdOpen))
+     powerCmd(1)
    else
-     tasmota.cmd(str(cmdToggle))
-   #  tasmota.publish("muh/portal/RLY/cmnd", "G_T")
+     powerCmd(2)
    end
  else
    print(string.format("MUH: FPrint missing: %s", devicename))
  end
  tasmota.cmd(string.format("i2splay +/sfx/FP%d.mp3", soundFPrint))
  tasmota.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+end
+
+def checkDNS()
+  if tasmota.cmd('IPAddress4')['IPAddress4'] == "253.0.0.0"
+    tasmota.cmd('IPAddress4 192.168.22.6')
+    tasmota.set_timer(5000, def (value) restart 1 end)
+  end
 end
 
 # CRON
@@ -99,17 +102,8 @@ tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3
 ## MQTT & HTTP API
 ### DOORS
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) tasmota.cmd(str(cmdLock)) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) tasmota.cmd(str(cmdUnlock)) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) tasmota.cmd(str(cmdOpen)) end)
-tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) tasmota.cmd(str(cmdLock)) end)
-tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) tasmota.cmd(str(cmdUnlock)) end)
-tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) tasmota.cmd(str(cmdOpen)) end)
-### GARAGE
-if devicename == "GD"
-  tasmota.add_rule("Event#RLY=G_T", def (value) tasmota.cmd(str(cmdToggle)) end)
-  tasmota.add_rule("Event#G_T=1", def (value) tasmota.cmd(str(cmdToggle)) end)
-end
+tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) powerCmd(0) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) powerCmd(0) end)
 ## checkWifi 
 tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
 
