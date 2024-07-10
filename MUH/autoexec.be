@@ -11,6 +11,7 @@ var volume = 30
 var cmdLock = "Power1 1"
 var cmdUnlock = "Backlog Power2 1; Delay 2; Power2 0"
 var cmdOpen = "Backlog Power2 1; Delay 10; Power2 0"    # Keymatic
+var cmdToggle = "Power3 1"
 
 #- SmartLock -# 
 if devicename == "GD"
@@ -71,12 +72,12 @@ def handleFPrint(values,sw1,sw2)
  elif devicename == "GD"
    #- RH TH,IF,MF,RF,LF [1,2,3,4,5] -#
    #- LH TH,IF,MF,RF,LF [6,7,8,9,10] -#
-   #- ben:1-10,ann:11-20,tre:31-40 -#
+   #- ben:1-10,ann:11-20,mem:21:30,tre:31-40 -#
    if values[0] % 5 == 0
      tasmota.cmd(str(cmdOpen))
    else
-   #  tasmota.cmd("Power3 1")
-     tasmota.publish("muh/portal/RLY/cmnd", "G_T")
+     tasmota.cmd(str(cmdToggle))
+   #  tasmota.publish("muh/portal/RLY/cmnd", "G_T")
    end
  else
    print(string.format("MUH: FPrint missing: %s", devicename))
@@ -96,6 +97,7 @@ tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3
 
 # RULES
 ## MQTT & HTTP API
+### DOORS
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
 tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) tasmota.cmd(str(cmdLock)) end)
 tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) tasmota.cmd(str(cmdUnlock)) end)
@@ -103,6 +105,11 @@ tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) tasmota.cmd(str(
 tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) tasmota.cmd(str(cmdLock)) end)
 tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) tasmota.cmd(str(cmdUnlock)) end)
 tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) tasmota.cmd(str(cmdOpen)) end)
+### GARAGE
+if devicename == "GD"
+  tasmota.add_rule("Event#RLY=G_T", def (value) tasmota.cmd(str(cmdToggle)) end)
+  tasmota.add_rule("Event#G_T=1", def (value) tasmota.cmd(str(cmdToggle)) end)
+end
 ## checkWifi 
 tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
 
