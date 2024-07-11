@@ -85,7 +85,7 @@ end
 def checkDNS()
   if tasmota.cmd('IPAddress4')['IPAddress4'] == "253.0.0.0"
     tasmota.cmd('IPAddress4 192.168.22.6')
-    tasmota.set_timer(5000, def (value) restart 1 end)
+    tasmota.set_timer(5000, def (value) tasmota.cmd('restart 1') end)
   end
 end
 
@@ -94,6 +94,7 @@ end
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
 tasmota.add_cron("8 */5 * * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
 #tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
+#tasmota.add_cron("0 3 3 * * *", def (value) checkDNS() end, "checkDNS")
 ## PC
 tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pcHalf")
 tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3") end, "pcFull")
