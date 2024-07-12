@@ -37,9 +37,8 @@ def handleButton(name,state)
 end
 
 # Blink LED
-def blinkLED(time)
-  tasmota.set_power(2,true)
-  tasmota.set_timer(time, def (value) tasmota.set_power(2,false) blinkLED(time) end, "HD_LED")
+def blinkLED(num,time)
+  tasmota.set_timer(time, def (value) tasmota.set_power(num,!tasmota.get_power()[num]) blinkLED(time) end, "HD_LED")
 end
 
 # LED Status
@@ -64,11 +63,9 @@ def handleLED(name, value)
     elif !gState && !gdlState
       tasmota.set_power(3, false)
     elif gState && !gdlState
-      blinkLED(20)
-      #tasmota.cmd("Backlog BlinkTime 2; Power3 3")
+      blinkLED(2,300)
     else
-      blinkLED(1000)
-      #tasmota.cmd("Backlog BlinkTime 10; Power3 3")
+      blinkLED(2,1000)
     end
   end
   ledChange = false
