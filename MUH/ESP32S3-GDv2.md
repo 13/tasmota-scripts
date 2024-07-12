@@ -47,7 +47,7 @@ Backlog IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.25
 DeviceName GD; FriendlyName1 GD_L; FriendlyName2 GD_U; FriendlyName3 G_T;
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
-PulseTime1 2; PulseTime2 2; PulseTime3 2;
+SetOption0 0; PowerOnState 0; PulseTime1 2; PulseTime2 2; PulseTime3 2;
 TelePeriod 3600;
 #SetOption56 1;
 ```
