@@ -5,10 +5,27 @@ print(string.format("MUH: Loading hd.be on %s...", devicename))
 var switch1 = tasmota.get_switches()[0] # HD
 var switch2 = tasmota.get_switches()[1] # HDL
 
+var HD_LOCK_PIN = 0
+var HD_UNLOCK_PIN = 1
+var HD_LED_PIN = 2
+
 var gState = false
 var gdlState = false
 var ledChange = true
 var xmas = ""           # Xmas Easteregg
+
+# Fingerprint
+def handleFPrint(values,sw1,sw2)
+ var soundFPrint = 1
+ if sw1 && sw2
+   powerCmd(HD_UNLOCK_PIN,1000)
+ elif sw1 && !sw2
+   powerCmd(HD_LOCK_PIN)
+ else
+   soundFPrint = 2
+ end
+ publishFPrint(values,soundFPrint)
+end
 
 # Buttons
 def handleButton(name,state)
@@ -37,12 +54,13 @@ def handleButton(name,state)
 end
 
 # Blink LED
-def blinkLED(num,time)
-  tasmota.set_timer(time, def (value) tasmota.set_power(num,!tasmota.get_power()[num]) blinkLED(time) end, "HD_LED")
+def blinkLED(id,time)
+  tasmota.set_timer(time, def (value) tasmota.set_power(id,!tasmota.get_power()[id]) blinkLED(time) end, "HD_LED")
 end
 
 # LED Status
 def handleLED(name, value)
+  #print(string.format("MUH: HD_LED %s %s...", name, value))
   if name == "G"
     if gState != value
       gState = value
@@ -57,15 +75,16 @@ def handleLED(name, value)
     print("MUH: handleLED() empty")
   end
   if ledChange
+    #print(string.format("MUH: HD_LED changed %s %s...", name, value))
     tasmota.remove_timer("HD_LED")
     if gState && gdlState
-      tasmota.set_power(3, true)
+      tasmota.set_power(HD_LED_PIN,true)
     elif !gState && !gdlState
-      tasmota.set_power(3, false)
+      tasmota.set_power(HD_LED_PIN,false)
     elif gState && !gdlState
-      blinkLED(2,300)
+      blinkLED(HD_LED_PIN,300)
     else
-      blinkLED(2,1000)
+      blinkLED(HD_LED_PIN,1000)
     end
   end
   ledChange = false
@@ -76,17 +95,20 @@ end
 tasmota.add_cron("20 */3 * * * *", def (value) publishSwitchP("HD") end, "wd_HD")
 tasmota.add_cron("20 */3 * * * *", def (value) publishSwitchP("HDL") end, "wd_HDL")
 ## AutoLock Night
-tasmota.add_cron("10 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.set_power(0, true) end end, "autolock")
+tasmota.add_cron("10 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.set_power(HD_LOCK_PIN, true) end end, "autolock")
 ## Xmas Easteregg
 tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
 tasmota.add_cron("0 0,30 * 27 12 *", def (value) xmas = "" end, "xmas_off")
 
 # RULES
 ## MQTT & HTTP API
-tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) powerCmd(1,200) end)
-tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) powerCmd(1,1000) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) powerCmd(1,200) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) powerCmd(1,1000) end)
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
+tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) powerCmd(HD_LOCK_PIN) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) powerCmd(HD_LOCK_PIN) end)
+tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) powerCmd(HD_UNLOCK_PIN,200) end)
+tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) powerCmd(HD_UNLOCK_PIN,1000) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) powerCmd(HD_UNLOCK_PIN,200) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) powerCmd(HD_UNLOCK_PIN,1000) end)
 ## Audio Volume
 tasmota.cmd(string.format("i2sgain %d", volume))
 ## FPrint

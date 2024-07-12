@@ -6,8 +6,23 @@ var switch1 = tasmota.get_switches()[0] # GD
 var switch2 = tasmota.get_switches()[1] # GDL
 var switch3 = tasmota.get_switches()[2] # G
 
+var GD_LOCK_PIN = 0
+var GD_UNLOCK_PIN = 1
+var G_TOGGLE_PIN = 2
+
 var timerMillis = 600000      # AutoLock Timer
 volume = 90                   # Audio Volume
+
+# Fingerprint
+def handleFPrint(values,sw1,sw2)
+ var soundFPrint = 1
+ if values[0] % 5 == 0
+   powerCmd(GD_UNLOCK_PIN)
+ else
+   powerCmd(G_TOGGLE_PIN)
+ end
+ publishFPrint(values,soundFPrint)
+end
 
 # AutoLock
 def handleLock(swState, timerOn)
@@ -17,7 +32,7 @@ def handleLock(swState, timerOn)
   end
   if swState && timerOn
     tasmota.remove_timer(timerName)
-    tasmota.set_timer(timerMillis, def (value) tasmota.set_power(0, true) end, timerName)
+    tasmota.set_timer(timerMillis, def (value) powerCmd(GD_LOCK_PIN) end, timerName)
   else
     tasmota.remove_timer(timerName)
   end
@@ -31,12 +46,15 @@ tasmota.add_cron("30 */3 * * * *", def (value) publishSwitchP("G") end, "wd_G")
 
 # RULES
 ## MQTT & HTTP API
-tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) powerCmd(1) end)
-tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) powerCmd(1) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) powerCmd(1) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) powerCmd(1) end)
-tasmota.add_rule("Event#G_T=1", def (value) powerCmd(2) end)
-tasmota.add_rule("Event#RLY=G_T", def (value) powerCmd(2) end)
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
+tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) powerCmd(GD_LOCK_PIN) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) powerCmd(GD_LOCK_PIN) end)
+tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) powerCmd(GD_UNLOCK_PIN) end)
+tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) powerCmd(GD_UNLOCK_PIN) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) powerCmd(GD_UNLOCK_PIN) end)
+tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) powerCmd(GD_UNLOCK_PIN) end)
+tasmota.add_rule("Event#G_T=1", def (value) powerCmd(G_TOGGLE_PIN) end)
+tasmota.add_rule("Event#RLY=G_T", def (value) powerCmd(G_TOGGLE_PIN) end)
 ## Audio Volume
 tasmota.cmd(string.format("i2sgain %d", volume))
 ## FPrint

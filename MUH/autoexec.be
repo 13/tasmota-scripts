@@ -59,26 +59,8 @@ end
 #- RH:TH,IF,MF,RF,LF:[1,2,3,4,5] -#
 #- LH:TH,IF,MF,RF,LF:[6,7,8,9,10] -#
 #- ben:1-10,ann:11-20,mem:21:30,tre:31-40 -#
-def handleFPrint(values,sw1,sw2)
- var soundFPrint = 1
- if devicename == "HD"
-   if sw1 && sw2
-     powerCmd(1,1000)
-   elif sw1 && !sw2
-     powerCmd(0)
-   else
-     soundFPrint = 2
-   end
- elif devicename == "GD"
-   if values[0] % 5 == 0
-     powerCmd(1)
-   else
-     powerCmd(2)
-   end
- else
-   print(string.format("MUH: FPrint missing: %s", devicename))
- end
- tasmota.cmd(string.format("i2splay +/sfx/FP%d.mp3", soundFPrint))
+def publishFPrint(values,sound)
+ tasmota.cmd(string.format("i2splay +/sfx/FP%d.mp3", sound))
  tasmota.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
 end
 
@@ -100,11 +82,6 @@ tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3"
 tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3") end, "pcFull")
 
 # RULES
-## MQTT & HTTP API
-### DOORS
-tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
-tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) powerCmd(0) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) powerCmd(0) end)
 ## checkWifi 
 tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
 
