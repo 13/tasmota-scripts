@@ -1,6 +1,6 @@
 #- GD -#
 
-print(string.format("MUH: Loading %s.be...", devicename))
+print(string.format("MUH: Loading gd.be on %s...", devicename))
 
 var switch1 = tasmota.get_switches()[0] # GD
 var switch2 = tasmota.get_switches()[1] # GDL
