@@ -55,7 +55,8 @@ end
 
 # Blink LED
 def blinkLED(id,time)
-  tasmota.set_timer(time, def (value) tasmota.set_power(id,!tasmota.get_power()[id]) blinkLED(time) end, "HD_LED")
+  #print(string.format("MUH: blinkLED() %s %s...", id, time))
+  tasmota.set_timer(time, def (value) tasmota.set_power(id,!tasmota.get_power()[id]) blinkLED(id,time) end, "HD_LED")
 end
 
 # LED Status
