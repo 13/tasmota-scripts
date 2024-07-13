@@ -83,9 +83,9 @@ def handleLED(name, value)
     elif !gState && !gdlState
       tasmota.set_power(HD_LED_PIN,false)
     elif gState && !gdlState
-      blinkLED(HD_LED_PIN,300)
+      blinkLED(HD_LED_PIN,200)
     else
-      blinkLED(HD_LED_PIN,1000)
+      blinkLED(HD_LED_PIN,1400)
     end
   end
   ledChange = false
