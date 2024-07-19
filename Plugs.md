@@ -305,7 +305,7 @@ Rule3
 
 ### Hittl Plug
 ```
-tasmota.add_cron("0 30 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "summer_on")
+tasmota.add_cron("0 0 9 * 6-9 *", def (value) tasmota.set_power(0, true) end, "summer_on")
 tasmota.add_cron("0 0 23 * 6-9 *", def (value) tasmota.set_power(0, false) end, "summer_off")
 tasmota.add_cron("0 0 6,22 * 1-5,10-12 *", def (value) tasmota.set_power(0, false) end, "winter_off")
 ```
