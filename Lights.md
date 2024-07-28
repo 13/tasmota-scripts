@@ -119,10 +119,12 @@ ON Rules#Timer=1 DO Power1 0 ENDON
 ON mqtt#connected DO Subscribe MTN, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
 ON Event#MTN=true DO var2 1 ENDON
 ON Event#MTN=false DO var2 0 ENDON
+ON mqtt#connected DO Subscribe HDP, muh/portal/HDP/json, state ENDON
+ON Event#HDP DO var3 %value% ENDON
 ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
 ON Event#HD=0 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
-ON event#chcksr0<%sunrise% DO IF (var2==1) Power1 1; RuleTimer1 300 ENDIF ENDON
-ON event#chckss0>%sunset% DO IF (var2==1) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chcksr0<%sunrise% DO IF ((var2==1) AND (var3==0)) Power1 1; RuleTimer1 300 ENDIF ENDON
+ON event#chckss0>%sunset% DO IF ((var2==1) AND (var3==0)) Power1 1; RuleTimer1 300 ENDIF ENDON
 ```
 
 ## HD_EXT
