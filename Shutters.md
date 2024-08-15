@@ -67,13 +67,13 @@ ON event#scs$|-09- DO ShutterPosition 25 ENDON
 ON event#scs$|-10- DO ShutterPosition 25 ENDON
 ```
 ### Rule 2
-- Summer close/open at 11:00/18:00 if HOT (heat protection)
+- Summer close/open at 10:00/18:00 if HOT (heat protection)
 ```
 Rule2
-ON mqtt#connected DO Subscribe SolarTemp, muh/sensors/DDD99C/json, DS18B20.Temperature ENDON
-ON Event#SolarTemp>=40 DO Var1 1 ENDON
-ON Event#SolarTemp<40 DO Var1 0 ENDON
-ON Time#Minute=660 DO Backlog event smrc=%timestamp% ENDON
+ON mqtt#connected DO Subscribe SolarTemp, muh/wst/data/B327, temp_c ENDON
+ON Event#SolarTemp>=20 DO Var1 1 ENDON
+ON Event#SolarTemp<20 DO Var1 0 ENDON
+ON Time#Minute=600 DO Backlog event smrc=%timestamp% ENDON
 ON event#smrc$|-06- DO IF (Var1 == 1) ShutterClose ENDIF ENDON
 ON event#smrc$|-07- DO IF (Var1 == 1) ShutterClose ENDIF ENDON
 ON event#smrc$|-08- DO IF (Var1 == 1) ShutterClose ENDIF ENDON
@@ -92,7 +92,7 @@ ON event#sdwc$^-06- DO ShutterPosition 4 ENDON
 ON event#sdwc$^-07- DO ShutterPosition 4 ENDON
 ON event#sdwc$^-08- DO ShutterPosition 4 ENDON
 
-ON mqtt#connected DO Subscribe SolarUv, muh/WStation/data/B327, uv ENDON
+ON mqtt#connected DO Subscribe SolarUv, muh/wst/data/B327, uv ENDON
 ON Event#SolarUv>=1 DO Var2 1 ENDON
 ON Event#SolarUv<1 DO Var2 0 ENDON
 ON Time#Minute=540 DO Backlog event sdwc=%timestamp% ENDON
