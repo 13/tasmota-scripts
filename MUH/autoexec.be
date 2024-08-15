@@ -51,7 +51,7 @@ def handleRemoteSwitchP(name,state)
   if int(state) != int(persist.member(name))
     #print(string.format("MUH: handleRemoteSwitchP() write %s %d,%d...", name,state,persist.member(name)))
     persist.setmember(string.format("%s",name),int(state))
-    tasmota.cmd(string.format("i2splay +/sfx/%s%d.mp3",name,state))
+    tasmota.cmd(string.format("i2splay /sfx/%s%d.mp3",name,state))
   end
 end
 
@@ -60,7 +60,7 @@ end
 #- LH:TH,IF,MF,RF,LF:[6,7,8,9,10] -#
 #- ben:1-10,ann:11-20,mem:21:30,tre:31-40 -#
 def publishFPrint(values,sound)
- tasmota.cmd(string.format("i2splay +/sfx/FP%d.mp3", sound))
+ tasmota.cmd(string.format("i2splay /sfx/FP%d.mp3", sound))
  tasmota.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
 end
 
@@ -78,8 +78,8 @@ tasmota.add_cron("8 */25 * * * *", def (value) tasmota.cmd("ping8 192.168.22.1")
 #tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
 #tasmota.add_cron("0 3 3 * * *", def (value) checkDNS() end, "checkDNS")
 ## PC
-tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC.mp3") end, "pcHalf")
-tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay +/sfx/PC3.mp3") end, "pcFull")
+tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay /sfx/PC.mp3") end, "pcHalf")
+tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay /sfx/PC3.mp3") end, "pcFull")
 
 # RULES
 ## checkWifi 

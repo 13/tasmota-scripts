@@ -31,18 +31,18 @@ end
 def handleButton(name,state)
   if name == "HDB"
     if state == 10
-      tasmota.cmd(string.format("Backlog i2sgain 100; i2splay +/sfx/HDB%s.mp3; i2sgain %d", xmas, volume))
+      tasmota.cmd(string.format("Backlog i2sgain 100; i2splay /sfx/HDB%s.mp3; i2sgain %d", xmas, volume))
     end
   elif name == "HDBTN"
     if state == 10
       tasmota.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2")
-      tasmota.cmd("i2splay +/sfx/click0.mp3")
+      tasmota.cmd("i2splay /sfx/click0.mp3")
     elif state == 11 || state == 3
       tasmota.publish("muh/portal/RLY/cmnd", "G_T")
-      tasmota.cmd("i2splay +/sfx/click2.mp3")
+      tasmota.cmd("i2splay /sfx/click2.mp3")
     elif state == 12
       tasmota.publish("muh/portal/RLY/cmnd", "GD_O")
-      tasmota.cmd("i2splay +/say/GD_O.mp3")
+      tasmota.cmd("i2splay /say/GD_O.mp3")
     elif state == 13
       volume = volume > 0 ? 0 : 30
       tasmota.cmd(string.format("i2sgain %d", volume))
@@ -118,7 +118,7 @@ tasmota.add_rule(["FPrint#Id","FPrint#Confidence>20"], def (values) handleFPrint
 ## Switches
 handleSwitchP("HD",switch1)
 handleSwitchP("HDL",switch2)
-tasmota.add_rule("Switch1#state", def (value) switch1 = value tasmota.cmd(string.format("i2splay +/sfx/HD%s%s.mp3", value, xmas)) handleSwitchP("HD",value,1) end)
+tasmota.add_rule("Switch1#state", def (value) switch1 = value tasmota.cmd(string.format("i2splay /sfx/HD%s%s.mp3", value, xmas)) handleSwitchP("HD",value,1) end)
 tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitchP("HDL",value,1) end)
 tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/HDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 
