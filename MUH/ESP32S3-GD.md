@@ -13,8 +13,8 @@
 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
 | GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
 | G | Switch 3 | 11 | D11 |   | x | Garage Reed |
-| GD_BTN | Button | 12 | D12 |   | x | Garage Door Button |
-| GD_LEDHDL | Relay 1 | 13 | D13 |   | x | Garage Door LED for HDL |
+| GD_BTN | Button 1 | 12 | D12 |   | x | Garage Door Button |
+| GD_LEDHDL | Relay 4 | 13 | D13 |   | x | Garage Door LED for HDL |
 | xxx | xxx | 38 | D38 |   | x | |
 | **Relays** | | | | | | |
 | GD_L | Relay_i 1 | 48 | D48 | | | Relay |
@@ -42,12 +42,12 @@ sensors
 
 ## Settings
 ```
-Backlog Template {"NAME":"ESP32S3-GD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,1,1,1,1,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}; Module 0;
+Backlog Template {"NAME":"ESP32S3-GD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,162,1,1,258,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}; Module 0;
 Backlog IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
-DeviceName GD; FriendlyName1 GD_L; FriendlyName2 GD_U; 
+DeviceName GD; FriendlyName1 GD_L; FriendlyName2 GD_U; FriendlyName3 G_T;
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
-PulseTime1 2; PulseTime2 0;
+SetOption0 0; PowerOnState 0; PulseTime1 2; PulseTime2 2; PulseTime3 2;
 TelePeriod 3600;
 #SetOption56 1;
 ```
@@ -68,42 +68,6 @@ FPCount
 - Fingerprint
 #### Rule 3
 - Sounds
-
-```
-Rule1
-ON Switch1#Boot DO var1 %value% ENDON
-ON Switch2#Boot DO var2 %value% ENDON
-ON Switch3#Boot DO var3 %value% ENDON
-ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/portal/GD/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
-ON System#Boot DO IF (%var2%!=%mem2%) mem2 %var2%; Publish2 muh/portal/GDL/json {"state": %var2%, "time": "%timestamp%"} ENDIF ENDON
-ON System#Boot DO IF (%var3%!=%mem3%) mem3 %var3%; Publish2 muh/portal/GDW/json {"state": %var3%, "time": "%timestamp%"} ENDIF ENDON
-ON Switch1#state!=%mem1% DO Backlog mem1 %value%; mem6 %timestamp%; Publish2 muh/portal/GD/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch2#state!=%mem2% DO Backlog mem2 %value%; mem7 %timestamp%; Publish2 muh/portal/GDL/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch3#state!=%mem3% DO Backlog mem3 %value%; mem8 %timestamp%; Publish2 muh/portal/GDW/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Switch4#state DO Publish muh/portal/GDP/json {"state": %value%, "time": "%timestamp%"} ENDON
-
-Rule2
-ON Time#Minute|1 DO Publish2 muh/portal/GD/json {"state": %mem1%, "time": "%mem6%"} ENDON
-ON Time#Minute|1 DO Publish2 muh/portal/GDL/json {"state": %mem2%, "time": "%mem7%"} ENDON
-ON Switch1#Boot=1 DO RuleTimer1 600 ENDON
-ON Switch2#Boot=1 DO RuleTimer1 0 ENDON
-ON Switch1#state=1 DO RuleTimer1 600 ENDON
-ON Switch1#state=0 DO RuleTimer1 0 ENDON
-ON Switch2#state=1 DO RuleTimer1 0 ENDON
-ON Rules#Timer=1 DO Power1 1 ENDON
-ON FPrint#Id DO var9 %value% ENDON
-ON FPrint#Confidence>20 DO Publish muh/portal/RLY/cmnd G_T ENDON
-ON FPrint#Confidence>20 DO Publish muh/portal/FPRINT/json {"uid": %var9%, "confidence": %value%, "time": "%timestamp%", "source": "GD"} ENDON
-
-Rule3
-ON System#Boot DO i2sgain 100 ENDON
-ON RDM6300#UID DO i2splay +/RFID1.mp3 ENDON
-ON FPrint#Confidence>100 DO i2splay +/RFID1.mp3 ENDON
-ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
-ON Event#HD!=%mem11% DO Backlog mem11 %value%; i2splay +/HD%value%.mp3 ENDON
-ON mqtt#connected DO Subscribe HDB, muh/portal/HDB/json, state ENDON
-ON Event#HDB DO i2splay +/HDB.mp3 ENDON
-```
 
 ### Commands
 ```

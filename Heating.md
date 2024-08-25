@@ -1,5 +1,25 @@
 # Shelly Plus 1
 
+## HZ_WW
+### Template
+
+- WWO DS18B20
+- WWU DS18B20
+- SOV  DS18B20
+- SOR  DS18B20
+
+- W REED
+```
+
+Backlog Template {"NAME":"Shelly Plus 1 ADDON","GPIO":[1344,1312,0,1,0,0,0,0,0,0,0,0,0,0,0,352,0,0,0,0,0,32,224,0,0,0,0,0,4736,4705,0,0,0,0,0,0],"FLAG":0,"BASE":1}; Module 0;
+Backlog IPAddress1 192.168.22.74; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
+DeviceName HZ_WW; FriendlyName1 HZ_WW_PUMPE;
+
+
+ON DS18B20-3628FF#Temperature!=%Var1% DO Backlog var1 %value%; Publish2 muh/sensors/%deviceid%/json {"TID":"%deviceid%", "DS18B20":{"Id":"00042B3628FF", "Temperature":%value%}, "Time":"%timestamp%"} ENDON 
+```
+
+
 ## Template
 ```
 {"NAME":"Shelly Plus 1","GPIO":[288,0,0,0,192,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,32,224,0,0,0,0,0,4736,4705,0,0,0,0,0,0],"FLAG":0,"BASE":1}
@@ -22,8 +42,7 @@ Backlog Latitude 46.696153; Longitude 11.152056; Sunrise 1;
 - Kommertemp >= 21 OFF
 ```
 Rule1
-ON Power1#state=1 DO RuleTimer1 1800 ENDON
-ON Power1#state=0 DO RuleTimer1 0 ENDON
+ON Power1#state=1 DO RuleTimer1 1800 ENDON ON Power1#state=0 DO RuleTimer1 0 ENDON
 ON Rules#Timer=1 DO Power1 0 ENDON
 ON mqtt#connected DO Subscribe TEMPK1, muh/sensors/22/json, T2 ENDON
 ON mqtt#connected DO Subscribe TEMPK2, muh/sensors/22/json, T4 ENDON

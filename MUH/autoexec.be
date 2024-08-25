@@ -6,7 +6,7 @@ import persist
 
 var devicename = tasmota.cmd("DeviceName")['DeviceName']
 
-var volume = 30
+var volume = 50
 
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
 
