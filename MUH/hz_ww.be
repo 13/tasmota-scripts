@@ -68,7 +68,11 @@ tasmota.add_rule("system#boot",
   def (value)
     for i: 0..ds18b20_list.size()-1
       if sensors.contains(ds18b20_list[i])
-        publishMqtt(ds18b20_list[i])
+        if sensors[ds18b20_list[i]]['Temperature'] != 85 
+          publishMqtt(ds18b20_list[i])
+        else
+          tasmota.set_timer((i+1)*2500, def (value) publishMqtt(ds18b20_list[i]) end, ds18b20_list[i])
+        end
       end
     end
   end

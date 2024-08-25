@@ -44,7 +44,7 @@ def handleButton(name,state)
       tasmota.publish("muh/portal/RLY/cmnd", "GD_O")
       tasmota.cmd("i2splay /say/GD_O.mp3")
     elif state == 13
-      volume = volume > 0 ? 0 : 30
+      volume = volume > 0 ? 0 : volume_default
       tasmota.cmd(string.format("i2sgain %d", volume))
     end
   else

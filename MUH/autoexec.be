@@ -6,7 +6,8 @@ import persist
 
 var devicename = tasmota.cmd("DeviceName")['DeviceName']
 
-var volume = 50
+var volume = 60
+var volume_default = volume
 
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
 
@@ -74,7 +75,8 @@ end
 # CRON
 ## Persist
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
-tasmota.add_cron("8 */25 * * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
+#tasmota.add_cron("8 */25 * * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
+tasmota.add_cron("8 0 21 * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
 #tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
 #tasmota.add_cron("0 3 3 * * *", def (value) checkDNS() end, "checkDNS")
 ## PC
