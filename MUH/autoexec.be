@@ -66,7 +66,7 @@ def publishFPrint(values,sound)
 end
 
 def checkDNS()
-  if tasmota.cmd('IPAddress4')['IPAddress4'] == "253.0.0.0"
+  if tasmota.cmd('IPAddress4')['IPAddress4'] == "0.0.0.0"
     tasmota.cmd('IPAddress4 192.168.22.6')
     tasmota.set_timer(5000, def (value) tasmota.cmd('restart 1') end)
   end
@@ -75,10 +75,10 @@ end
 # CRON
 ## Persist
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
-#tasmota.add_cron("8 */25 * * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
-tasmota.add_cron("8 0 21 * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
+tasmota.add_cron("10 */15 * * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
+#tasmota.add_cron("8 0 21 * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
 #tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
-#tasmota.add_cron("0 3 3 * * *", def (value) checkDNS() end, "checkDNS")
+tasmota.add_cron("15 1 */1 * * *", def (value) checkDNS() end, "checkDNS")
 ## PC
 tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay /sfx/PC.mp3") end, "pcHalf")
 tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay /sfx/PC3.mp3") end, "pcFull")

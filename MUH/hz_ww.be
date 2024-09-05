@@ -50,14 +50,20 @@ def publishMqtt(sensor)
   tasmota.publish(string.format("muh/sensors/%s/%s/json", devicename, sensor), json.dump(ds18b20_data[sensor]))
 end
 
-def checkDS18B20()
+def checkDS18B20(delta)
   sensors = json.load(tasmota.read_sensors())
   for i: 0..ds18b20_list.size()-1
-    if sensors.contains(ds18b20_list[i])
-      if checkDelta(sensors[ds18b20_list[i]]['Temperature'], ds18b20_data[ds18b20_list[i]]['DS18B20']['Temperature'])
-        #print(string.format("BRY: Delta %s", ds18b20_list[i]))
-        ds18b20_data[ds18b20_list[i]]['DS18B20']['Temperature'] = sensors[ds18b20_list[i]]['Temperature']
-        publishMqtt(ds18b20_list[i])
+    sensor_id = ds18b20_list[i]
+    if sensors.contains(sensor_id)
+      sensor_temp = sensors[sensor_id]['Temperature']
+      if !delta
+        if checkDelta(sensor_temp, ds18b20_data[sensor_id]['DS18B20']['Temperature']) && sensor_temp != 85
+          #print(string.format("BRY: Delta %s", ds18b20_list[i]))
+          ds18b20_data[sensor_id]['DS18B20']['Temperature'] = sensor_temp
+          publishMqtt(sensor_id)
+        end
+      else
+        publishMqtt(sensor_id)
       end
     end
   end
@@ -71,7 +77,14 @@ tasmota.add_rule("system#boot",
         if sensors[ds18b20_list[i]]['Temperature'] != 85 
           publishMqtt(ds18b20_list[i])
         else
-          tasmota.set_timer((i+1)*2500, def (value) publishMqtt(ds18b20_list[i]) end, ds18b20_list[i])
+          print(string.format("BRY: ERR85 %s", ds18b20_list[i]))
+          tasmota.set_timer((2*i+1)*2000,
+            def (value)
+              if sensors[ds18b20_list[i]]['Temperature'] != 85 
+                publishMqtt(ds18b20_list[i])
+              end
+            end,
+          ds18b20_list[i])
         end
       end
     end
@@ -80,6 +93,7 @@ tasmota.add_rule("system#boot",
 
 # cron
 tasmota.add_cron("10 */2 * * * *", def (value) checkDS18B20() end, "checkDS18B20")
+tasmota.add_cron("0 0 */1 * * *", def (value) checkDS18B20() end, "checkDS18B20")
 
 #for i: 0..ds18b20_list.size()-1
 #  if sensors.contains(ds18b20_list[i])
