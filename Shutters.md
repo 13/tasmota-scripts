@@ -49,14 +49,19 @@ ShutterSetHalfway 72
 - // Door close 75%
 - // Window open at 06:00
 - Set Nautical Sunrise and Civil Sunset
+## Timers
+- MON-FRI open 06:00 ~
+```
+Timer1 {"Enable":1,"Mode":0,"Time":"06:00","Window":0,"Days":"0111110","Repeat":1,"Output":1,"Action":3}
+```
 ```
 Rule1
 ON Shutter1#Position DO Publish2 tasmota/status/%topic%/pos %value% ENDON
 ON Time#Minute=30 DO Sunrise 2 ENDON
 ON Time#Minute=720 DO Sunrise 1 ENDON
-ON Time#Minute=360 DO ShutterOpen ENDON
-ON Time#Minute=%sunrise% DO ShutterPosition 60 ENDON
+ON Time#Minute=420 DO ShutterOpen ENDON
 ON Time#Minute=%sunset% DO ShutterClose ENDON
+ON Clock#Timer=1 DO ShutterPosition 45 ENDON
 // BIG
 ON Time#Minute=%sunset% DO Backlog event scs=%timestamp% ENDON
 ON event#scs$|-05- DO ShutterPosition 25 ENDON
@@ -147,3 +152,23 @@ ON event#scs$|-08- DO ShutterPosition 25 ENDON
 ON event#scs$|-09- DO ShutterPosition 25 ENDON
 ON event#scs$|-10- DO ShutterPosition 25 ENDON
 ```
+
+## 2024
+- OPEN
+  - at 6:00
+  - SAT+SUN at 7:00
+  - SMALL 60%
+  - BIG 80%
+
+
+## Timers
+- MON-FRI open 06:00 ~
+```
+Timer1 {"Enable":1,"Mode":0,"Time":"06:00","Window":0,"Days":"0111110","Repeat":1,"Output":1,"Action":3}
+
+Rule3
+ON Clock#Timer=1 DO ENDON
+
+
+```
+
