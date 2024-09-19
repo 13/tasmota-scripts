@@ -49,10 +49,16 @@ ShutterSetHalfway 72
 - // Door close 75%
 - // Window open at 06:00
 - Set Nautical Sunrise and Civil Sunset
+
+### Rule 1
+- Set shutter position MQTT
+- Open at 07:00
 ## Timers
-- MON-FRI open 06:00 ~
+- MON-FRI open half 06:00~
+- SAT-SUN open half 06:35~
 ```
 Timer1 {"Enable":1,"Mode":0,"Time":"06:00","Window":0,"Days":"0111110","Repeat":1,"Output":1,"Action":3}
+Timer2 {"Enable":2,"Mode":0,"Time":"06:35","Window":0,"Days":"1000001","Repeat":1,"Output":1,"Action":3}
 ```
 ```
 Rule1
@@ -61,7 +67,8 @@ ON Time#Minute=30 DO Sunrise 2 ENDON
 ON Time#Minute=720 DO Sunrise 1 ENDON
 ON Time#Minute=420 DO ShutterOpen ENDON
 ON Time#Minute=%sunset% DO ShutterClose ENDON
-ON Clock#Timer=1 DO ShutterPosition 45 ENDON
+ON Clock#Timer=1 DO ShutterPosition 55 ENDON
+ON Clock#Timer=2 DO ShutterPosition 55 ENDON
 // BIG
 ON Time#Minute=%sunset% DO Backlog event scs=%timestamp% ENDON
 ON event#scs$|-05- DO ShutterPosition 25 ENDON

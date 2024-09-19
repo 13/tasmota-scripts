@@ -6,7 +6,7 @@ import persist
 
 var devicename = tasmota.cmd("DeviceName")['DeviceName']
 
-var volume = 60
+var volume = 80
 var volume_default = volume
 
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
@@ -72,6 +72,20 @@ def checkDNS()
   end
 end
 
+def chimePC()
+  var hour =  int(tasmota.strftime("%I", tasmota.rtc()['local'])) + 1
+  if hour == 5 || hour == 8 || hour == 11
+    hour = 2
+  elif hour == 6 || hour == 9 || hour == 12
+    hour = 3
+  elif hour == 7 || hour == 10
+    hour = 4
+  else
+    #print(string.format("MUH: PC%d", hour))
+  end
+  tasmota.cmd(string.format("i2splay /sfx/PC%d.mp3", hour))
+end
+
 # CRON
 ## Persist
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
@@ -80,8 +94,9 @@ tasmota.add_cron("10 */15 * * * *", def (value) tasmota.cmd("ping8 192.168.22.1"
 #tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
 tasmota.add_cron("15 1 */1 * * *", def (value) checkDNS() end, "checkDNS")
 ## PC
-tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay /sfx/PC.mp3") end, "pcHalf")
-tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd("i2splay /sfx/PC3.mp3") end, "pcFull")
+tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay /sfx/PC1.mp3") end, "pcHalf")
+tasmota.add_cron("59 59 * * * *", def (value) chimePC() end, "pcFull")
+#tasmota.add_cron("59 59 * * * *", def (value) tasmota.cmd(string.format("i2splay /sfx/PC%d.mp3", int(tasmota.strftime("%I", tasmota.rtc()['local'])))) end, "pcFull")
 
 # RULES
 ## checkWifi 

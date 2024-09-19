@@ -100,6 +100,8 @@ tasmota.add_cron("10 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.se
 ## Xmas Easteregg
 tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
 tasmota.add_cron("0 0,30 * 27 12 *", def (value) xmas = "" end, "xmas_off")
+## Check GD up
+tasmota.add_cron("25 */3 * * * *", def (value) tasmota.cmd("ping8 192.168.22.91") end, "checkGD")
 
 # RULES
 ## MQTT & HTTP API
@@ -136,4 +138,7 @@ tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GD, muh/po
 tasmota.add_rule("Event#GD", def (value) handleRemoteSwitchP("GD",int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GDL, muh/portal/GDL/json, state") end)
 tasmota.add_rule("Event#GDL", def (value) handleLED("GDL",int(value)) end)
+
+## checkGD
+tasmota.add_rule("Ping#192.168.22.91#Success==0", def (value) handleLED("G",0) handleLED("GDL",0) end)
 
