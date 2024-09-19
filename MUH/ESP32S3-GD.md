@@ -11,7 +11,7 @@
 | SCL | I2C SCL | 2 | D02 | | | RTC DS3231 |
 | **Reeds, Buttons & LEDS** | | | | | | |
 | GD | Switch 1 | 9 | D09 | | x | Garage Door Reed |
-| GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed (with LED) |
+| GDL | Switch 2 | 10 | D10 | 3v | x | Garage Door Lock Reed with LED |
 | G | Switch 3 | 11 | D11 |   | x | Garage Reed |
 | GD_BTN | Button 1 | 12 | D12 |   | x | Garage Door Button |
 | GD_LEDHDL | Relay 4 | 13 | D13 |   | x | Garage Door LED for HDL |
@@ -46,7 +46,7 @@ Backlog Template {"NAME":"ESP32S3-GD","GPIO":[1,640,608,1,7840,7808,7776,5984,16
 Backlog IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName GD; FriendlyName1 GD_L; FriendlyName2 GD_U; FriendlyName3 G_T;
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode3 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
-SetOption73 1; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
+SetOption73 1; SetOption32 20; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 SetOption0 0; PowerOnState 0; PulseTime1 2; PulseTime2 2; PulseTime3 2;
 TelePeriod 3600;
 #SetOption56 1;

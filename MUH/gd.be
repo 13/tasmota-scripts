@@ -24,6 +24,33 @@ def handleFPrint(values,sw1,sw2)
  publishFPrint(values,soundFPrint)
 end
 
+
+# Buttons
+def handleButton(name,state)
+  if name == "GDBTN"
+    if state == 3 # hold
+      powerCmd(G_TOGGLE_PIN)
+      #tasmota.cmd("i2splay /sfx/click2.mp3")
+    elif state == 10 # single
+      tasmota.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2")
+      tasmota.publish("tasmota/cmnd/tasmota_3905F0/POWER", "0")
+      #tasmota.cmd("i2splay /sfx/click0.mp3")
+    elif state == 11 # double
+      powerCmd(GD_UNLOCK_PIN)
+      #tasmota.cmd("i2splay /sfx/click2.mp3")
+    #elif state == 12 # triple
+    #  tasmota.publish("muh/portal/RLY/cmnd", "G_T")
+    #  tasmota.cmd("i2splay /sfx/click2.mp3")
+    elif state == 13 # quad
+      volume = volume > 0 ? 0 : volume_default
+      tasmota.cmd(string.format("i2sgain %d", volume))
+    end
+  else
+    print(string.format("MUH: handleButton() %s...", name))
+  end
+  tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tasmota.time_str(tasmota.rtc()['local'])), false)
+end
+
 # AutoLock
 def handleLock(swState, timerOn)
   var timerName = "timerLock"
@@ -70,6 +97,9 @@ tasmota.add_rule("Switch1#state", def (value) switch1 = value handleSwitchP("GD"
 tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitchP("GDL",value,1) handleLock(value,0) end)
 tasmota.add_rule("Switch3#state", def (value) switch3 = value handleSwitchP("G",value,1) end)
 tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/GDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+
+## Buttons
+tasmota.add_rule("Button1#state", def (value) handleButton("GDBTN",value) end)
 
 ## MQTT Subscribe Remote Switches
 ### sfx
