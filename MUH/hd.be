@@ -80,12 +80,16 @@ def handleLED(name, value)
     tasmota.remove_timer("HD_LED")
     if gState && gdlState
       tasmota.set_power(HD_LED_PIN,true)
+      tasmota.cmd("Color #005500") # #00FF00
     elif !gState && !gdlState
       tasmota.set_power(HD_LED_PIN,false)
+      tasmota.cmd("Color #660000") # #FF0000
     elif gState && !gdlState
-      blinkLED(HD_LED_PIN,200)
+      tasmota.cmd("Color #5A2F00") # #FFCC00
+      blinkLED(HD_LED_PIN,500)
     else
-      blinkLED(HD_LED_PIN,1400)
+      tasmota.cmd("Color #660000") # #FF0000
+      blinkLED(HD_LED_PIN,1000)
     end
   end
   ledChange = false

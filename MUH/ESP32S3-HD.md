@@ -1,8 +1,4 @@
 # ESP32-S3 HD
-## Template
-```
-{"NAME":"ESP32-S3-DevKitC-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,32,33,226,1,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
-```
 ## Table
 | NAME | MODULE | GPIO | PIN | + | - | DESC |
 |:--|:--|:--|--:|:--|---|---|
@@ -17,28 +13,32 @@
 | **Relays** | | | | | | |
 | HD_L | Relay_i 1 | 47 | D47 | | | Relay |
 | HD_U | Relay_i 2 | 48 | D48 | | | Relay |
-| HD_LED | Relay 3 | 13 | D13 | | | Relay |
+| **LED** | | | | | | |
+| HD_LED R | PWM 1 | 13 | D13 | | | PWM |
+| HD_LED G | PWM 2 | 14 | D14 | | | PWM |
+| HD_LED B | PWM 3 | 21 | D21 | | | PWM |
 | **I2S Audio** | | | | | | |
 | LRC | I2S_WS | 4 | D04 | 5v | x | i2s |
 | BCLK | I2S_BCLK | 5 | D05 | | | i2s |
 | DIN | I2S_DOUT | 6 | D05 | | | i2s |
 | **PIR** | | | | | | |
 | HDP | Switch 4 | 8 | D08 | 3v | x | Garage Door PiR |
-| **RFID** | | | | | | |
-| xxx | xxx | 21 | D21 | x | x | |
 | **FPRINT** | | | | | | |
 | FPrint | As608 TX | 7 | D07 | x | x | Fingerprint |
 | FPrint | As608 RX | 15 | D15 | x | x | Fingerprint |
 
 ## Settings
 ```
-Backlog Template {"NAME":"ESP32S3-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,32,33,226,1,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}; Module 0;
+Backlog Template
+{"NAME":"ESP32S3-HD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,32,33,416,417,6016,1,1,1,1,1,418,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1};
+Module 0;
 Backlog IPAddress1 192.168.22.92; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName HD; FriendlyName1 HD_L; FriendlyName2 HD_U; FriendlyName3 HD_LED; 
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption32 20; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
 SetOption0 0; PowerOnState 0; PulseTime1 2; PulseTime2 0;
 TelePeriod 3600;
+SetOption20 1; Dimmer 100;
 Restart 1;
 ```
 ### Rules

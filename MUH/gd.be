@@ -36,7 +36,8 @@ def handleButton(name,state)
       tasmota.publish("tasmota/cmnd/tasmota_3905F0/POWER", "0")
       #tasmota.cmd("i2splay /sfx/click0.mp3")
     elif state == 11 # double
-      powerCmd(GD_UNLOCK_PIN)
+      tasmota.publish("tasmota/cmnd/tasmota_BCD50C/POWER", "2")
+      #powerCmd(G_TOGGLE_PIN)
       #tasmota.cmd("i2splay /sfx/click2.mp3")
     #elif state == 12 # triple
     #  tasmota.publish("muh/portal/RLY/cmnd", "G_T")
@@ -58,9 +59,11 @@ def handleLock(swState, timerOn)
     timerOn = swState
   end
   if swState && timerOn
+    print(string.format("MUH: Starting timer GDL"))
     tasmota.remove_timer(timerName)
     tasmota.set_timer(timerMillis, def (value) powerCmd(GD_LOCK_PIN) end, timerName)
   else
+    print(string.format("MUH: Stopping timer GDL"))
     tasmota.remove_timer(timerName)
   end
 end
@@ -88,8 +91,9 @@ tasmota.cmd(string.format("i2sgain %d", volume))
 tasmota.add_rule(["FPrint#Id","FPrint#Confidence>20"], def (values) handleFPrint(values) end)
 
 ## Switches
-handleLock(switch1,1)
-handleLock(switch2,0)
+if switch1 && !switch2
+  handleLock(switch1,1)
+end
 handleSwitchP("GD",switch1)
 handleSwitchP("GDL",switch2)
 handleSwitchP("G",switch3)
