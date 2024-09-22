@@ -10,6 +10,7 @@ Backlog Sunrise 1;
 Backlog Ledtable 0; DimmerRange 45,100; ShdLeadingEdge 1; ShdLeadingEdge 0;
 SwitchMode 11; SetOption32 10; Rule1 1
 PulseTime 5400
+A PulseTime 3600
 ```
 ## Rules
 ### Rule 1
