@@ -104,18 +104,22 @@ ON Event#PIR=1 DO Power1 1 ENDON
 ## HD_INT
 ### Settings
 ```
-Backlog SwitchMode 0
+{"NAME":"Shelly 2.5","GPIO":[320,0,0,0,224,193,0,0,640,192,608,225,3456,4736],"FLAG":0,"BASE":18}
+Backlog PulseTime1 600; PulseTime2 600;
 ```
 ### Rules
 - Turn OFF after 10m
 - Turn ON (10m) if HD=0 & ShellyPiR=1
 ```
 Rule1
-ON Power1#Boot DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ENDIF ENDON
-ON System#Boot DO IF (%var1%!=%mem1%) mem1 %var1%; Publish2 muh/lights/HD_INT/json {"state": %var1%, "time": "%timestamp%"} ENDIF ENDON
-ON Power1#state!=%mem1% DO Backlog mem1 %value%; Publish2 muh/lights/HD_INT/json {"state": %value%, "time": "%timestamp%"} ENDON
-ON Power1#state DO Backlog var1 %value%; IF (%value%==1) RuleTimer1 600 ELSE RuleTimer1 0 ENDIF ENDON
-ON Rules#Timer=1 DO Power1 0 ENDON
+ON Power1#Boot DO var1 %value% ENDON
+ON Power2#Boot DO var10 %value% ENDON
+ON System#Boot DO Publish2 muh/lights/HD_INT/json {"state": %var1%, "time": "%timestamp%"} ENDON
+ON System#Boot DO Publish2 muh/lights/HD_GOBE/json {"state": %var10%, "time": "%timestamp%"} ENDON
+ON Power1#state!=%var1% DO Backlog var1 %value%; Publish2 muh/lights/HD_INT/json {"state": %value%, "time": "%timestamp%"} ENDON
+ON Power2#state!=%var10% DO Backlog var10 %value%; Publish2 muh/lights/HD_GOBE/json {"state": %value%, "time": "%timestamp%"} ENDON
+
+Rule2
 ON mqtt#connected DO Subscribe MTN, shellies/shellymotion2-8CF6811074B3/status, motion ENDON
 ON Event#MTN=true DO var2 1 ENDON
 ON Event#MTN=false DO var2 0 ENDON
