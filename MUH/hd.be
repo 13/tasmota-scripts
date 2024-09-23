@@ -13,6 +13,7 @@ var gState = false
 var gdlState = false
 var ledChange = true
 var xmas = ""           # Xmas Easteregg
+var gdOffline = false
 
 # Fingerprint
 def handleFPrint(values,sw1,sw2)
@@ -95,6 +96,18 @@ def handleLED(name, value)
   ledChange = false
 end
 
+def checkGD(state)
+  if state == 0
+    if gdOffline
+      handleLED("G",0)
+      handleLED("GDL",0)
+    end
+    gdOffline = true
+  else
+    gdOffline = false
+  end
+end
+
 # CRON
 ## MQTT Publish Status WatchDog
 tasmota.add_cron("20 */3 * * * *", def (value) publishSwitchP("HD") end, "wd_HD")
@@ -144,5 +157,5 @@ tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GDL, muh/p
 tasmota.add_rule("Event#GDL", def (value) handleLED("GDL",int(value)) end)
 
 ## checkGD
-tasmota.add_rule("Ping#192.168.22.91#Success==0", def (value) handleLED("G",0) handleLED("GDL",0) end)
+tasmota.add_rule("Ping#192.168.22.91#Success", def (value) checkGD(value) end)
 
