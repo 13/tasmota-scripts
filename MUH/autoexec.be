@@ -9,6 +9,8 @@ var devicename = tasmota.cmd("DeviceName")['DeviceName']
 var volume = 80
 var volume_default = volume
 
+var isOnline = true
+
 print(string.format("MUH: Loading autoexec.be %s...", devicename))
 
 # Custom Relay Cmd
@@ -72,6 +74,17 @@ def checkDNS()
   end
 end
 
+def checkIsOnline(state)
+  if state == 0
+    if !isOnline
+      tasmota.cmd("restart 1")
+    end
+    isOnline= false
+  else
+    isOnline = true
+  end
+end
+
 def chimePC()
   var hour =  int(tasmota.strftime("%I", tasmota.rtc()['local'])) + 1
   if hour == 5 || hour == 8 || hour == 11
@@ -100,6 +113,7 @@ tasmota.add_cron("59 59 * * * *", def (value) chimePC() end, "pcFull")
 
 # RULES
 ## checkWifi 
+#tasmota.add_rule("Ping#192.168.22.1#Success", def (value) checkIsOnline(value) end)
 tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
 
 # Load custom script
@@ -110,3 +124,4 @@ elif devicename == "GD"
 else
   print(string.format("MUH: Unknown %s", devicename))
 end
+
