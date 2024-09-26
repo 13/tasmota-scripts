@@ -40,7 +40,7 @@ sensors
 ## Settings
 ```
 Backlog 
-Template {"NAME":"ESP32S3-GD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,162,32,1,258,6016,1,1,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
+Template {"NAME":"ESP32S3-GD","GPIO":[1,640,608,1,7840,7808,7776,5984,163,160,161,162,32,1,258,6016,9888,9920,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,256,257],"FLAG":0,"BASE":1}
 Module 0;
 Backlog IPAddress1 192.168.22.91; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName GD; FriendlyName1 GD_L; FriendlyName2 GD_U; FriendlyName3 G_T;

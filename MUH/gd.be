@@ -5,6 +5,7 @@ print(string.format("MUH: Loading gd.be on %s...", devicename))
 var switch1 = tasmota.get_switches()[0] # GD
 var switch2 = tasmota.get_switches()[1] # GDL
 var switch3 = tasmota.get_switches()[2] # G
+#var switch4 = tasmota.get_switches()[3] # GDW
 
 var GD_LOCK_PIN = 0
 var GD_UNLOCK_PIN = 1
@@ -13,17 +14,31 @@ var G_TOGGLE_PIN = 2
 var timerMillis = 600000      # AutoLock Timer
 volume = 90                   # Audio Volume
 
+var ld2410MotionDetected = false
+
 # Fingerprint
 def handleFPrint(values,sw1,sw2)
- var soundFPrint = 1
- if values[0] % 5 == 0
-   powerCmd(GD_UNLOCK_PIN)
- else
-   powerCmd(G_TOGGLE_PIN)
- end
- publishFPrint(values,soundFPrint)
+  var soundFPrint = 1
+  if values[0] % 5 == 0
+    powerCmd(GD_UNLOCK_PIN)
+  else
+    powerCmd(G_TOGGLE_PIN)
+  end
+  publishFPrint(values,soundFPrint)
 end
 
+# LD2410
+def handleLD2410(values)
+  if values[0] > 0 && values[1] > 0 && values[2] > 0
+    #print(string.format("MUH: LD2410 detected motion %d", values[0]))
+    if !ld2410MotionDetected
+      tasmota.publish("muh/portal/RADAR/json", string.format("{\"state\": 1, \"moving\": %d, \"static\": %d, \"detect\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], values[2], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+      ld2410MotionDetected = true
+    end
+  else
+    ld2410MotionDetected = false
+  end
+end
 
 # Buttons
 def handleButton(name,state)
@@ -88,7 +103,10 @@ tasmota.add_rule("Event#RLY=G_T", def (value) powerCmd(G_TOGGLE_PIN) end)
 ## Audio Volume
 tasmota.cmd(string.format("i2sgain %d", volume))
 ## FPrint
-tasmota.add_rule(["FPrint#Id","FPrint#Confidence>20"], def (values) handleFPrint(values) end)
+tasmota.add_rule(["FPrint#Id","FPrint#Confidence>10"], def (values) handleFPrint(values) end)
+## LD2410
+#tasmota.add_rule(["LD2410#Distance[0]","LD2410#Distance[1]","LD2410#Distance[2]"], def (values) handleLD2410(values) end)
+tasmota.add_rule("LD2410#Distance", def (values) handleLD2410(values) end)
 
 ## Switches
 if switch1 && !switch2
