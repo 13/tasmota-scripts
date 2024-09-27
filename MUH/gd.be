@@ -15,6 +15,7 @@ var timerMillis = 600000      # AutoLock Timer
 volume = 90                   # Audio Volume
 
 var ld2410MotionDetected = false
+var ld2410DistanceSum = 0
 
 # Fingerprint
 def handleFPrint(values,sw1,sw2)
@@ -31,10 +32,13 @@ end
 def handleLD2410(values)
   if values[0] > 0 && values[1] > 0 && values[2] > 0
     #print(string.format("MUH: LD2410 detected motion %d", values[0]))
-    if !ld2410MotionDetected
+    var distanceSum = values[0] + values[1] + values[2]
+    #print(string.format("MUH: LD2410 distance sum %d", distanceSum))
+    if !ld2410MotionDetected && ld2410DistanceSum != distanceSum
       ld2410MotionDetected = true
-      tasmota.publish("muh/portal/RADAR/json", string.format("{\"state\": 1, \"moving\": %d, \"static\": %d, \"detect\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], values[2], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+      ld2410DistanceSum = distanceSum
       tasmota.set_timer(60000, def (value) ld2410MotionDetected = false end, "ld2410timer")
+      tasmota.publish("muh/portal/RADAR/json", string.format("{\"state\": 1, \"moving\": %d, \"static\": %d, \"detect\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], values[2], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
     end
   else
     ld2410MotionDetected = false
