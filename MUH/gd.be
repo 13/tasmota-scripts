@@ -5,7 +5,8 @@ print(string.format("MUH: Loading gd.be on %s...", devicename))
 var switch1 = tasmota.get_switches()[0] # GD
 var switch2 = tasmota.get_switches()[1] # GDL
 var switch3 = tasmota.get_switches()[2] # G
-#var switch4 = tasmota.get_switches()[3] # GDW
+#var switch4 = tasmota.get_switches()[3] # PIR
+#var switch5 = tasmota.get_switches()[3] # LD2410
 
 var GD_LOCK_PIN = 0
 var GD_UNLOCK_PIN = 1
@@ -20,7 +21,10 @@ var ld2410DistanceSum = 0
 # Fingerprint
 def handleFPrint(values,sw1,sw2)
   var soundFPrint = 1
-  if values[0] % 5 == 0
+  if values[0] % 5 ||
+     values[0] == 3 || values[0] == 4 || values[0] == 8 || values[0] == 9 ||
+     values[0] == 13 || values[0] == 14 || values[0] == 18 || values[0] == 19 ||
+     values[0] == 23 || values[0] == 24 || values[0] == 28 || values[0] == 29
     powerCmd(GD_UNLOCK_PIN)
   else
     powerCmd(G_TOGGLE_PIN)
@@ -38,7 +42,7 @@ def handleLD2410(values)
       ld2410MotionDetected = true
       ld2410DistanceSum = distanceSum
       tasmota.set_timer(60000, def (value) ld2410MotionDetected = false end, "ld2410timer")
-      tasmota.publish("muh/portal/RADAR/json", string.format("{\"state\": 1, \"moving\": %d, \"static\": %d, \"detect\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], values[2], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+      tasmota.publish("muh/portal/GDMW1/json", string.format("{\"state\": 1, \"moving\": %d, \"static\": %d, \"detect\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], values[2], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
     end
   else
     ld2410MotionDetected = false
@@ -124,6 +128,7 @@ tasmota.add_rule("Switch1#state", def (value) switch1 = value handleSwitchP("GD"
 tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitchP("GDL",value,1) handleLock(value,0) end)
 tasmota.add_rule("Switch3#state", def (value) switch3 = value handleSwitchP("G",value,1) end)
 tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/GDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Switch5#state>0", def (value) tasmota.publish("muh/portal/GDMW2/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 
 ## Buttons
 tasmota.add_rule("Button1#state", def (value) handleButton("GDBTN",value) end)
