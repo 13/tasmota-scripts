@@ -3,6 +3,11 @@ import mqtt
 import string
 import math
 
+#-
+{"NAME":"SuperMini ESP32-C3","GPIO":[1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],"FLAG":0,"BASE":1}
+
+-#
+
 class ParkAi
 
   var distMax    # max distance
