@@ -5,7 +5,8 @@ Backlog Template
 Backlog 
 DeviceName RolloTron; FriendlyName1 RolloTronUp; FriendlyName2 RolloTronDown;
 PowerOnState 0; PulseTime1 4; PulseTime2 4;
-Timer1 {"Enable":1,"Mode":1,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":1};
-Timer2 {"Enable":1,"Mode":2,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":2,"Action":1};
+Timer1 {"Enable":1,"Mode":0,"Time":"06:45","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":1};
+Timer2 {"Enable":1,"Mode":2,"Time":"00:15","Window":0,"Days":"1111111","Repeat":1,"Output":2,"Action":1};
+Timers 1;
 Restart 1;
 --#
