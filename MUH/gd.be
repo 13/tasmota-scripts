@@ -19,12 +19,11 @@ var ld2410MotionDetected = false
 var ld2410DistanceSum = 0
 
 # Fingerprint
+# 1:RT,2:RI,3:RM,4:5:RP
 def handleFPrint(values,sw1,sw2)
   var soundFPrint = 1
-  if values[0] % 5 ||
-     values[0] == 3 || values[0] == 4 || values[0] == 8 || values[0] == 9 ||
-     values[0] == 13 || values[0] == 14 || values[0] == 18 || values[0] == 19 ||
-     values[0] == 23 || values[0] == 24 || values[0] == 28 || values[0] == 29
+  #if (values[0] - 1) % 5 == 0 || (values[0] - 2) % 5 == 0
+  if (values[0] - 3) % 5 == 0 || (values[0] - 4) % 5 == 0 || (values[0] - 5) % 5 == 0
     powerCmd(GD_UNLOCK_PIN)
   else
     powerCmd(G_TOGGLE_PIN)
