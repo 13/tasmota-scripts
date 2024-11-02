@@ -92,11 +92,11 @@ def handleLED(name, value)
       tasmota.set_power(HD_LED_PIN,false)
       tasmota.cmd("Color #660000") # #FF0000
     elif gState && gdState && !gdlState
-      tasmota.cmd("Color #5A2F00") # #FFCC00
-      blinkLED(HD_LED_PIN,500)
-    elif gState && !gdState && !gdlState
       tasmota.set_power(HD_LED_PIN,true)
       tasmota.cmd("Color #5A2F00") # #FFCC00
+    elif gState && !gdState && !gdlState
+      tasmota.cmd("Color #5A2F00") # #FFCC00
+      blinkLED(HD_LED_PIN,500)
     else
       tasmota.cmd("Color #660000") # #FF0000
       blinkLED(HD_LED_PIN,1000)
