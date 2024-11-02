@@ -10,6 +10,7 @@ var HD_UNLOCK_PIN = 1
 var HD_LED_PIN = 2
 
 var gState = false
+var gdState = false
 var gdlState = false
 var ledChange = true
 var xmas = ""           # Xmas Easteregg
@@ -68,6 +69,11 @@ def handleLED(name, value)
       gState = value
       ledChange = true
     end
+  elif name == "GD"
+    if gdState != value
+      gdState = value
+      ledChange = true
+    end
   elif name == "GDL"
     if gdlState != value
       gdlState = value
@@ -85,9 +91,12 @@ def handleLED(name, value)
     elif !gState && !gdlState
       tasmota.set_power(HD_LED_PIN,false)
       tasmota.cmd("Color #660000") # #FF0000
-    elif gState && !gdlState
+    elif gState && gdState && !gdlState
       tasmota.cmd("Color #5A2F00") # #FFCC00
       blinkLED(HD_LED_PIN,500)
+    elif gState && !gdState && !gdlState
+      tasmota.set_power(HD_LED_PIN,true)
+      tasmota.cmd("Color #5A2F00") # #FFCC00
     else
       tasmota.cmd("Color #660000") # #FF0000
       blinkLED(HD_LED_PIN,1000)
@@ -152,7 +161,7 @@ tasmota.add_rule("Button2#state", def (value) handleButton("HDBTN",value) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe G, muh/portal/G/json, state") end)
 tasmota.add_rule("Event#G", def (value) handleRemoteSwitchP("G",int(value)) handleLED("G",int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GD, muh/portal/GD/json, state") end)
-tasmota.add_rule("Event#GD", def (value) handleRemoteSwitchP("GD",int(value)) end)
+tasmota.add_rule("Event#GD", def (value) handleRemoteSwitchP("GD",int(value)) handleLED("GD",int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GDL, muh/portal/GDL/json, state") end)
 tasmota.add_rule("Event#GDL", def (value) handleLED("GDL",int(value)) end)
 
