@@ -139,3 +139,7 @@ tasmota.add_rule("Event#HD", def (value) handleRemoteSwitchP("HD",int(value)) en
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe HDB, muh/portal/HDB/json, state") end)
 tasmota.add_rule("Event#HDB", def (value) tasmota.cmd("i2splay /sfx/HDB.mp3") end)
 
+## MQTT Mobile Garage Opener
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe MGO, muh/portal/caa/json, B1") end)
+tasmota.add_rule("Event#MGO=1", def (value) if int(value) == 1 powerCmd(G_TOGGLE_PIN) end end)
+
