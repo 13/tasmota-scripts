@@ -207,7 +207,7 @@ Backlog SwitchMode 0
 - Toggle HD_INT
 ```
 Rule1
-ON Switch1#state DO Publish tasmota/cmnd/tasmota_BE3540/POWER 2 ENDON
+ON Switch1#state DO Publish tasmota/cmnd/tasmota_5FB259/POWER 2 ENDON
 ```
 ---
 ## UD_GANG
