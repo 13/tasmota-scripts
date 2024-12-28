@@ -124,8 +124,8 @@ tasmota.add_cron("20 */3 * * * *", def (value) publishSwitchP("HDL") end, "wd_HD
 ## AutoLock Night
 tasmota.add_cron("10 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.set_power(HD_LOCK_PIN, true) end end, "autolock")
 ## Xmas Easteregg
-tasmota.add_cron("0 0,30 * 24-26 12 *", def (value) xmas = "X" end, "xmas_on")
-tasmota.add_cron("0 0,30 * 27 12 *", def (value) xmas = "" end, "xmas_off")
+tasmota.add_cron("0 0,30 * 24-25 12 *", def (value) xmas = "X" end, "xmas_on")
+tasmota.add_cron("0 0,30 * 26 12 *", def (value) xmas = "" end, "xmas_off")
 ## Check GD up
 tasmota.add_cron("25 */3 * * * *", def (value) tasmota.cmd("ping8 192.168.22.91") end, "checkGD")
 

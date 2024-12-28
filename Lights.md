@@ -194,7 +194,7 @@ ON Rules#Timer=1 DO Power1 0 ENDON
 ```
 
 ## STCK2_SW
-## Template
+### Template
 ```
 {"NAME":"Shelly 1","GPIO":[1,1,0,1,224,192,0,0,0,0,0,0,0,0],"FLAG":0,"BASE":46}
 ```
@@ -208,6 +208,9 @@ Backlog SwitchMode 0
 ```
 Rule1
 ON Switch1#state DO Publish tasmota/cmnd/tasmota_5FB259/POWER 2 ENDON
+Rule2
+ON Time#Minute|5 DO Ping4 192.168.22.1 ENDON
+ON Ping#192.168.22.1#Reachable=false DO Restart 1 ENDON
 ```
 ---
 ## UD_GANG
