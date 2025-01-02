@@ -107,7 +107,8 @@ ON Event#PIR=1 DO Power1 1 ENDON
 {"NAME":"Shelly 2.5","GPIO":[320,0,0,0,224,193,0,0,640,192,608,225,3456,4736],"FLAG":0,"BASE":18}
 {"NAME":"Shelly Plus 2PM ADDON PCB v0.1.9","GPIO":[320,0,0,0,32,192,0,0,225,224,0,0,0,0,193,0,0,0,194,0,0,608,640,3458,0,0,0,0,0,9472,0,4736,0,0,0,0],"FLAG":0,"BASE":1}
 
-Backlog PulseTime1 600; PulseTime2 300; SwitchMode3 1;
+Backlog PulseTime1 600; PulseTime2 300; 
+Backlog PulseTime1 600; PulseTime2 300; SwitchMode3 1; SetOption114 1;
 ```
 ### Rules
 - Turn OFF after 10m
@@ -134,6 +135,8 @@ ON event#chcksr0<%sunrise% DO IF ((var2==1) AND (var3==0)) Power1 1; RuleTimer1 
 ON event#chckss0>%sunset% DO IF ((var2==1) AND (var3==0)) Power1 1; RuleTimer1 300 ENDIF ENDON
 
 Rule3
+ON Switch1#state=1 DO Power1 %value% ENDON
+ON Switch2#state=1 DO Power2 %value% ENDON
 ON Switch3#state=1 DO Power2 1 ENDON
 ```
 
