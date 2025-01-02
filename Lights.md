@@ -135,8 +135,8 @@ ON event#chcksr0<%sunrise% DO IF ((var2==1) AND (var3==0)) Power1 1; RuleTimer1 
 ON event#chckss0>%sunset% DO IF ((var2==1) AND (var3==0)) Power1 1; RuleTimer1 300 ENDIF ENDON
 
 Rule3
-ON Switch1#state=1 DO Power1 %value% ENDON
-ON Switch2#state=1 DO Power2 %value% ENDON
+ON Switch1#state DO Power1 %value% ENDON
+ON Switch2#state DO Power2 %value% ENDON
 ON Switch3#state=1 DO Power2 1 ENDON
 ```
 
