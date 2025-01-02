@@ -216,7 +216,7 @@ Backlog SwitchMode 0
 - Toggle HD_INT
 ```
 Rule1
-ON Switch1#state DO Publish tasmota/cmnd/tasmota_5FB259/POWER 2 ENDON
+ON Switch1#state DO Publish tasmota/cmnd/tasmota_0E8F04/POWER 2 ENDON
 Rule2
 ON Time#Minute|5 DO Ping4 192.168.22.1 ENDON
 ON Ping#192.168.22.1#Reachable=false DO Restart 1 ENDON
