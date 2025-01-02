@@ -105,11 +105,14 @@ ON Event#PIR=1 DO Power1 1 ENDON
 ### Settings
 ```
 {"NAME":"Shelly 2.5","GPIO":[320,0,0,0,224,193,0,0,640,192,608,225,3456,4736],"FLAG":0,"BASE":18}
-Backlog PulseTime1 600; PulseTime2 600;
+{"NAME":"Shelly Plus 2PM ADDON PCB v0.1.9","GPIO":[320,0,0,0,32,192,0,0,225,224,0,0,0,0,193,0,0,0,194,0,0,608,640,3458,0,0,0,0,0,9472,0,4736,0,0,0,0],"FLAG":0,"BASE":1}
+
+Backlog PulseTime1 600; PulseTime2 600; SwitchMode3 1;
 ```
 ### Rules
 - Turn OFF after 10m
 - Turn ON (10m) if HD=0 & ShellyPiR=1
+- Turn ON HD_GOBE when PIR=1
 ```
 Rule1
 ON Power1#Boot DO var1 %value% ENDON
@@ -129,6 +132,9 @@ ON mqtt#connected DO Subscribe HD, muh/portal/HD/json, state ENDON
 ON Event#HD=0 DO Backlog event chcksr0=%time%; event chckss0=%time% ENDON
 ON event#chcksr0<%sunrise% DO IF ((var2==1) AND (var3==0)) Power1 1; RuleTimer1 300 ENDIF ENDON
 ON event#chckss0>%sunset% DO IF ((var2==1) AND (var3==0)) Power1 1; RuleTimer1 300 ENDIF ENDON
+
+Rule3
+ON Switch3#state=1 DO Power2 1 ENDON
 ```
 
 ## HD_EXT
