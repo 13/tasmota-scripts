@@ -127,7 +127,7 @@ tasmota.add_cron("10 0 0,1 * * *", def (value) if switch1 && !switch2 tasmota.se
 tasmota.add_cron("0 0,30 * 24-25 12 *", def (value) xmas = "X" end, "xmas_on")
 tasmota.add_cron("0 0,30 * 26 12 *", def (value) xmas = "" end, "xmas_off")
 ## Check GD up
-tasmota.add_cron("25 */3 * * * *", def (value) tasmota.cmd("ping8 192.168.22.91") end, "checkGD")
+tasmota.add_cron("25 */3 * * * *", def (value) tasmota.cmd("ping4 192.168.22.91") end, "checkGD")
 
 # RULES
 ## MQTT & HTTP API
