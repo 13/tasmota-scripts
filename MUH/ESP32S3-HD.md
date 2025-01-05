@@ -39,9 +39,11 @@ Backlog IPAddress1 192.168.22.92; IPAddress2 192.168.22.6; IPAddress3 255.255.25
 DeviceName HD; FriendlyName1 HD_L; FriendlyName2 HD_U; FriendlyName3 HD_LED;
 SetOption114 1; SwitchMode1 2; SwitchMode2 2; SwitchMode4 1; SwitchTopic 0; SwitchDebounce 100;
 SetOption73 1; SetOption32 20; SetOption1 1; ButtonTopic 0; LedPower 0; BlinkCount 0;
-SetOption0 0; SaveData 3600; PowerOnState 0; PulseTime1 2; PulseTime2 0;
+SetOption0 0; PowerOnState 0; PulseTime1 2; PulseTime2 0;
 TelePeriod 3600;
 SetOption20 1; Dimmer 100;
+Webbutton1 LOCK; Webbutton2 UNLOCK; Webbutton3 LED;
+SaveData 3600;
 Restart 1;
 ```
 
