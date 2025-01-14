@@ -27,18 +27,19 @@ GPIO14 -> DHT22
 DisplayScrollDelay 8; 
 Rule1
   ON system#init DO Backlog DisplayDimmer 13; DisplayClock 2; RuleTimer3 5 ENDON
-  ON Minute=1140 DO DisplayDimmer 13 ENDON
-  ON Minute=419 DO DisplayDimmer 100 ENDON
-  ON Minute=419 DO DisplayDimmer 100 ENDON
-
   ON mqtt#connected DO Subscribe TempOut, muh/wst/data/B327, temp_c ENDON
   ON Event#TempOut DO Backlog var3 %value%; CalcRes 0; ADD3 0 ENDON
-
   ON am2301#Temperature DO Backlog var1 %value%; CalcRes 0; ADD1 0; var2 %value% ENDON
   ON Event#ShowTemp DO Backlog DisplayText %var1%^; RuleTimer2 5 ENDON
   ON Rules#Timer=1 DO Backlog DisplayClock 2; RuleTimer3 15 ENDON
   ON Rules#Timer=2 Do Backlog DisplayText %var3%A; RuleTimer1 5 ENDON
   ON Rules#Timer=3 Do Event ShowTemp ENDON
+
+Rule2 
+  ON Minute=1140 DO DisplayDimmer 13 ENDON
+  ON Minute=1170 DO DisplayDimmer 13 ENDON
+  ON Minute=419 DO DisplayDimmer 100 ENDON
+  ON Minute=450 DO DisplayDimmer 100 ENDON
 
 
 Rule2
