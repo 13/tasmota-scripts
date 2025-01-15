@@ -19,7 +19,7 @@ def showClock()
 end
 
 def showTempIn()
-  tasmota.cmd(string.format("DisplayText %d°", math.round(tempIn)))
+  tasmota.cmd(string.format("DisplayText %dC", math.round(tempIn)))
 end
 
 def showTempOut()
@@ -48,9 +48,9 @@ end
 tasmota.add_cron("0 * 7-18 * * *", def (value) checkDimmer(100) end, "DimmerHigh")
 tasmota.add_cron("0 * 1-6,19-23 * * *", def (value) checkDimmer(13) end, "DimmerLow")
 # cycle
-tasmota.add_cron("10,45 */1 * * * *", def (value) showTempIn() end, "showTempIn")
-tasmota.add_cron("15,50 */1 * * * *", def (value) showTempOut() end, "showTempOut")
-tasmota.add_cron("20,55 */1 * * * *", def (value) showClock() end, "showClock")
+tasmota.add_cron("5,20,35,50 */1 * * * *", def (value) showTempIn() end, "showTempIn")
+tasmota.add_cron("10,25,40,55 */1 * * * *", def (value) showTempOut() end, "showTempOut")
+tasmota.add_cron("15,30,45,0 */1 * * * *", def (value) showClock() end, "showClock")
 
 # boot
 tasmota.add_rule("system#init",
