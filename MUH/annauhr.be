@@ -19,13 +19,39 @@ def showClock()
 end
 
 def showTempIn()
-  tasmota.cmd(string.format("DisplayText %dC", math.round(tempIn)))
+  if tempIn != ""
+    var roundedTempIn= math.round(tempIn)
+    var roundedTempInSize = size(str(roundedTempIn))
+    var pos = 0
+    if roundedTempInSize == 3
+      pos = 0
+    elif roundedTempInSize == 2 
+      pos = 1
+    elif roundedTempInSize == 1 
+      pos = 2
+    else
+      pos = 0
+    end
+    tasmota.cmd(string.format("DisplayText %d^,%d", roundedTempIn, pos))
+  end
 end
 
 def showTempOut()
   if tempOut != ""
-    tasmota.cmd(string.format("DisplayText %dA", math.round(tempOut)))
-  end 
+    var roundedTempOut = math.round(tempOut)
+    var roundedTempOutSize = size(str(roundedTempOut))
+    var pos = 0
+    if roundedTempOutSize == 3
+      pos = 0
+    elif roundedTempOutSize == 2 
+      pos = 1
+    elif roundedTempOutSize == 1 
+      pos = 2
+    else
+      pos = 0
+    end
+    tasmota.cmd(string.format("DisplayText %d^,%d", roundedTempOut, pos))
+  end
 end
 
 # DisplayDimmer
