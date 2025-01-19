@@ -4,7 +4,11 @@ import string
 import math
 
 #-
-{"NAME":"SuperMini ESP32-C3","GPIO":[1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],"FLAG":0,"BASE":1}
+Backlog Template {"NAME":"SuperMini ESP32-S3","GPIO":[1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],"FLAG":0,"BASE":1}; Module 0; restart 1;
+
+Backlog DeviceName PARK2; FriendlyName1 park2Display;
+
+DisplayModel 19; DisplayMode 0; DisplayHeight 8; DisplayWidth 8; restart 1;
 
 -#
 

@@ -4,15 +4,19 @@ import string
 import math
 
 #-
-{"NAME":"S2 Mini v1.0.0","GPIO":[32,1,1,7392,1,7456,1,7424,1,1,1,1,1,1,1,576,1888,1,0,0,0,1,1856,1,1,1,1,1,1,1,0,0,0,0,0,0],"FLAG":0,"BASE":1}
+Backlog Template {"NAME":"S2 Mini v1.0.0","GPIO":[32,1,1,7392,1,7456,1,7424,1,1,1,1,1,1,1,576,1888,1,0,0,0,1,1856,1,1,1,1,1,1,1,0,0,0,0,0,0],"FLAG":0,"BASE":1}; Module 0; restart 1;
 
-Backlog DisplayModel 19; DisplayMode 0; DisplayHeight 8; DisplayWidth 8;
+Backlog DeviceName PARK1; FriendlyName1 park1display;
+
+DisplayModel 19; DisplayMode 0; DisplayHeight 8; DisplayWidth 8; restart 1;
 -#
 
-var threshold = 5
+var threshold = 3   #- 5cm -#
 var distMax = 400
+
 #- 0:stateNum, 1:stateNumLast, 2:distance -#
 var sr04 = [-1, 0, 0]
+
 var sensors = json.load(tasmota.read_sensors())
 var timerOn = false
 
@@ -24,14 +28,14 @@ def checkDelta(current, last, threshold)
   return math.abs(current - last) >= threshold
 end
 
- # updateDisplay
+# updateDisplay
 def updateDisplay()
   if sr04[0] >= 0
      if sr04[0] != sr04[1]
        sr04[1] = sr04[0]
        tasmota.cmd(string.format("DisplayText %d", sr04[0]))
        tasmota.remove_timer("displayTimer")
-       tasmota.set_timer(30000, def (value) tasmota.cmd('DisplayClear') end, "displayTimer")
+       tasmota.set_timer(30000, def (value) tasmota.cmd('DisplayClear') timerOn = false end, "displayTimer")
      end
   else
     if !timerOn
@@ -62,8 +66,8 @@ def handleSR04(value)
       sr04[0] = 5
     elif value < distMax
       sr04[0] = 6
-    else 
-      sr04[0] = -1
+    else
+      sr04[0] = 7
     end
   end
   #print(string.format("MUH: SR04 %d", sr04[0]))
@@ -74,7 +78,7 @@ def handleSR04(value)
 end
 
 class ParkAi
-  def every_50ms()
+  def every_100ms()
     sensors = json.load(tasmota.read_sensors())
     if sensors != nil && sensors.contains('SR04') && sensors['SR04'].contains('Distance')
       handleSR04(sensors['SR04']['Distance'])
@@ -100,6 +104,3 @@ tasmota.add_rule("SR04#Distance",
       tasmota.remove_rule("SR04#Distance", "parkRule")
     end
   end, "parkRule")
-
-
-
