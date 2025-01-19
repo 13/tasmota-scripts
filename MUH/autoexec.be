@@ -5,7 +5,7 @@ import string
 var devicename = tasmota.cmd("DeviceName")['DeviceName']
 var loaded = false
 
-print(string.format("MUH: Loading %s ...", devicename))
+print(string.format("MUH: AutoExec %s ...", devicename))
 
 # Load custom script
 if devicename == "HD" || devicename == "GD"

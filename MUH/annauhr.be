@@ -1,8 +1,8 @@
 #-
-Backlog Template {"NAME":"AnnaUhr","GPIO":[0,0,0,0,1216,0,0,0,0,32,0,0,0,0,0,0,0,640,608,0,0,0,0,0,0,0,0,0,7104,7136,0,0,0,0,0,0],"FLAG":0,"BASE":1}; Module 0;
+Backlog Template {"NAME":"AnnaUhr","GPIO":[0,0,0,0,1216,0,0,0,0,32,0,0,0,0,0,0,0,640,608,0,0,0,0,0,0,0,0,0,7104,7136,0,0,0,0,0,0],"FLAG":0,"BASE":1}; Module 0; restart 1;
 
-DeviceName AnnaUhr; FriendlyName1 AnnaUhrDisplay;
-Backlog DisplayScrollDelay 8; DisplayDimmer 13; DisplayClock 2;
+Backlog DeviceName AnnaUhr; FriendlyName1 AnnaUhrDisplay;
+DisplayScrollDelay 8; DisplayDimmer 13; DisplayClock 2;
 -#
 
 import json
@@ -100,3 +100,5 @@ tasmota.add_rule("system#init",
     tasmota.cmd("DisplayClock 2")
   end
 )
+
+print(string.format("MUH: Loaded %s ...", devicename))
