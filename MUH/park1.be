@@ -33,7 +33,11 @@ def updateDisplay()
   if sr04[0] >= 0
      if sr04[0] != sr04[1]
        sr04[1] = sr04[0]
-       tasmota.cmd(string.format("DisplayText %d", sr04[0]))
+       if sr04[0] == 0
+         tasmota.cmd(string.format("DisplayText X"))
+       else
+         tasmota.cmd(string.format("DisplayText %d", sr04[0]))
+       end
        tasmota.remove_timer("displayTimer")
        tasmota.set_timer(30000, def (value) tasmota.cmd('DisplayClear') timerOn = false end, "displayTimer")
      end
