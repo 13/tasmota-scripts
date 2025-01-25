@@ -1,5 +1,6 @@
 #-
-Backlog Template {"NAME":"Shelly Plus 1 ADDON","GPIO":[1344,1312,0,1,0,0,0,0,0,0,0,0,0,0,0,352,0,0,0,0,0,32,224,0,0,0,0,0,4736,4705,0,0,0,0,0,0],"FLAG":0,"BASE":1}; Module 0;
+Backlog Template {"NAME":"Shelly Plus 1 ADDON","GPIO":[1344,1312,0,1,0,0,0,0,0,0,0,0,0,0,0,352,0,0,0,0,0,32,224,0,0,0,0,0,4736,4705,0,0,0,0,0,0],"FLAG":0,"BASE":1}; Module 0; Restart 1;
+
 Backlog IPAddress1 192.168.22.74; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName HZ_WW; FriendlyName1 HZ_WW_PUMPE;
 TempRes 1;
@@ -91,6 +92,10 @@ tasmota.add_rule("system#boot",
 # cron
 tasmota.add_cron("10 */2 * * * *", def (value) checkDS18B20() end, "checkDS18B20")
 tasmota.add_cron("0 0 */1 * * *", def (value) checkDS18B20(true) end, "checkDS18B20")
+## reboot
+#tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
+tasmota.add_cron("10 */8 * * * *", def (value) tasmota.cmd("ping4 192.168.22.1") end, "checkWifi")
+tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
 
 #for i: 0..ds18b20_list.size()-1
 #  if sensors.contains(ds18b20_list[i])

@@ -16,6 +16,8 @@ elif devicename == "PARK2"
   load("park2.be")
 elif devicename == "AnnaUhr"
   load("annauhr.be")
+elif devicename == "HZ_WW"
+  load("hz_ww.be")
 else
   print(string.format("MUH: Unknown %s", devicename))
 end
