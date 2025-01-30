@@ -19,7 +19,12 @@ var ld2410MotionDetected = false
 var ld2410DistanceSum = 0
 
 # Fingerprint
-# 1:RT,2:RI,3:RM,4:5:RP
+# 1-10 = 2 hands = 1st person
+# 11-20 = 2nd person, 21-30 = 3rd person
+# x1:RT,x2:RI,x3:RM,x4:RR,x5:RP
+# x6:LT,x7:LI,x8:LM,x9:LR,x10:LP
+# x1,x2,x6,x7 = G_TOGGLE_PIN
+# x3,x4,x5,x8,x9,x10 = GD_UNLOCK_PIN
 def handleFPrint(values,sw1,sw2)
   var soundFPrint = 1
   #if (values[0] - 1) % 5 == 0 || (values[0] - 2) % 5 == 0
