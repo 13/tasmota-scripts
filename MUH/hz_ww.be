@@ -80,6 +80,8 @@ tasmota.add_rule("system#boot",
             def (value)
               if sensor_temp != 85 
                 publishMqtt(sensor_id)
+              else
+                tasmota.cmd("restart 1")
               end
             end,
           sensor_id)
