@@ -11,7 +11,7 @@ import string
 import math
 
 var tempIn = json.load(tasmota.read_sensors())['AM2301']['Temperature']
-var tempOut = ""
+var tempOut = nil
 
 # updateDisplay
 def showClock()
@@ -37,8 +37,8 @@ def showTempIn()
 end
 
 def showTempOut()
-  if tempOut != ""
-    var roundedTempOut = math.round(tempOut)
+  if tempOut != nil
+    var roundedTempOut = int(math.round(tempOut))
     var roundedTempOutSize = size(str(roundedTempOut))
     var pos = 0
     if roundedTempOutSize == 3
@@ -91,7 +91,7 @@ tasmota.add_rule("system#init",
 tasmota.add_rule("am2301#Temperature", def (value) tempIn = value end)
 # tempOut
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe TempOut, muh/wst/data/B327, temp_c") end)
-tasmota.add_rule("Event#TempOut", def (value) tempOut = int(value) end)
+tasmota.add_rule("Event#TempOut", def (value) tempOut = real(value) end)
 
 # boot
 tasmota.add_rule("system#init",
