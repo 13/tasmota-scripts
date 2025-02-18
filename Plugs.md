@@ -182,6 +182,7 @@ Rule1 on Time#Minute|5 do backlog var1 0;ping4 8.8.8.8;ping4 1.1.1.1;ping4 208.6
 ## Shelly 3EM
 ```
 {"NAME":"Shelly 3EM","GPIO":[1,1,288,1,32,8065,0,0,640,8064,608,224,8096,0],"FLAG":0,"BASE":18}
+SetOption162 1;
 ```
 - http://{ip}:8050/setMaxPower?p=800
 ```
