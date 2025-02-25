@@ -18,6 +18,8 @@ elif devicename == "AnnaUhr"
   load("annauhr.be")
 elif devicename == "HZ_WW"
   load("hz_ww.be")
+elif devicename == "BAD"
+  load("bad.be")
 elif devicename == "PlugUD"
   load("plugud.be")
 else
