@@ -31,7 +31,7 @@ def check_power()
   var average_power = total_power / power_readings.size()
 
   # Check if the average power is below the threshold
-  if tasmota.get_power() && power < 10
+  if tasmota.get_power()[0] && power < 10
     if average_power < watt_threshold
       tasmota.set_power(0, false) # Turn off the plug
       print("Average power consumption over the last 20 minutes is below threshold. Turning off the plug.")
