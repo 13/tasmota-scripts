@@ -7,9 +7,9 @@ print(string.format("MUH: Loading bad.be on %s...", devicename))
 # Berry Script to monitor power consumption and turn off the plug if the average wattage over the last 20 minutes is below 20 watts
 
 # Define the threshold and time window
-var watt_threshold = 20          # Threshold in watts
-var time_window = 20 * 60        # 20 minutes in seconds
-var interval = 600               # Check every 10 minutes
+var watt_threshold = 10          # Threshold in watts
+var time_window = 30 * 60        # 20 minutes in seconds
+var interval = 120               # Check every 10 minutes
 var power_readings = []          # List to store power readings
 
 # Function to check the power consumption and control the plug
