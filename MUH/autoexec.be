@@ -22,6 +22,8 @@ elif devicename == "BAD"
   load("bad.be")
 elif devicename == "PlugUD"
   load("plugud.be")
+elif devicename == "PV"
+  load("pv.be")
 else
   print(string.format("MUH: Unknown %s", devicename))
 end
