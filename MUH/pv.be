@@ -23,6 +23,7 @@ var min_inverter_power = 400
 var inverter_power = max_inverter_power
 var total_active_power = 0
 #var pv_active_power = energy.read()['active_power']
+#var tstamp = tasmota.time_str(tasmota.rtc()['local'])
 
 def getMaxPowerInverter()
   var payload = tasmota.cmd('WebQuery http://192.168.22.59:8050/getMaxPower GET') 
@@ -36,7 +37,8 @@ end
 
 def setMaxPowerInverter(power)
   tasmota.cmd(string.format("WebQuery http://192.168.22.59:8050/setMaxPower?p=%d GET", power)) 
-  print(string.format("MUH: PV setting %d watt ...", power))
+  #print(string.format("MUH: PV setting %d watt ...", power))
+  print(string.format("%s MUH: PV setting %d watt (%d watt)...", tasmota.time_str(tasmota.rtc()['local']), power, total_active_power))
 end
 
 def controlInverter()
@@ -84,6 +86,6 @@ mqtt.subscribe("tasmota/tele/tasmota_5FF8B2/SENSOR", getTotalActivePower)
 
 # cron
 # check every 10 seconds 
-tasmota.add_cron("*/10 * * * * *", def (value) controlInverter() end, "controlInverter")
+tasmota.add_cron("*/10 * 6-21 * * *", def (value) controlInverter() end, "controlInverter")
 
 print(string.format("MUH: Loaded %s ...", devicename))
