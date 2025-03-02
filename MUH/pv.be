@@ -28,9 +28,14 @@ var interval = 3
 #var tstamp = tasmota.time_str(tasmota.rtc()['local'])
 
 def getMaxPowerInverter()
-  var payload = tasmota.cmd('WebQuery http://192.168.22.59:8050/getMaxPower GET') 
-  if payload.contains('WebQuery') && payload['WebQuery'].contains('data') && payload['WebQuery']['data'].contains('maxPower')
-    inverter_power = int(payload['WebQuery']['data']['maxPower'])
+  var data = tasmota.cmd('WebQuery http://192.168.22.59:8050/getMaxPower GET') 
+
+  if data.contains('WebQuery') && data['WebQuery'] != "Connect failed"
+    if data['WebQuery'].contains('data') && data['WebQuery']['data'].contains('maxPower')
+      inverter_power = int(data['WebQuery']['data']['maxPower'])
+    else
+      inverter_power = max_inverter_power
+    end
   else
     inverter_power = max_inverter_power
   end
@@ -70,12 +75,12 @@ def controlInverter()
   end
 end
 
-def getTotalActivePower(topic, idx, data, databytes)
-  var mydata = json.load(data)
+def getTotalActivePower(topic, idx, payload)
+  var data = json.load(payload)
 
   # Check if the payload contains the "ENERGY" key and the "Power" array
-  if mydata.contains('ENERGY') && mydata['ENERGY'].contains('Power')
-    var power_data = mydata['ENERGY']['Power']
+  if data.contains('ENERGY') && data['ENERGY'].contains('Power')
+    var power_data = data['ENERGY']['Power']
 
     # Calculate the sum of the Power array
     var power_sum = 0
