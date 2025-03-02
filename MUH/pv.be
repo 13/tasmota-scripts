@@ -22,6 +22,8 @@ var min_inverter_power = 400
 
 var inverter_power = max_inverter_power
 var total_active_power = 0
+var power_readings = []
+var interval = 3
 #var pv_active_power = energy.read()['active_power']
 #var tstamp = tasmota.time_str(tasmota.rtc()['local'])
 
@@ -45,7 +47,18 @@ def controlInverter()
   var inverter_value = getMaxPowerInverter()
   if inverter_value != nil
     #print(string.format("MUH: getMaxPowerInverter %d watt ...", inverter_value))
-    if int(total_active_power) < max_load_power
+    # Remove readings older than the time window
+    while power_readings.size() > interval
+      power_readings.remove(0)
+    end
+    # Calculate the average power over the last
+    var sum_power = 0
+    for reading: power_readings
+      sum_power = sum_power + reading
+    end
+    var average_power = sum_power / power_readings.size()
+
+    if int(average_power) < max_load_power && int(total_active_power) < max_load_power
       if int(inverter_value) == max_inverter_power
         setMaxPowerInverter(min_inverter_power)
       end
@@ -79,6 +92,8 @@ def getTotalActivePower(topic, idx, data, databytes)
     print(string.format("MUH: ERR MQTT %s ...", devicename))
     total_active_power = 0
   end
+  # Add the current reading to the list
+  power_readings.push(total_active_power)
 end
 
 # mqtt
