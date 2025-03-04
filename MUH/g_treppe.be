@@ -1,5 +1,7 @@
 #-
 G_TREPPE
+
+PulseTime 160;
 -#
 
 import json
@@ -37,22 +39,23 @@ def process_mqtt_message(topic, idx, payload)
   var data = json.load(payload)
   var turn_on = false
  
-  if topic.contains('6a7') && data.contains('S1') && reed_state != data['S1']
+  if string.find(topic, '6a7') > -1 && data.contains('S1') && reed_state != data['S1']
     reed_state = data['S1']
     if !reed_state
       turn_on = true
     end
   end
-  if topic.contains('33c') && data.contains('M1') && pir_state != data['M1']
-    pir_state = data('M1')
+
+  if string.find(topic, '33c') > -1 && data.contains('M1') && pir_state != data['M1']
+    pir_state = data['M1']
     if pir_state
       turn_on = true
     end
   end
+
   if turn_on && is_dark()
     setPowerTimer(true)
   end
-  #print(string.format("MUH: ERR MQTT %s ...", devicename))
 end
 
 # rules
