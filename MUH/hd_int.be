@@ -20,10 +20,7 @@ var devicename2 = "HD_GAR"
 var pir_state1 = false
 var pir_state2 = false
 var reed_state = false
-var power_state = [false, false]
-
-power_state[0] = tasmota.get_power()[0]
-power_state[1] = tasmota.get_power()[1]
+var power_state = [tasmota.get_power()[0], tasmota.get_power()[1]]
 
 def is_dark() 
   var time_threshold = dark_offset * 60

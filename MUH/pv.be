@@ -15,6 +15,8 @@ import mqtt
 import string
 import math
 
+var mqtt_topic_power = "tasmota/tele/tasmota_5FF8B2/SENSOR"
+
 # Grundverbrauch ~= 150
 var MAX_INVERTER_POWER = 800
 var MIN_INVERTER_POWER = 600
@@ -26,7 +28,14 @@ var power_usage = 0
 #var pv_active_power = energy.read()['active_power']
 
 def get_power_usage(topic, idx, payload)
-  var data = json.load(payload)
+  var data = nil
+
+  try
+    data = json.load(payload)
+  except .. as e
+    print("Failed to parse MQTT payload:", e)
+    return
+  end
 
   # Check if the payload contains the "ENERGY" key and the "Power" array
   if data.contains('ENERGY') && data['ENERGY'].contains('Power')
@@ -79,7 +88,7 @@ def control_inverter()
 end
 
 # mqtt
-mqtt.subscribe("tasmota/tele/tasmota_5FF8B2/SENSOR", get_power_usage)
+mqtt.subscribe(mqtt_topic_power, get_power_usage)
 
 # cron
 # check every 10 seconds 

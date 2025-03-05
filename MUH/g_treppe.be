@@ -9,12 +9,17 @@ import mqtt
 import string
 import math
 
+var mqtt_topic_pir = "muh/sensors/33c/json"
+var mqtt_topic_reed = "muh/sensors/6a7/json"
+
+var dark_offset = 120
+
 var pir_state = false
 var reed_state = true
 var power_state = tasmota.get_power()[0]
 
 def is_dark() 
-  var time_threshold = 25 * 60
+  var time_threshold = dark_offset * 60
   var statustim = tasmota.cmd('Status 7')['StatusTIM']
   var now = tasmota.rtc()['local']
   var now_dump = tasmota.time_dump(now)
@@ -36,8 +41,15 @@ def setPowerTimer(state)
 end
 
 def process_mqtt_message(topic, idx, payload)
-  var data = json.load(payload)
+  var data = nil
   var turn_on = false
+
+  try
+    data = json.load(payload)
+  except .. as e
+    print("Failed to parse MQTT payload:", e)
+    return
+  end
  
   if string.find(topic, '6a7') > -1 && data.contains('S1') && reed_state != data['S1']
     reed_state = data['S1']
@@ -70,8 +82,8 @@ tasmota.add_rule("Power1#state",
 
 # mqtt
 ## g_treppe_door
-mqtt.subscribe("muh/sensors/6a7/json", process_mqtt_message)
+mqtt.subscribe(mqtt_topic_reed, process_mqtt_message)
 # g_treppe_pir
-mqtt.subscribe("muh/sensors/33c/json", process_mqtt_message)
+mqtt.subscribe(mqtt_topic_pir, process_mqtt_message)
 
 print(string.format("MUH: Loaded %s ...", devicename))
