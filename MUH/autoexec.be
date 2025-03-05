@@ -26,6 +26,8 @@ elif devicename == "PV"
   load("pv.be")
 elif devicename == "G_TREPPE"
   load("g_treppe.be")
+elif devicename == "HD_INT"
+  load("hd_int.be")
 else
   print(string.format("MUH: Unknown %s", devicename))
 end
