@@ -37,13 +37,13 @@ def handleButton(name,state)
     end
   elif name == "HDBTN"
     if state == 10
-      tasmota.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2")
+      mqtt.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2")
       tasmota.cmd("i2splay /sfx/click0.mp3")
     elif state == 11 || state == 3
-      tasmota.publish("muh/portal/RLY/cmnd", "G_T")
+      mqtt.publish("muh/portal/RLY/cmnd", "G_T")
       tasmota.cmd("i2splay /sfx/click2.mp3")
     elif state == 12
-      tasmota.publish("muh/portal/RLY/cmnd", "GD_O")
+      mqtt.publish("muh/portal/RLY/cmnd", "GD_O")
       tasmota.cmd("i2splay /say/GD_O.mp3")
     elif state == 13
       volume = volume > 0 ? 0 : volume_default
@@ -52,7 +52,7 @@ def handleButton(name,state)
   else
     print(string.format("MUH: handleButton() %s...", name))
   end
-  tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tasmota.time_str(tasmota.rtc()['local'])), false)
+  mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tasmota.time_str(tasmota.rtc()['local'])), false)
 end
 
 # Blink LED
@@ -148,7 +148,7 @@ handleSwitchP("HD",switch1)
 handleSwitchP("HDL",switch2)
 tasmota.add_rule("Switch1#state", def (value) switch1 = value tasmota.cmd(string.format("i2splay /sfx/HD%s%s.mp3", value, xmas)) handleSwitchP("HD",value,1) end)
 tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitchP("HDL",value,1) end)
-tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/HDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/HDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 
 ## Buttons
 tasmota.add_rule("Button1#state", def (value) handleButton("HDB",value) end)

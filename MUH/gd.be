@@ -46,7 +46,7 @@ def handleLD2410(values)
       ld2410MotionDetected = true
       ld2410DistanceSum = distanceSum
       tasmota.set_timer(60000, def (value) ld2410MotionDetected = false end, "ld2410timer")
-      tasmota.publish("muh/portal/GDMW1/json", string.format("{\"state\": 1, \"moving\": %d, \"static\": %d, \"detect\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], values[2], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+      mqtt.publish("muh/portal/GDMW1/json", string.format("{\"state\": 1, \"moving\": %d, \"static\": %d, \"detect\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], values[2], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
     end
   else
     ld2410MotionDetected = false
@@ -60,15 +60,15 @@ def handleButton(name,state)
       powerCmd(G_TOGGLE_PIN)
       #tasmota.cmd("i2splay /sfx/click2.mp3")
     elif state == 10 # single
-      tasmota.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2")
-      tasmota.publish("tasmota/cmnd/tasmota_3905F0/POWER", "0")
+      mqtt.publish("tasmota/cmnd/tasmota_9521A4/POWER", "2")
+      mqtt.publish("tasmota/cmnd/tasmota_3905F0/POWER", "0")
       #tasmota.cmd("i2splay /sfx/click0.mp3")
     elif state == 11 # double
-      tasmota.publish("tasmota/cmnd/tasmota_BCD50C/POWER", "2")
+      mqtt.publish("tasmota/cmnd/tasmota_BCD50C/POWER", "2")
       #powerCmd(G_TOGGLE_PIN)
       #tasmota.cmd("i2splay /sfx/click2.mp3")
     #elif state == 12 # triple
-    #  tasmota.publish("muh/portal/RLY/cmnd", "G_T")
+    #  mqtt.publish("muh/portal/RLY/cmnd", "G_T")
     #  tasmota.cmd("i2splay /sfx/click2.mp3")
     elif state == 13 # quad
       volume = volume > 0 ? 0 : volume_default
@@ -77,7 +77,7 @@ def handleButton(name,state)
   else
     print(string.format("MUH: handleButton() %s...", name))
   end
-  tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tasmota.time_str(tasmota.rtc()['local'])), false)
+  mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tasmota.time_str(tasmota.rtc()['local'])), false)
 end
 
 # AutoLock
@@ -131,8 +131,8 @@ handleSwitchP("G",switch3)
 tasmota.add_rule("Switch1#state", def (value) switch1 = value handleSwitchP("GD",value,1) handleLock(value) end)
 tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitchP("GDL",value,1) handleLock(value,0) end)
 tasmota.add_rule("Switch3#state", def (value) switch3 = value handleSwitchP("G",value,1) end)
-tasmota.add_rule("Switch4#state", def (value) tasmota.publish("muh/portal/GDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
-tasmota.add_rule("Switch5#state>0", def (value) tasmota.publish("muh/portal/GDMW2/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/GDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+tasmota.add_rule("Switch5#state>0", def (value) mqtt.publish("muh/portal/GDMW2/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
 
 ## Buttons
 tasmota.add_rule("Button1#state", def (value) handleButton("GDBTN",value) end)

@@ -36,7 +36,7 @@ def handleSwitchP(name, state, saveTimeOn)
       #print(string.format("MUH: handleSwitchP() #2 %s write %s,%s...", name,state,tstamp))
       persist.setmember(string.format("%s_TIME",name),string.format("%s",tstamp))
     end
-    tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tstamp), true)
+    mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tstamp), true)
   end
 end
 
@@ -45,7 +45,7 @@ def publishSwitchP(name)
   var state = int(persist.member(name))
   var tstamp = persist.member(string.format("%s_TIME",name))
   #print(string.format("MUH: publishSwitchP() %s %d,%s...", name,state,tstamp))
-  tasmota.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tstamp), true)
+  mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tstamp), true)
 end
 
 # MQTT Remote Switch
@@ -64,7 +64,7 @@ end
 #- ben:1-10,ann:11-20,mem:21:30,tre:31-40 -#
 def publishFPrint(values,sound)
  tasmota.cmd(string.format("i2splay /sfx/FP%d.mp3", sound))
- tasmota.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+ mqtt.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
 end
 
 def checkDNS()
