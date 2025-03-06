@@ -18,6 +18,7 @@ var MQTT_TOPIC_PIR = "shellies/shellymotion2-8CF6811074B3/status"
 var MQTT_TOPIC_PIR2 = "muh/portal/HDP/json"
 var MQTT_TOPIC_REED = "muh/portal/HD/json"
 var DARK_OFFSET = 160  # Offset in minutes for darkness detection
+var POWER_TIMER_DURATION = 25000
 
 # Device names
 var DEVICE_NAME = "HD_INT"
@@ -67,7 +68,7 @@ def set_power(state, id, timer)
   if id == 1
     tasmota.remove_timer(string.format("power_timer_%d", id))
     if timer
-      tasmota.set_timer(25000, def () tasmota.set_power(id, !state) end, string.format("power_timer_%d", id))
+      tasmota.set_timer(POWER_TIMER_DURATION, def () tasmota.set_power(id, !state) end, string.format("power_timer_%d", id))
     end
   end
 

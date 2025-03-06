@@ -1,7 +1,12 @@
 #-
 G_TREPPE
 
-PulseTime 160;
+Backlog Template {"NAME":"Shelly Plus1PMMini","GPIO":[576,32,0,4736,0,224,3200,8161,0,0,192,0,0,0,0,0,0,0,0,0,0,0],"FLAG":0,"BASE":1}; Module 0; restart 1;
+
+Backlog IPAddress1 192.168.22.70; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
+DeviceName G_TREPPE; FriendlyName1 G_TREPPE;
+SwitchMode 1; PulseTime1 160; Restart 1;
+
 -#
 
 import json
@@ -12,17 +17,30 @@ import math
 # Constants
 var MQTT_TOPIC_PIR = "muh/sensors/33c/json"
 var MQTT_TOPIC_REED = "muh/sensors/6a7/json"
-var DARK_OFFSET = 120  # Offset in minutes for darkness detection
+var DARK_OFFSET = 240  # Offset in minutes for darkness detection
+var POWER_TIMER_DURATION = 22000
+
+# Device names
+var DEVICE_NAME = "G_TREPPE"
 
 # State variables
 var pir_state = false
 var reed_state = true
 var power_state = tasmota.get_power()[0]
+var status_tim = nil
+
+# Get status sunrise/sunset
+def get_status_tim()
+  status_tim = tasmota.cmd('Status 7')['StatusTIM']
+end
 
 # Check if it's dark based on sunrise and sunset times
 def is_dark()
+  if status_tim == nil
+    return false
+  end
+
   var time_threshold = DARK_OFFSET * 60  # Convert offset to seconds
-  var status_tim = tasmota.cmd('Status 7')['StatusTIM']
   var now = tasmota.rtc()['local']
   var now_dump = tasmota.time_dump(now)
   var now_date = string.format("%s-%s-%s", now_dump['year'], now_dump['month'], now_dump['day'])
@@ -37,7 +55,7 @@ end
 def set_power_timer(state)
   tasmota.set_power(0, state)
   tasmota.remove_timer("power_timer")
-  tasmota.set_timer(20000, def () tasmota.set_power(0, !state) end, "power_timer")
+  tasmota.set_timer(POWER_TIMER_DURATION, def () tasmota.set_power(0, !state) end, "power_timer")
 end
 
 # Process MQTT messages from subscribed topics
@@ -54,18 +72,14 @@ def process_mqtt_message(topic, idx, payload)
 
   # Handle reed sensor (door) state changes
   if string.find(topic, '6a7') > -1 && data.contains('S1') && reed_state != data['S1']
-    reed_state = data['S1']
-    if !reed_state
-      turn_on = true
-    end
+    reed_state = bool(data['S1'])
+    turn_on = !reed_state
   end
 
   # Handle PIR sensor (motion) state changes
   if string.find(topic, '33c') > -1 && data.contains('M1') && pir_state != data['M1']
-    pir_state = data['M1']
-    if pir_state
-      turn_on = true
-    end
+    pir_state = bool(data['M1'])
+    turn_on = pir_state
   end
 
   # Turn on the light if conditions are met
@@ -74,21 +88,30 @@ def process_mqtt_message(topic, idx, payload)
   end
 end
 
-# Rule to publish power state changes
+def publish_power_state(id, device_name, power_state)
+  var timestamp = tasmota.time_str(tasmota.rtc()['local'])
+  tasmota.publish(
+    string.format("muh/lights/%s/json", device_name),
+    string.format("{\"state\": %d, \"time\": \"%s\"}", int(power_state[id]), timestamp),
+    true
+  )
+end
+
+# Rules to publish power state changes
 tasmota.add_rule("Power1#state", def (value)
-  if power_state != tasmota.get_power()[0]
-    var timestamp = tasmota.time_str(tasmota.rtc()['local'])
-    power_state = tasmota.get_power()[0]
-    tasmota.publish(
-      string.format("muh/lights/%s/json", devicename),
-      string.format("{\"state\": %d, \"time\": \"%s\"}", power_state, timestamp),
-      true
-    )
+  if power_state[0] != tasmota.get_power()[0]
+    power_state[0] = tasmota.get_power()[0]
+    publish_power_state(0, DEVICE_NAME, power_state)
   end
 end)
+
+# Get sunrise/sunset
+tasmota.add_rule("System#Init", def () get_status_tim() end)
 
 # Subscribe to MQTT topics
 mqtt.subscribe(MQTT_TOPIC_REED, process_mqtt_message)  # Reed sensor (door)
 mqtt.subscribe(MQTT_TOPIC_PIR, process_mqtt_message)   # PIR sensor (motion)
+# cron
+tasmota.add_cron("0 30 */3 * * *", def () get_status_tim() end, "get_status_tim")
 
-print(string.format("MUH: Loaded %s ...", devicename))
+print(string.format("MUH: Loaded %s ...", DEVICE_NAME))
