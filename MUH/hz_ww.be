@@ -13,73 +13,82 @@ import mqtt
 import string
 import math
 
-var devicename = tasmota.cmd("DeviceName")['DeviceName']
+# Constants
+DS18B20_PREFIX = "DS18B20-"
+INVALID_TEMP = 85
+DEFAULT_DELTA_THRESHOLD = 1
+
+# Device name
+var DEVICE_NAME = tasmota.cmd("DeviceName")['DeviceName']
+
+# Read sensors and filter DS18B20 sensors
 var sensors = json.load(tasmota.read_sensors())
-var ds18b20_data = { 'TID': devicename }
+var ds18b20_data = { 'tid': DEVICE_NAME }
 var ds18b20_list = []
 
-for k: sensors.keys()
-  if string.startswith(k, "DS18B20-")
+for k in sensors.keys()
+  if string.startswith(k, DS18B20_PREFIX)
     ds18b20_list.push(k)
     ds18b20_data[k] = {
-      'DS18B20': {
-        'Id': sensors[k]['Id'],
-        'Temperature': sensors[k]['Temperature']
+      'ds18b20': {
+        'id': sensors[k]['Id'],
+        'temperature': sensors[k]['Temperature']
       }
     }
   end
 end
 
-# checkDelta
-def checkDelta(current, last, threshold)
+# Check if the temperature delta exceeds the threshold
+def check_delta(current, last, threshold)
   if threshold == nil
-    threshold = 1
+    threshold = DEFAULT_DELTA_THRESHOLD
   end
   return math.abs(current - last) >= threshold
 end
 
-# Publish
-def publishMqtt(sensor)
-  ds18b20_data[sensor]['TID'] = devicename
-  ds18b20_data[sensor]['Time'] = tasmota.time_str(tasmota.rtc()['local'])
-  #print(string.format("MQT: Publish %s", sensor))
-  tasmota.publish(string.format("muh/sensors/%s/%s/json", devicename, sensor), json.dump(ds18b20_data[sensor]))
+# Publish sensor data to MQTT
+def publish_mqtt(sensor)
+  ds18b20_data[sensor]['tid'] = DEVICE_NAME
+  ds18b20_data[sensor]['time'] = tasmota.time_str(tasmota.rtc()['local'])
+  tasmota.publish(string.format("muh/sensors/%s/%s/json", DEVICE_NAME, sensor), json.dump(ds18b20_data[sensor]))
 end
 
-def checkDS18B20(delta)
+# Check DS18B20 sensors and publish data if delta is exceeded or forced
+def check_ds18b20(force_publish)
+  if force_publish == nil
+    force_publish = false
+  end
   sensors = json.load(tasmota.read_sensors())
-  for i: 0..ds18b20_list.size()-1
-    var sensor_id = ds18b20_list[i]
+  for sensor_id in ds18b20_list
     if sensors.contains(sensor_id)
       var sensor_temp = sensors[sensor_id]['Temperature']
-      if !delta
-        if checkDelta(sensor_temp, ds18b20_data[sensor_id]['DS18B20']['Temperature']) && sensor_temp != 85
-          #print(string.format("BRY: Delta %s", ds18b20_list[i]))
-          ds18b20_data[sensor_id]['DS18B20']['Temperature'] = sensor_temp
-          publishMqtt(sensor_id)
+      if !force_publish
+        if check_delta(sensor_temp, ds18b20_data[sensor_id]['ds18b20']['temperature']) && sensor_temp != INVALID_TEMP
+          ds18b20_data[sensor_id]['ds18b20']['temperature'] = sensor_temp
+          publish_mqtt(sensor_id)
         end
       else
-        publishMqtt(sensor_id)
+        publish_mqtt(sensor_id)
       end
     end
   end
 end
 
-# boot
+# Boot rule: Initialize and publish sensor data
 tasmota.add_rule("system#boot",
   def (value)
     for i: 0..ds18b20_list.size()-1
       var sensor_id = ds18b20_list[i]
       if sensors.contains(sensor_id)
         var sensor_temp = sensors[sensor_id]['Temperature']
-        if sensor_temp != 85 
-          publishMqtt(sensor_id)
+        if sensor_temp != INVALID_TEMP
+          publish_mqtt(sensor_id)
         else
           print(string.format("BRY: ERR85 %s", sensor_id))
           tasmota.set_timer((2*i+1)*2000,
             def (value)
-              if sensor_temp != 85 
-                publishMqtt(sensor_id)
+              if sensor_temp != INVALID_TEMP
+                publish_mqtt(sensor_id)
               else
                 tasmota.cmd("restart 1")
               end
@@ -91,23 +100,8 @@ tasmota.add_rule("system#boot",
   end
 )
 
-# cron
-tasmota.add_cron("10 */2 * * * *", def (value) checkDS18B20() end, "checkDS18B20")
-tasmota.add_cron("0 0 */1 * * *", def (value) checkDS18B20(true) end, "checkDS18B20")
-## reboot
-#tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
-tasmota.add_cron("10 */8 * * * *", def (value) tasmota.cmd("ping4 192.168.22.1") end, "checkWifi")
+# Cron jobs
+tasmota.add_cron("10 */2 * * * *", def (value) check_ds18b20() end, "check_ds18b20")
+tasmota.add_cron("0 0 */1 * * *", def (value) check_ds18b20(true) end, "check_ds18b20_force")
+tasmota.add_cron("10 */8 * * * *", def (value) tasmota.cmd("ping4 192.168.22.1") end, "check_wifi")
 tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
-
-#for i: 0..ds18b20_list.size()-1
-#  if sensors.contains(ds18b20_list[i])
-#    tasmota.add_rule(string.format("%s#Temperature", ds18b20_list[i]),
-#      def (value)
-#        if checkDelta(value, ds18b20_data[ds18b20_list[i]]['DS18B20']['Temperature'])
-#          ds18b20_data[ds18b20_list[i]]['DS18B20']['Temperature'] = value 
-#          publishMqtt(ds18b20_list[i])
-#        end
-#      end
-#    )
-#  end
-#end

@@ -2,7 +2,7 @@
 
 import json
 
-print(string.format("MUH: Loading bad.be on %s...", devicename))
+print(string.format("MUH: Loading bad.be on %s...", DEVICENAME))
 
 # Monitor power consumption and turn off the plug if the average wattage over the last 30 minutes is below 20 watts
 
