@@ -14,11 +14,13 @@ import string
 import math
 
 # Constants
+var DARK_OFFSET = 90            # Offset in minutes for darkness detection
+var DARK_OFFSET_SUNSET = 60
+var POWER_TIMER_DURATION = 25000
+
 var MQTT_TOPIC_PIR = "shellies/shellymotion2-8CF6811074B3/status"
 var MQTT_TOPIC_PIR2 = "muh/portal/HDP/json"
 var MQTT_TOPIC_REED = "muh/portal/HD/json"
-var DARK_OFFSET = 160  # Offset in minutes for darkness detection
-var POWER_TIMER_DURATION = 25000
 
 # Device names
 var DEVICE_NAME = "HD_INT"
@@ -35,6 +37,7 @@ var status_tim = nil
 # Get status sunrise/sunset
 def get_status_tim()
   status_tim = tasmota.cmd('Status 7')['StatusTIM']
+  print(status_tim)
 end
 
 # Check if it's dark based on sunrise and sunset times
@@ -44,14 +47,21 @@ def is_dark()
   end
 
   var time_threshold = DARK_OFFSET * 60  # Convert offset to seconds
+  var time_threshold_sunset = DARK_OFFSET_SUNSET * 60
   var now = tasmota.rtc()['local']
   var now_dump = tasmota.time_dump(now)
   var now_date = string.format("%s-%s-%s", now_dump['year'], now_dump['month'], now_dump['day'])
   
   var sunrise = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunrise']), "%Y-%m-%d %H:%M")
   var sunset = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunset']), "%Y-%m-%d %H:%M")
+  
+  var sunrise_threshold = sunrise['epoch'] + time_threshold
+  var sunset_threshold = sunset['epoch'] - time_threshold
 
-  return now < sunrise['epoch'] + time_threshold || now > sunset['epoch'] - time_threshold
+  #print(string.format("Sunrise: %s, Sunset: %s", tasmota.strftime("%H:%M", sunrise['epoch']), tasmota.strftime("%H:%M", sunset['epoch'])))
+  print(string.format("Sunrise: %s, Sunset: %s", tasmota.strftime("%H:%M", sunrise_threshold), tasmota.strftime("%H:%M", sunset_threshold)))
+
+  return now < sunrise_threshold || now > sunset_threshold
 end
 
 # Set power state with an optional timer to revert after 20 seconds
@@ -136,7 +146,7 @@ tasmota.add_rule("Power2#state", def (value)
 end)
 
 # Get sunrise/sunset
-tasmota.add_rule("System#Init", def () get_status_tim() end)
+tasmota.add_rule("Time#Initialized", def () get_status_tim() end)
 
 # Rules to handle switch states
 tasmota.add_rule("Switch1#state", def (value)
