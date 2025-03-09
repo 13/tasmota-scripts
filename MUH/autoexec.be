@@ -18,6 +18,7 @@ var DEVICE_SCRIPTS = {
   "PlugUD": "plugud.be",
   "PV": "pv.be",
   "G_TREPPE": "g_treppe.be",
+  "G_EXT": "g_ext.be",
   "HD_INT": "hd_int.be"
 }
 
@@ -47,7 +48,7 @@ if DEVICE_SCRIPTS.has(DEVICENAME)
   try
     load(script)
     loaded = true
-  except as e
+  except .. as e
     log(string.format("Failed to load %s - %s", script, e))
   end
 else
