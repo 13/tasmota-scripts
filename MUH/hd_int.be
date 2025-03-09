@@ -56,7 +56,7 @@ def is_dark()
   var sunset = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunset']), "%Y-%m-%d %H:%M")
   
   var sunrise_threshold = sunrise['epoch'] + time_threshold
-  var sunset_threshold = sunset['epoch'] - time_threshold
+  var sunset_threshold = sunset['epoch'] - time_threshold_sunset
 
   #print(string.format("Sunrise: %s, Sunset: %s", tasmota.strftime("%H:%M", sunrise['epoch']), tasmota.strftime("%H:%M", sunset['epoch'])))
   print(string.format("Sunrise: %s, Sunset: %s", tasmota.strftime("%H:%M", sunrise_threshold), tasmota.strftime("%H:%M", sunset_threshold)))
