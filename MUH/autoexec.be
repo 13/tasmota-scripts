@@ -19,7 +19,9 @@ var DEVICE_SCRIPTS = {
   "PV": "pv.be",
   "G_TREPPE": "g_treppe.be",
   "G_EXT": "g_ext.be",
-  "HD_INT": "hd_int.be"
+  "G_INT": "g_int.be",
+  "HD_INT": "hd_int.be",
+  "HD_EXT": "hd_ext.be"
 }
 
 # Logging function
