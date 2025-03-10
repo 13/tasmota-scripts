@@ -9,7 +9,7 @@ Module 0; restart 1;
 Backlog IPAddress1 192.168.22.70; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 
 DeviceName G_INT; FriendlyName1 G_INT;
-PulseTime1 3600; SwitchMode0 1;
+PulseTime1 3600; SwitchMode1 0;
 Restart 1;
 
 -#
@@ -144,7 +144,7 @@ tasmota.add_rule("Time#Initialized", def () get_status_tim() end)
 
 # Rules to handle switch states
 tasmota.add_rule("Switch1#state", def (value)
-  set_power(!tasmota.get_power()[0])
+  set_power(tasmota.get_power()[0])
 end)
 
 # Subscribe to MQTT topics
