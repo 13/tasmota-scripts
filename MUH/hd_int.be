@@ -29,7 +29,7 @@ var DEVICE_NAME2 = "HD_GAR"
 # State variables
 var pir_state1 = false
 var pir_state2 = false
-var reed_state = tasmota.get_switches()[2]
+var reed_state = false
 var power_state = tasmota.get_power()
 var status_tim = nil
 
