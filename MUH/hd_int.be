@@ -110,7 +110,7 @@ def process_mqtt_message(topic, idx, payload)
   end
 
   # Turn on the light if conditions are met
-  if pir_state1 && !pir_state2 && reed_state
+  if pir_state1 && !pir_state2 && !reed_state
     turn_on = true
   end
 
