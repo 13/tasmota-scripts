@@ -15,12 +15,14 @@ import string
 import math
 
 # Constants
-var DARK_OFFSET = 90            # Offset in minutes for darkness detection
-var DARK_OFFSET_SUNSET = 60
 var POWER_TIMER_DURATION = 22000
+var LUX_THRESHOLD = 25
+var DARK_OFFSET = 90              # Offset in minutes for darkness detection
+var DARK_OFFSET_SUNSET = 60
 
 var MQTT_TOPIC_PIR = "muh/sensors/33c/json"
 var MQTT_TOPIC_REED = "muh/sensors/6a7/json"
+var MQTT_TOPIC_LUX = "muh/wst/data/B327"
 
 # Device names
 var DEVICE_NAME = "G_TREPPE"
@@ -29,6 +31,7 @@ var DEVICE_NAME = "G_TREPPE"
 var pir_state = false
 var reed_state = true
 var power_state = tasmota.get_power()
+var lux_state = false
 var status_tim = nil
 
 # Get status sunrise/sunset
@@ -48,7 +51,7 @@ def is_dark()
   var now = tasmota.rtc()['local']
   var now_dump = tasmota.time_dump(now)
   var now_date = string.format("%s-%s-%s", now_dump['year'], now_dump['month'], now_dump['day'])
-  
+
   var sunrise = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunrise']), "%Y-%m-%d %H:%M")
   var sunset = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunset']), "%Y-%m-%d %H:%M")
 
@@ -93,6 +96,19 @@ def process_mqtt_message(topic, idx, payload)
     turn_on = pir_state
   end
 
+  #
+  if string.find(topic, 'B327') > -1 && data.contains('light_klx') && pir_state != data['light_klx']
+    if int(data['light_klx']) < LUX_THRESHOLD
+      lux_state = true
+    else
+      lux_state = false
+    end
+  end
+
+  if lux_state
+    set_power_timer(true)
+  end
+
   # Turn on the light if conditions are met
   if turn_on && is_dark()
     set_power_timer(true)
@@ -122,6 +138,7 @@ tasmota.add_rule("Time#Initialized", def () get_status_tim() end)
 # Subscribe to MQTT topics
 mqtt.subscribe(MQTT_TOPIC_REED, process_mqtt_message)  # Reed sensor (door)
 mqtt.subscribe(MQTT_TOPIC_PIR, process_mqtt_message)   # PIR sensor (motion)
+mqtt.subscribe(MQTT_TOPIC_LUX, process_mqtt_message)   #
 # cron
 tasmota.add_cron("0 30 */3 * * *", def () get_status_tim() end, "get_status_tim")
 
