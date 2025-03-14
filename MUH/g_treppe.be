@@ -105,12 +105,8 @@ def process_mqtt_message(topic, idx, payload)
     end
   end
 
-  if lux_state
-    set_power_timer(true)
-  end
-
   # Turn on the light if conditions are met
-  if turn_on && is_dark()
+  if turn_on && (is_dark() || lux_state)
     set_power_timer(true)
   end
 end
