@@ -14,6 +14,9 @@ import mqtt
 import string
 import math
 
+# Device names
+var DEVICE_NAME = "G_TREPPE"
+
 # Constants
 var POWER_TIMER_DURATION = 22000
 var LUX_THRESHOLD = 25
@@ -23,9 +26,6 @@ var DARK_OFFSET_SUNSET = 60
 var MQTT_TOPIC_PIR = "muh/sensors/33c/json"
 var MQTT_TOPIC_REED = "muh/sensors/6a7/json"
 var MQTT_TOPIC_LUX = "muh/wst/data/B327"
-
-# Device names
-var DEVICE_NAME = "G_TREPPE"
 
 # State variables
 var pir_state = false

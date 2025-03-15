@@ -13,26 +13,28 @@ import mqtt
 import string
 import math
 
+# Device names
+var DEVICE_NAME = "HD_INT"
+var DEVICE_NAME2 = "HD_GAR"
+
 # Constants
 var DARK_OFFSET = 90            # Offset in minutes for darkness detection
+var LUX_THRESHOLD = 25
 var DARK_OFFSET_SUNSET = 60
 var POWER_TIMER_DURATION = 25   # in seconds
 
 var MQTT_TOPIC_PIR = "shellies/shellymotion2-8CF6811074B3/status"
 var MQTT_TOPIC_PIR2 = "muh/portal/HDP/json"
 var MQTT_TOPIC_REED = "muh/portal/HD/json"
-
-# Device names
-var DEVICE_NAME = "HD_INT"
-var DEVICE_NAME2 = "HD_GAR"
-
+var MQTT_TOPIC_LUX = "muh/wst/data/B327"
+ 
 # State variables
 var pir_state1 = false
 var pir_state2 = false
 var reed_state = false
 var power_state = tasmota.get_power()
+var lux_state = false
 var status_tim = nil
-
 
 # Get status sunrise/sunset
 def get_status_tim()
@@ -109,12 +111,20 @@ def process_mqtt_message(topic, idx, payload)
     reed_state = bool(data['state'])
   end
 
+  if string.find(topic, 'B327') > -1 && data.contains('light_klx') && pir_state != data['light_klx']
+    if int(data['light_klx']) < LUX_THRESHOLD
+      lux_state = true
+    else
+      lux_state = false
+    end
+  end
+
   # Turn on the light if conditions are met
   if pir_state1 && !pir_state2 && !reed_state
     turn_on = true
   end
 
-  if turn_on && is_dark()
+  if turn_on && (is_dark() || lux_state)
     set_power(true, 0, true)
   end
 end
