@@ -18,8 +18,8 @@ var DEVICE_NAME = "HD_INT"
 var DEVICE_NAME2 = "HD_GAR"
 
 # Constants
+var LUX_THRESHOLD = 35
 var DARK_OFFSET = 90            # Offset in minutes for darkness detection
-var LUX_THRESHOLD = 25
 var DARK_OFFSET_SUNSET = 60
 var POWER_TIMER_DURATION = 25   # in seconds
 

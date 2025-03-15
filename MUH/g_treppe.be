@@ -19,7 +19,7 @@ var DEVICE_NAME = "G_TREPPE"
 
 # Constants
 var POWER_TIMER_DURATION = 22000
-var LUX_THRESHOLD = 25
+var LUX_THRESHOLD = 35
 var DARK_OFFSET = 90              # Offset in minutes for darkness detection
 var DARK_OFFSET_SUNSET = 60
 
