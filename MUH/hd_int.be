@@ -111,7 +111,7 @@ def process_mqtt_message(topic, idx, payload)
     reed_state = bool(data['state'])
   end
 
-  if string.find(topic, 'B327') > -1 && data.contains('light_klx') && pir_state != data['light_klx']
+  if string.find(topic, 'B327') > -1 && data.contains('light_klx')
     if int(data['light_klx']) < LUX_THRESHOLD
       lux_state = true
     else
@@ -166,7 +166,7 @@ tasmota.add_rule("Switch2#state", def (value)
 end)
 
 tasmota.add_rule("Switch3#state=1", def ()
-  if !tasmota.get_power()[1] && is_dark()
+  if !tasmota.get_power()[1] && (is_dark() || lux_state)
     set_power(true, 1, true)
   end
 end)
@@ -175,6 +175,7 @@ end)
 mqtt.subscribe(MQTT_TOPIC_PIR, process_mqtt_message)   # PIR sensor 1 (Shelly Motion)
 mqtt.subscribe(MQTT_TOPIC_PIR2, process_mqtt_message)  # PIR sensor 2 (HDP)
 mqtt.subscribe(MQTT_TOPIC_REED, process_mqtt_message)  # Reed sensor (HD)
+mqtt.subscribe(MQTT_TOPIC_LUX, process_mqtt_message)  
 
 # cron
 tasmota.add_cron("0 30 */3 * * *", def () get_status_tim() end, "get_status_tim")

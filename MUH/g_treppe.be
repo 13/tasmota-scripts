@@ -97,7 +97,7 @@ def process_mqtt_message(topic, idx, payload)
   end
 
   #
-  if string.find(topic, 'B327') > -1 && data.contains('light_klx') && pir_state != data['light_klx']
+  if string.find(topic, 'B327') > -1 && data.contains('light_klx')
     if int(data['light_klx']) < LUX_THRESHOLD
       lux_state = true
     else
