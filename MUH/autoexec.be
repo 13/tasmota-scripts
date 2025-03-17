@@ -17,6 +17,8 @@ var DEVICE_SCRIPTS = {
   "BAD": "bad.be",
   "PlugUD": "plugud.be",
   "PV": "pv.be",
+  "PV_A": "pva.be",
+  "PV_B": "pvb.be",
   "G_TREPPE": "g_treppe.be",
   "G_EXT": "g_ext.be",
   "G_INT": "g_int.be",
