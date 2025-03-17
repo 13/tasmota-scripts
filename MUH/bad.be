@@ -4,12 +4,12 @@ import json
 
 print(string.format("MUH: Loading bad.be on %s...", DEVICENAME))
 
-# Monitor power consumption and turn off the plug if the average wattage over the last 30 minutes is below 20 watts
+# Monitor power consumption and turn off the plug if the average wattage over the last 20 minutes is below 20 watts
 
 # Define the threshold and time window
 var WATT_THRESHOLD = 20          # Threshold in watts
-var TIME_WINDOW = 30 * 60        # 30 minutes in seconds
-var INTERVAL = 5 * 60            # Check every 5 minutes in seconds
+var TIME_WINDOW = 20             # minutes
+var INTERVAL = 2                 # minutes
 var power_readings = []          # List to store power readings
 
 # Function to check the power consumption and control the plug
@@ -19,7 +19,7 @@ def check_power()
   power_readings.push(power)       # Add the current reading to the list
 
   # Remove readings older than the time window
-  if power_readings.size() > TIME_WINDOW / INTERVAL
+  if power_readings.size() > TIME_WINDOW * 60 / INTERVAL * 60
     power_readings.remove(0)     # Remove the oldest reading
   end
 
@@ -33,9 +33,9 @@ def check_power()
   # Check if the average power is below the threshold
   if tasmota.get_power()[0] && average_power < WATT_THRESHOLD
     tasmota.set_power(0, false) # Turn off the plug
-    print("Average power consumption over the last 30 minutes is below threshold. Turning off the plug.")
+    print(string.format("Washing machine finished. Current power: %s, Average power: %s", power, average_power))
   else
-    print("Average power consumption over the last 30 minutes is above threshold. Plug remains on.")
+    print(string.format("Washing machine is running. Current power: %s, Average power: %s", power, average_power))
   end
 end
 
