@@ -21,7 +21,7 @@ import math
 
 # Constants
 var DARK_OFFSET = 90            # Offset in minutes for darkness detection
-var DARK_OFFSET_SUNSET = 60
+var DARK_OFFSET_SUNSET = 20
 var POWER_TIMER_DURATION = 300  # in seconds
 
 var MQTT_TOPIC_PIR1 = "muh/portal/GDP/json"
@@ -35,6 +35,7 @@ var DEVICE_NAME = "G_INT"
 var pir_state1 = false
 var reed_state1 = true
 var reed_state2 = true 
+var reed_trigger = false
 var power_state = tasmota.get_power()
 var status_tim = nil
 
@@ -113,8 +114,15 @@ def process_mqtt_message(topic, idx, payload)
   end
 
   # Turn on the light if conditions are met
-  if (!reed_state1 && !pir_state1) || (!reed_state2 && !pir_state1)
-    turn_on = true
+  if !pir_state && (!reed_state1 || !reed_state2)
+    if !reed_trigger
+      turn_on = true
+      reed_trigger = true
+    end
+  else
+    if pir_state && (reed_state1 && reed_state2)
+      reed_trigger = false
+    end
   end
 
   if turn_on && is_dark()
