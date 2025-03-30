@@ -13,6 +13,11 @@ SetOption162 1; PowerDelta 101; PowerOnState 1; Restart 1;
 ## Rules
 
 ```
+
+Rule2
+  ON Time#Minute|5 DO Ping4 192.168.22.1 ENDON
+  ON Ping#192.168.22.1#Reachable=false DO Restart 1 ENDON
+
 Rule3
   ON file#calib.dat DO {"state":0,"rms":{"current_a":3211982,"current_b":3189648,"current_c":3199282,"current_n":-1399975513,"current_s":266717838,"voltage_a":-731348,"voltage_b":-719234,"voltage_c":-732765},"angles":{"angle0":184,"angle1":172,"angle2":192},"powers":{"totactive":{"a":-1345486,"b":-1347556,"c":-1352447},"apparent":{"a":214497,"b":214494,"c":214496}},"energies":{"totactive":{"a":8731,"b":8730,"c":8730},"apparent":{"a":40353,"b":40352,"c":40361}}} ENDON
 ```
