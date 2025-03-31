@@ -7,7 +7,11 @@ Backlog Template {"NAME":"Shelly 3EM","GPIO":[1,1,288,1,32,8065,0,0,640,8064,608
 
 Backlog IPAddress1 192.168.22.60; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName 3EM; FriendlyName1 3EM;
-SetOption162 1; PowerDelta 101; PowerOnState 1; Restart 1;
+SetOption162 1; PowerOnState 1; TelePeriod 10;
+PowerDelta 101;
+PowerDelta 5;
+Restart 1;
+
 ```
 
 ## Rules
