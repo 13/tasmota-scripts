@@ -24,22 +24,31 @@ var data = [
 ]
 
 def checkPing(state, id)
-  for device : data
-    if device["id"] == id
-      device["state"] = state
-      break
-    end
-  end
-
-  if !data[0]["state"] && !data[1]["state"] && !data[2]["state"]
-    if tasmota.get_power()[0]
-      print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
-      tasmota.set_power(0, false)
+  if state == nil && id == nil
+    if !data[0]["state"] && !data[1]["state"] && !data[2]["state"]
+      if tasmota.get_power()[0]
+        print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
+        tasmota.set_power(0, false)
+      end
     end
   else
-    if !tasmota.get_power()[0]
-      print(string.format("%s MUH: Devices %s is reachable, turning ON the plug", tasmota.time_str(tasmota.rtc()['local']), data[id]["ip"]))
-      tasmota.set_power(0, true)
+    for device : data
+      if device["id"] == id
+        device["state"] = state
+        break
+      end
+    end
+
+    if !data[0]["state"] && !data[1]["state"] && !data[2]["state"]
+      if tasmota.get_power()[0]
+        print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
+        tasmota.set_power(0, false)
+      end
+    else
+      if !tasmota.get_power()[0]
+        print(string.format("%s MUH: Devices %s is reachable, turning ON the plug", tasmota.time_str(tasmota.rtc()['local']), data[id]["ip"]))
+        tasmota.set_power(0, true)
+      end
     end
   end
 end
@@ -61,10 +70,15 @@ end, "TurnPlugOn")
 
 for device : data
   #tasmota.add_cron(string.format("%d 0,30 23,0,1,2 * * *", device["id"] * 20), def (value) 
-  tasmota.add_cron(string.format("%d * 8-23 * * *", device["id"] * 10), def (value) 
-    tasmota.cmd("ping4 " .. device["ip"]) 
+  #tasmota.add_cron(string.format("%d * 7-23 * * *", device["id"] * 5), def (value) 
+  tasmota.add_cron(string.format("*/5 * 7-23 * * *"), def (value) 
+    tasmota.cmd("ping1 " .. device["ip"]) 
   end, "checkPing" .. device["id"])
 end
+
+tasmota.add_cron(string.format("0 0,30 23-3 * * *"), def () 
+  checkPing() 
+end, "turn_off")
 
 # Rules
 for device : data
