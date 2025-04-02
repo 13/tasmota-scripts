@@ -11,13 +11,16 @@ Restart 1;
 -#
 
 import json
+import string
+import math
 
-print(string.format("MUH: Loading plugud.be on %s...", devicename))
+print(string.format("MUH: Loading plugud.be on %s...", DEVICENAME))
 
 var data = [
-  { "id": 0, "ip": "192.168.22.20", "state": true },
-  { "id": 1, "ip": "192.168.22.11", "state": true },
-  { "id": 2, "ip": "192.168.22.12", "state": true }
+  { "id": 0, "ip": "192.168.22.20", "state": true }, # samstv
+  { "id": 1, "ip": "192.168.22.28", "state": true }, # wzr ap
+  { "id": 2, "ip": "192.168.22.11", "state": true }, # gold
+  { "id": 3, "ip": "192.168.22.12", "state": true }  # g1
 ]
 
 def checkPing(state, id)
@@ -29,18 +32,23 @@ def checkPing(state, id)
   end
 
   if !data[0]["state"] && !data[1]["state"] && !data[2]["state"]
-    print("All devices are unreachable, turning off the plug")
-    tasmota.set_power(0, false)
+    if tasmota.get_power()[0]
+      print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
+      tasmota.set_power(0, false)
+    end
   else
     if !tasmota.get_power()[0]
-      print(string.format("Device %d is reachable, turning on the plug", id))
+      print(string.format("%s MUH: Devices %s is reachable, turning ON the plug", tasmota.time_str(tasmota.rtc()['local']), data[id]["ip"]))
       tasmota.set_power(0, true)
     end
   end
 end
 
 # CRON
+# Always turn on
+#-
 tasmota.add_cron("0 */5 7-10,12 * * *", def (value)
+#tasmota.add_cron("*/10 * 7-23 * * *", def (value)
   if !tasmota.get_power()[0]
     for device : data
       device["state"] = true
@@ -49,9 +57,11 @@ tasmota.add_cron("0 */5 7-10,12 * * *", def (value)
     print("Plug was off. Turning it on.")
   end
 end, "TurnPlugOn")
+-#
 
 for device : data
-  tasmota.add_cron(string.format("%d 0,30 23,0,1,2 * * *", device["id"] * 20), def (value) 
+  #tasmota.add_cron(string.format("%d 0,30 23,0,1,2 * * *", device["id"] * 20), def (value) 
+  tasmota.add_cron(string.format("%d * 8-23 * * *", device["id"] * 10), def (value) 
     tasmota.cmd("ping4 " .. device["ip"]) 
   end, "checkPing" .. device["id"])
 end
