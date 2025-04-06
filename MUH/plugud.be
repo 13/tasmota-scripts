@@ -76,7 +76,7 @@ for device : data
   end, "checkPing" .. device["id"])
 end
 
-tasmota.add_cron(string.format("0 0,30 23-3 * * *"), def () 
+tasmota.add_cron(string.format("0 0,30 23,0-3 * * *"), def ()
   checkPing() 
 end, "turn_off")
 
