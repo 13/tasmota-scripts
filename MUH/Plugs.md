@@ -108,3 +108,42 @@ ON event#checksunrise<%sunrise% DO Var1 1 ENDON
 ON event#checksunset>%sunset% DO Var2 1 ENDON
 ON event#checkDark DO IF (%var1%==%var2%) Power 0 ELSE Power 1 ENDIF ENDON
 ```
+
+## Athom Plug V2
+
+### HZ_BRENNER
+
+```
+Backlog
+Template {"NAME":"Athom Plug V2","GPIO":[0,0,0,3104,0,32,0,0,224,576,0,0,0,0],"FLAG":0,"BASE":18};
+Module 0; Restart 1;
+
+Backlog
+IPAddress1 192.168.22.73; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
+DeviceName HZ_BRENNER; FriendlyName1 HZ_BRENNER;
+PowerDelta 5; PowerOnState 1;
+Restart 1;
+```
+
+#### Rule 1
+
+- Wintermode (Months 01,02,03,11,12)
+- Turn ON from 05:30 - 21:30
+
+```
+Backlog
+Timers 1;
+Timer1 {"Enable":1,"Mode":0,"Time":"05:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer2 {"Enable":1,"Mode":0,"Time":"21:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Restart 1;
+
+Rule1
+  ON Clock#Timer=1 DO Backlog Event wintermode=%timestamp% ENDON
+  ON Event#wintermode$|-01- DO Power 1 ENDON
+  ON Event#wintermode$|-02- DO Power 1 ENDON
+  ON Event#wintermode$|-03- DO Power 1 ENDON
+  ON Event#wintermode$|-11- DO Power 1 ENDON
+  ON Event#wintermode$|-12- DO Power 1 ENDON
+
+Rule1 1
+```
