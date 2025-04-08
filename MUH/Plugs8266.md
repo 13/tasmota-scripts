@@ -34,9 +34,9 @@ Timer2 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":
 Timer3 {"Enable":1,"Mode":0,"Time":"23:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer4 {"Enable":1,"Mode":0,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer5 {"Enable":1,"Mode":0,"Time":"01:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timers 1;
 Restart 1;
 
-Backlog
 Rule1
   ON System#Boot DO Backlog var1 15; var2 0; ENDON
   ON Energy#Power DO var2 %value% ENDON
@@ -45,8 +45,10 @@ Rule1
   ON Clock#Timer=4 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
   ON Clock#Timer=5 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
 
-Rule1 1;
+Backlog Rule1 1;
 Restart 1;
+
+Backlog PowerSet 14.0; VoltageSet 230; CurrentSet 60.87
 ```
 
 ### mop
@@ -63,8 +65,9 @@ PowerDelta 5; PowerOnState 0;
 Restart 1;
 
 Backlog
-Timer1 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":1}
-Timer2 {"Enable":1,"Mode":0,"Time":"14:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0}
+Timer1 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":1};
+Timer2 {"Enable":1,"Mode":0,"Time":"14:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Timers 1;
 Restart 1;
 ```
 
@@ -173,9 +176,9 @@ PowerDelta 5; PowerOnState 0;
 Restart 1;
 
 Backlog
-Timers 1;
 Timer1 {"Enable":1,"Mode":0,"Time":"18:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer2 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Timers 1;
 Restart 1;
 
 Rule1
@@ -187,4 +190,7 @@ Rule1
   ON Event#wintermode$|-10- DO Power 0 ENDON
   ON Event#wintermode$|-11- DO Power 0 ENDON
   ON Event#wintermode$|-12- DO Power 0 ENDON
+
+Backlog Rule1 1;
+Restart 1;
 ```
