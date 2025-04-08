@@ -19,7 +19,7 @@ Restart 1;
 
 Backlog
 Timer1 {"Enable":1,"Mode":0,"Time":"08:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":1};
-Timer2 {"Enable":1,"Mode":0,"Time":"22:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer2 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer3 {"Enable":1,"Mode":0,"Time":"23:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer4 {"Enable":1,"Mode":0,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer5 {"Enable":1,"Mode":0,"Time":"01:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
@@ -146,4 +146,34 @@ Rule1
   ON Event#wintermode$|-12- DO Power 1 ENDON
 
 Rule1 1
+```
+
+### GartenPlug
+
+```
+Backlog
+Template {"NAME":"Athom Plug V2","GPIO":[0,0,0,3104,0,32,0,0,224,576,0,0,0,0],"FLAG":0,"BASE":18};
+Module 0; Restart 1;
+
+Backlog
+IPAddress1 192.168.22.73; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
+DeviceName GartenPlug; FriendlyName1 GartenPlug;
+PowerDelta 5; PowerOnState 0;
+Restart 1;
+
+Backlog
+Timers 1;
+Timer1 {"Enable":1,"Mode":0,"Time":"18:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer2 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Restart 1;
+
+Rule1
+  ON Clock#Timer=1 DO Backlog Event wintermode=%timestamp% ENDON
+  ON Event#wintermode$|-01- DO Power 0 ENDON
+  ON Event#wintermode$|-02- DO Power 0 ENDON
+  ON Event#wintermode$|-03- DO Power 0 ENDON
+  ON Event#wintermode$|-04- DO Power 0 ENDON
+  ON Event#wintermode$|-10- DO Power 0 ENDON
+  ON Event#wintermode$|-11- DO Power 0 ENDON
+  ON Event#wintermode$|-12- DO Power 0 ENDON
 ```
