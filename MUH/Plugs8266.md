@@ -8,8 +8,8 @@
 
 2. [Athom Plug V2](#athom-plug-v2)
 
-   - [HZ_BRENNER](#hz-brenner)
-   - [GartenPlug](#garten-plug)
+   - [HZ_BRENNER](#hz_brenner)
+   - [GartenPlug](#gartenplug)
 
 ## Shelly Plug S
 
