@@ -92,35 +92,12 @@ DeviceName desklight; FriendlyName1 desklight;
 PowerDelta 5; PowerOnState 1;
 Restart 1;
 
-Backlog
 Rule1
-ON Time#Initialized DO Backlog var11=%sunrise%; var12=%sunset%-30; event checksunrise=%time%; event checksunset=%time% ENDON
-ON event#checksunrise>%var11% DO Var1 0 ENDON
-ON event#checksunrise<%var11% DO Var1 1 ENDON
-ON event#checksunset<%var12% DO Var2 0 ENDON
-ON event#checksunset>%var12% DO Var2 1 ENDON
-ON var2#state==%var1% DO Power 0 ENDON
-ON var2#state!=%var1% DO Power 1 ENDON
-ON Time#Minute=%var11% DO Power 0 ENDON
-ON Time#Minute=%var12% DO Power 1 ENDON
-
-## < 5 || < 12 || < 10
-Rule2
-ON mqtt#connected DO Subscribe LightLux, muh/WStation/data/B327, light_klx ENDON
-ON Event#LightLux<10 DO Power 1 ENDON
-ON Event#LightLux>10 DO Power 0 ENDON
-
-###
-ON Time#Minute|10 DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
-
-// ALTERNATIVE IF/ENDIF
-Rule1
-ON Time#Initialized DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
-ON event#checksunrise>%sunrise% DO Var1 0 ENDON
-ON event#checksunset<%sunset% DO Var2 0 ENDON
-ON event#checksunrise<%sunrise% DO Var1 1 ENDON
-ON event#checksunset>%sunset% DO Var2 1 ENDON
-ON event#checkDark DO IF (%var1%==%var2%) Power 0 ELSE Power 1 ENDIF ENDON
+ON mqtt#connected DO Subscribe LightLux, muh/wst/data/B327, light_klx ENDON
+ON Event#LightLux<10 DO var1 1 ENDON
+ON Event#LightLux>10 DO var1 0 ENDON
+ON var1#state!=%var2% DO Backlog var2 %value%; Power %value% ENDON
+Rule1 1
 ```
 
 ## Athom Plug V2
