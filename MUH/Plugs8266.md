@@ -29,7 +29,7 @@ PowerDelta 5; PowerOnState 1; TelePeriod 10;
 Restart 1;
 
 Backlog
-Timer1 {"Enable":1,"Mode":0,"Time":"08:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":1};
+Timer1 {"Enable":1,"Mode":0,"Time":"09:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer2 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer3 {"Enable":1,"Mode":0,"Time":"23:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timer4 {"Enable":1,"Mode":0,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
@@ -38,14 +38,19 @@ Timers 1;
 Restart 1;
 
 Rule1
-  ON System#Boot DO Backlog var1 15; var2 0; ENDON
+  ON System#Boot DO Backlog var1 15; var2 0; var3 0; ENDON
   ON Energy#Power DO var2 %value% ENDON
   ON Clock#Timer=2 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
   ON Clock#Timer=3 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
   ON Clock#Timer=4 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
   ON Clock#Timer=5 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
 
-Backlog Rule1 1;
+Rule2
+  ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR ENDON
+  ON Event#PowerTotal#ENERGY#Power[1] DO IF (%value%<0) var3 1 ELSE var3 0 ENDIF ENDON
+  ON Clock#Timer=1 DO IF (%var3%==1) Power 1 ENDIF ENDON
+
+Backlog Rule1 1; Rule2 1;
 Restart 1;
 
 Backlog PowerSet 14.0; VoltageSet 230; CurrentSet 60.87
@@ -93,10 +98,11 @@ PowerDelta 5; PowerOnState 1;
 Restart 1;
 
 Rule1
-ON mqtt#connected DO Subscribe LightLux, muh/wst/data/B327, light_klx ENDON
-ON Event#LightLux<10 DO var1 1 ENDON
-ON Event#LightLux>10 DO var1 0 ENDON
-ON var1#state!=%var2% DO Backlog var2 %value%; Power %value% ENDON
+  ON mqtt#connected DO Subscribe LightLux, muh/wst/data/B327, light_klx ENDON
+  ON Event#LightLux<10 DO var1 1 ENDON
+  ON Event#LightLux>10 DO var1 0 ENDON
+  ON var1#state!=%var2% DO Backlog var2 %value%; Power %value% ENDON
+
 Rule1 1
 ```
 
