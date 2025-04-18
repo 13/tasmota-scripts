@@ -29,26 +29,32 @@ PowerDelta 5; PowerOnState 1; TelePeriod 10;
 Restart 1;
 
 Backlog
-Timer1 {"Enable":1,"Mode":0,"Time":"09:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
-Timer2 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
-Timer3 {"Enable":1,"Mode":0,"Time":"23:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
-Timer4 {"Enable":1,"Mode":0,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
-Timer5 {"Enable":1,"Mode":0,"Time":"01:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer1 {"Enable":1,"Mode":0,"Time":"08:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer2 {"Enable":1,"Mode":0,"Time":"09:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer3 {"Enable":1,"Mode":0,"Time":"10:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer4 {"Enable":1,"Mode":0,"Time":"11:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer5 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer6 {"Enable":1,"Mode":0,"Time":"23:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer7 {"Enable":1,"Mode":0,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer8 {"Enable":1,"Mode":0,"Time":"01:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timers 1;
 Restart 1;
 
 Rule1
   ON System#Boot DO Backlog var1 15; var2 0; var3 0; ENDON
   ON Energy#Power DO var2 %value% ENDON
-  ON Clock#Timer=2 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
-  ON Clock#Timer=3 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
-  ON Clock#Timer=4 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
   ON Clock#Timer=5 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
+  ON Clock#Timer=6 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
+  ON Clock#Timer=7 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
+  ON Clock#Timer=8 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
 
 Rule2
   ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR ENDON
   ON Event#PowerTotal#ENERGY#Power[1] DO IF (%value%<0) var3 1 ELSE var3 0 ENDIF ENDON
   ON Clock#Timer=1 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=2 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=3 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=4 DO IF (%var3%==1) Power 1 ENDIF ENDON
 
 Backlog Rule1 1; Rule2 1;
 Restart 1;
