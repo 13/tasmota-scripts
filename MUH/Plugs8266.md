@@ -76,10 +76,20 @@ PowerDelta 5; PowerOnState 0;
 Restart 1;
 
 Backlog
-Timer1 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":1};
-Timer2 {"Enable":1,"Mode":0,"Time":"14:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Timer1 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
+Timer2 {"Enable":1,"Mode":0,"Time":"10:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
+Timer3 {"Enable":1,"Mode":0,"Time":"11:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
+Timer5 {"Enable":1,"Mode":0,"Time":"14:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
 Timers 1;
 Restart 1;
+
+Rule2
+  ON System#Boot DO Backlog var3 0; ENDON
+  ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR ENDON
+  ON Event#PowerTotal#ENERGY#Power[1] DO IF (%value%<0) var3 1 ELSE var3 0 ENDIF ENDON
+  ON Clock#Timer=1 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=2 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=3 DO IF (%var3%==1) Power 1 ENDIF ENDON
 ```
 
 ### desklight
