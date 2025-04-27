@@ -23,7 +23,9 @@ var DEVICE_SCRIPTS = {
   "G_EXT": "g_ext.be",
   "G_INT": "g_int.be",
   "HD_INT": "hd_int.be",
-  "HD_EXT": "hd_ext.be"
+  "HD_EXT": "hd_ext.be",
+  "FL2": "fl2.be",
+  "FL3": "fl3.be"
 }
 
 # Logging function
