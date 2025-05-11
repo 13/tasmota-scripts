@@ -64,7 +64,7 @@ end
 #- ben:1-10,ann:11-20,mem:21:30,tre:31-40 -#
 def publishFPrint(values,sound)
  tasmota.cmd(string.format("i2splay /sfx/FP%d.mp3", sound))
- mqtt.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+ mqtt.publish("muh/portal/FP/json", string.format("{\"fp_id\": %d, \"confidence\": %d, \"location\": \"%s\", \"ts\": \"%s\"}", values[0], values[1], devicename, tasmota.time_str(tasmota.rtc()['local'])), false)
 end
 
 def checkDNS()
