@@ -56,6 +56,10 @@ Rule2
   ON Clock#Timer=3 DO IF (%var3%==1) Power 1 ENDIF ENDON
   ON Clock#Timer=4 DO IF (%var3%==1) Power 1 ENDIF ENDON
 
+#Rule3
+#  ON mqtt#connected DO Subscribe GartenPlug, tasmota/tele/tasmota_8F499A/LWT ENDON
+#  ON Event#GartenPlug=Online DO Power 1 ENDON
+
 Backlog Rule1 1; Rule2 1;
 Restart 1;
 
@@ -169,7 +173,7 @@ Template {"NAME":"Athom Plug V2","GPIO":[0,0,0,3104,0,32,0,0,224,576,0,0,0,0],"F
 Module 0; Restart 1;
 
 Backlog
-IPAddress1 192.168.22.73; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
+IPAddress1 192.168.22.30; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName GartenPlug; FriendlyName1 GartenPlug;
 PowerDelta 5; PowerOnState 0;
 Restart 1;
@@ -189,6 +193,11 @@ Rule1
   ON Event#wintermode$|-10- DO Power 0 ENDON
   ON Event#wintermode$|-11- DO Power 0 ENDON
   ON Event#wintermode$|-12- DO Power 0 ENDON
+
+Rule3
+  ON button1#state=1 DO Publish tasmota/cmnd/tasmota_0C6423/power 1 ENDON
+
+#  ON button1#state=1 DO Publish muh/plugs/garten/power 1 ENDON
 
 Backlog Rule1 1;
 Restart 1;
