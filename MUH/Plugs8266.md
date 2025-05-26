@@ -83,7 +83,8 @@ Backlog
 Timer1 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
 Timer2 {"Enable":1,"Mode":0,"Time":"10:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
 Timer3 {"Enable":1,"Mode":0,"Time":"11:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
-Timer5 {"Enable":1,"Mode":0,"Time":"14:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Timer4 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":1};
+Timer5 {"Enable":1,"Mode":0,"Time":"16:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
 Timers 1;
 Restart 1;
 
