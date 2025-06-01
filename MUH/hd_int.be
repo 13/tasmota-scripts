@@ -5,6 +5,7 @@ Backlog Template {"NAME":"Shelly Plus 2PM ADDON PCB v0.1.9","GPIO":[320,0,0,0,32
 
 Backlog IPAddress1 192.168.22.70; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName HD_INT; FriendlyName1 HD_INT; FriendlyName2 HD_GAR;
+SaveData 3600;
 PulseTime1 600; PulseTime2 300; SwitchMode3 1; SetOption114 1; Restart 1;
 -#
 
@@ -31,7 +32,9 @@ var MQTT_TOPIC_LUX = "muh/wst/data/B327"
 # State variables
 var pir_state1 = false
 var pir_state2 = false
-var reed_state = false
+var reed_state1 = false
+var reed_state2 = false
+var last_reed_state2 = false
 var power_state = tasmota.get_power()
 var lux_state = false
 var status_tim = nil
@@ -108,7 +111,26 @@ def process_mqtt_message(topic, idx, payload)
 
   # Handle reed sensor (HD)
   if string.find(topic, 'HD/json') > -1 && data.contains('state')
-    reed_state = bool(data['state'])
+    reed_state1 = bool(data['state'])
+    # Turn on the light if conditions are met
+    if pir_state1 && !pir_state2 && !reed_state1 && hdl_unlocked
+      turn_on = true
+    end
+    #if turn_on && (is_dark() || lux_state)
+    if turn_on && is_dark()
+      set_power(true, 0, true)
+    end
+  end
+
+  # Handle reed sensor 2 (HDL)
+  if string.find(topic, 'HDL/json') > -1 && data.contains('state')
+    reed_state2 = bool(data['state'])
+    if reed_state2 == false && reed_state2 != last_reed_state2)
+      hdl_unlocked = true
+    else
+      hdl_unlocked = false
+    end
+    last_reed_state2 = reed_state2
   end
 
   if string.find(topic, 'B327') > -1 && data.contains('light_klx')
@@ -117,16 +139,6 @@ def process_mqtt_message(topic, idx, payload)
     else
       lux_state = false
     end
-  end
-
-  # Turn on the light if conditions are met
-  if pir_state1 && !pir_state2 && !reed_state
-    turn_on = true
-  end
-
-  #if turn_on && (is_dark() || lux_state)
-  if turn_on && is_dark()
-    set_power(true, 0, true)
   end
 end
 
