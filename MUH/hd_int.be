@@ -35,6 +35,7 @@ var pir_state2 = false
 var reed_state1 = false
 var reed_state2 = false
 var last_reed_state2 = false
+var hdl_unlocked = false
 var power_state = tasmota.get_power()
 var lux_state = false
 var status_tim = nil
@@ -125,7 +126,7 @@ def process_mqtt_message(topic, idx, payload)
   # Handle reed sensor 2 (HDL)
   if string.find(topic, 'HDL/json') > -1 && data.contains('state')
     reed_state2 = bool(data['state'])
-    if reed_state2 == false && reed_state2 != last_reed_state2)
+    if reed_state2 == false && reed_state2 != last_reed_state2
       hdl_unlocked = true
     else
       hdl_unlocked = false
