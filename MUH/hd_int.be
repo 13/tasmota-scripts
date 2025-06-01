@@ -117,10 +117,6 @@ def process_mqtt_message(topic, idx, payload)
     if pir_state1 && !pir_state2 && !reed_state1 && hdl_unlocked
       turn_on = true
     end
-    #if turn_on && (is_dark() || lux_state)
-    if turn_on && is_dark()
-      set_power(true, 0, true)
-    end
   end
 
   # Handle reed sensor 2 (HDL)
@@ -140,6 +136,11 @@ def process_mqtt_message(topic, idx, payload)
     else
       lux_state = false
     end
+  end
+
+  #if turn_on && (is_dark() || lux_state)
+  if turn_on && is_dark()
+    set_power(true, 0, true)
   end
 end
 
