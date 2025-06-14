@@ -1,5 +1,15 @@
 #-
 
+Backlog
+Template {"NAME":"Shelly Plus Plug S","GPIO":[0,0,0,0,224,0,32,2720,0,0,0,0,0,0,0,2624,0,0,2656,0,0,288,289,0,0,0,0,0,0,4736,0,0,0,0,0,0],"FLAG":0,"BASE":1};
+Module 0; Restart 1;
+
+Backlog
+Template {"NAME":"Shelly Plus Plug S 4 LEDs","GPIO":[0,0,0,0,224,0,32,2720,0,0,0,0,0,0,0,2624,0,0,2656,0,0,1376,0,0,0,0,0,0,0,4736,0,0,0,0,0,0],"FLAG":0,"BASE":1};
+Module 0; Restart 1;
+
+Backlog DeviceName PlusPlugS; FriendlyName1 PlusPlugS; PowerDelta 101; PowerOnState 0; Restart 1;
+
 ZERO FEED
 
 http://192.168.22.59:8050/getOutputData
