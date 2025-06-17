@@ -64,13 +64,13 @@ end
 #- ben:1-10,ann:11-20,mem:21:30,tre:31-40 -#
 def publishFPrint(values,sound)
  tasmota.cmd(string.format("i2splay /sfx/FP%d.mp3", sound))
- mqtt.publish("muh/portal/FPRINT/json", string.format("{\"uid\": %d, \"confidence\": %d, \"time\": \"%s\", \"source\": \"%s\"}", values[0], values[1], tasmota.time_str(tasmota.rtc()['local']), devicename), false)
+ mqtt.publish("muh/portal/FP/json", string.format("{\"fp_id\": %d, \"confidence\": %d, \"location\": \"%s\", \"ts\": \"%s\"}", values[0], values[1], devicename, tasmota.time_str(tasmota.rtc()['local'])), false)
 end
 
 def checkDNS()
   if tasmota.cmd('IPAddress4')['IPAddress4'] == "0.0.0.0"
     tasmota.cmd('IPAddress4 192.168.22.6')
-    tasmota.set_timer(5000, def (value) tasmota.cmd('restart 1') end)
+    #tasmota.set_timer(5000, def (value) tasmota.cmd('restart 1') end)
   end
 end
 
@@ -102,7 +102,7 @@ end
 # CRON
 ## Persist
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
-tasmota.add_cron("10 */8 * * * *", def (value) tasmota.cmd("ping4 192.168.22.1") end, "checkWifi")
+tasmota.add_cron("10 10 */3 * * *", def (value) tasmota.cmd("ping4 192.168.22.1") end, "checkWifi")
 #tasmota.add_cron("8 0 21 * * *", def (value) tasmota.cmd("ping8 192.168.22.1") end, "checkWifi")
 #tasmota.add_cron("0 0 2 * * *", def (value) tasmota.cmd("restart 1") end, "restartAll")
 tasmota.add_cron("15 1 */1 * * *", def (value) checkDNS() end, "checkDNS")

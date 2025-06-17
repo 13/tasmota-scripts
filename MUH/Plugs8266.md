@@ -8,8 +8,8 @@
 
 2. [Athom Plug V2](#athom-plug-v2)
 
-   - [HZ_BRENNER](#hz-brenner)
-   - [GartenPlug](#garten-plug)
+   - [HZ_BRENNER](#hz_brenner)
+   - [GartenPlug](#gartenplug)
 
 ## Shelly Plug S
 
@@ -29,23 +29,44 @@ PowerDelta 5; PowerOnState 1; TelePeriod 10;
 Restart 1;
 
 Backlog
-Timer1 {"Enable":1,"Mode":0,"Time":"08:15","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":1};
-Timer2 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
-Timer3 {"Enable":1,"Mode":0,"Time":"23:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
-Timer4 {"Enable":1,"Mode":0,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
-Timer5 {"Enable":1,"Mode":0,"Time":"01:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer1 {"Enable":1,"Mode":0,"Time":"07:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer2 {"Enable":1,"Mode":0,"Time":"07:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer3 {"Enable":1,"Mode":0,"Time":"08:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer4 {"Enable":1,"Mode":0,"Time":"08:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer5 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer6 {"Enable":1,"Mode":0,"Time":"09:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer7 {"Enable":1,"Mode":0,"Time":"10:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer10 {"Enable":1,"Mode":0,"Time":"22:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer11 {"Enable":1,"Mode":0,"Time":"23:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer12 {"Enable":1,"Mode":0,"Time":"00:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
+Timer13 {"Enable":1,"Mode":0,"Time":"01:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":3};
 Timers 1;
 Restart 1;
 
 Rule1
-  ON System#Boot DO Backlog var1 15; var2 0; ENDON
+  ON System#Boot DO Backlog var1 15; var2 0; var3 0; ENDON
   ON Energy#Power DO var2 %value% ENDON
-  ON Clock#Timer=2 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
-  ON Clock#Timer=3 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
-  ON Clock#Timer=4 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
-  ON Clock#Timer=5 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
+  ON Clock#Timer=10 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
+  ON Clock#Timer=11 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
+  ON Clock#Timer=12 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
+  ON Clock#Timer=13 DO IF (%var2% < %var1%) Power 0 ENDIF ENDON
 
-Backlog Rule1 1;
+Rule2
+  ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR ENDON
+  ON Event#PowerTotal#ENERGY#Power[1] DO IF (%value%<0) var3 1 ELSE var3 0 ENDIF ENDON
+  ON Clock#Timer=1 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=2 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=3 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=4 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=5 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=6 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=7 DO IF (%var3%==1) Power 1 ENDIF ENDON
+
+#Rule3
+#  ON mqtt#connected DO Subscribe GartenPlug, tasmota/tele/tasmota_8F499A/LWT ENDON
+#  ON Event#GartenPlug=Online DO Power 1 ENDON
+
+Backlog Rule1 1; Rule2 1;
 Restart 1;
 
 Backlog PowerSet 14.0; VoltageSet 230; CurrentSet 60.87
@@ -65,10 +86,21 @@ PowerDelta 5; PowerOnState 0;
 Restart 1;
 
 Backlog
-Timer1 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":1};
-Timer2 {"Enable":1,"Mode":0,"Time":"14:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Timer1 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
+Timer2 {"Enable":1,"Mode":0,"Time":"10:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
+Timer3 {"Enable":1,"Mode":0,"Time":"11:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
+Timer4 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":1};
+Timer5 {"Enable":1,"Mode":0,"Time":"16:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
 Timers 1;
 Restart 1;
+
+Rule2
+  ON System#Boot DO Backlog var3 0; ENDON
+  ON mqtt#connected DO Subscribe PowerTotal, tasmota/tele/tasmota_5FF8B2/SENSOR ENDON
+  ON Event#PowerTotal#ENERGY#Power[1] DO IF (%value%<0) var3 1 ELSE var3 0 ENDIF ENDON
+  ON Clock#Timer=1 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=2 DO IF (%var3%==1) Power 1 ENDIF ENDON
+  ON Clock#Timer=3 DO IF (%var3%==1) Power 1 ENDIF ENDON
 ```
 
 ### desklight
@@ -92,35 +124,13 @@ DeviceName desklight; FriendlyName1 desklight;
 PowerDelta 5; PowerOnState 1;
 Restart 1;
 
-Backlog
 Rule1
-ON Time#Initialized DO Backlog var11=%sunrise%; var12=%sunset%-30; event checksunrise=%time%; event checksunset=%time% ENDON
-ON event#checksunrise>%var11% DO Var1 0 ENDON
-ON event#checksunrise<%var11% DO Var1 1 ENDON
-ON event#checksunset<%var12% DO Var2 0 ENDON
-ON event#checksunset>%var12% DO Var2 1 ENDON
-ON var2#state==%var1% DO Power 0 ENDON
-ON var2#state!=%var1% DO Power 1 ENDON
-ON Time#Minute=%var11% DO Power 0 ENDON
-ON Time#Minute=%var12% DO Power 1 ENDON
+  ON mqtt#connected DO Subscribe LightLux, muh/wst/data/B327, light_klx ENDON
+  ON Event#LightLux<10 DO var1 1 ENDON
+  ON Event#LightLux>10 DO var1 0 ENDON
+  ON var1#state!=%var2% DO Backlog var2 %value%; Power %value% ENDON
 
-## < 5 || < 12 || < 10
-Rule2
-ON mqtt#connected DO Subscribe LightLux, muh/WStation/data/B327, light_klx ENDON
-ON Event#LightLux<10 DO Power 1 ENDON
-ON Event#LightLux>10 DO Power 0 ENDON
-
-###
-ON Time#Minute|10 DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
-
-// ALTERNATIVE IF/ENDIF
-Rule1
-ON Time#Initialized DO Backlog event checksunrise=%time%; event checksunset=%time% ENDON
-ON event#checksunrise>%sunrise% DO Var1 0 ENDON
-ON event#checksunset<%sunset% DO Var2 0 ENDON
-ON event#checksunrise<%sunrise% DO Var1 1 ENDON
-ON event#checksunset>%sunset% DO Var2 1 ENDON
-ON event#checkDark DO IF (%var1%==%var2%) Power 0 ELSE Power 1 ENDIF ENDON
+Rule1 1
 ```
 
 ## Athom Plug V2
@@ -170,7 +180,7 @@ Template {"NAME":"Athom Plug V2","GPIO":[0,0,0,3104,0,32,0,0,224,576,0,0,0,0],"F
 Module 0; Restart 1;
 
 Backlog
-IPAddress1 192.168.22.73; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
+IPAddress1 192.168.22.30; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName GartenPlug; FriendlyName1 GartenPlug;
 PowerDelta 5; PowerOnState 0;
 Restart 1;
@@ -190,6 +200,11 @@ Rule1
   ON Event#wintermode$|-10- DO Power 0 ENDON
   ON Event#wintermode$|-11- DO Power 0 ENDON
   ON Event#wintermode$|-12- DO Power 0 ENDON
+
+Rule3
+  ON button1#state=1 DO Publish tasmota/cmnd/tasmota_0C6423/power 1 ENDON
+
+#  ON button1#state=1 DO Publish muh/plugs/garten/power 1 ENDON
 
 Backlog Rule1 1;
 Restart 1;

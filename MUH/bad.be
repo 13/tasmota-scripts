@@ -1,5 +1,20 @@
 #- Bad -#
 
+#-
+Backlog
+Template {"NAME":"Shelly Plus 1PM","GPIO":[0,0,0,0,192,2720,0,0,0,0,0,0,0,0,2656,0,0,0,0,2624,0,32,224,0,0,0,0,0,0,0,0,0,0,0,0,0],"FLAG":0,"BASE":1};
+Module 0; Restart 1;
+
+Backlog IPAddress1 192.168.22.56; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
+DeviceName Bad; FriendlyName1 Bad;
+PowerDelta 5; PowerOnState 0; TelePeriod 10;
+Restart 1;
+
+## Options
+# Calibrate
+Backlog PowerSet 14.0; VoltageSet 230; CurrentSet 60.87
+-#
+
 import json
 
 print(string.format("MUH: Loading bad.be on %s...", DEVICENAME))
