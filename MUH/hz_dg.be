@@ -4,7 +4,7 @@ Backlog Template {"NAME":"Shelly Plus 1","GPIO":[288,0,0,0,192,0,0,0,0,0,0,0,0,0
 Backlog IPAddress1 192.168.22.70; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName HZ_DG; FriendlyName1 HZ_DG_PUMPE;
 PowerOnState 0; PulseTime1 21700;
-TelePeriod 3600;
+TelePeriod 60;
 Timer1 {"Enable":1,"Mode":0,"Time":"23:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
 Timer2 {"Enable":1,"Mode":0,"Time":"01:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
 Timer3 {"Enable":1,"Mode":0,"Time":"03:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
