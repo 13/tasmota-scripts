@@ -27,7 +27,7 @@ var buttonOverride= false
 
 def checkPing(state, id)
   if buttonOverride 
-    return
+    return;
   end
   if state == nil && id == nil
     if !data[0]["state"] && !data[1]["state"] && !data[2]["state"]
