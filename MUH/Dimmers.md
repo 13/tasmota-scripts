@@ -17,7 +17,7 @@ Restart 1;
 
 Backlog Ledtable 0; ShdLeadingEdge 0;
 DimmerRange 21,48;  // E27
-DimmerRange 40,120; // GU14
+DimmerRange 21,50; // GU14
 SwitchMode 11; SetOption32 5; DimmerStep 2;
 PulseTime 3600;
 Rule1 1;
