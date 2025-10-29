@@ -43,6 +43,7 @@ Rule1
 ON Button1#state=10 DO Publish tasmota/cmnd/tasmota_3381CE/Power 2 ENDON
 ON Button1#state=11 DO Publish tasmota/cmnd/tasmota_3381CE/Dimmer 15 ENDON
 ON Button1#state=3 DO Publish tasmota/cmnd/tasmota_3381CE/Dimmer 100 ENDON
+ON Button1#state=13 DO Publish muh/cmnd PLUGUD ENDON
 ON mqtt#connected DO Subscribe HzOn, tasmota/tele/tasmota_F982EC/STATE, POWER ENDON
 ON Event#HzOn=ON DO LedPower1 1 ENDON
 ON Event#HzOn=OFF DO LedPower1 0 ENDON
