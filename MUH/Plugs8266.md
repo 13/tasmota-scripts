@@ -151,8 +151,8 @@ Restart 1;
 
 #### Rule 1
 
-- Wintermode (Months 01,02,03,11,12)
-- Turn ON from 05:30 - 22:30
+- Wintermode (Months 01,02,03,10,11,12)
+- Turn ON from 05:30 - 21:30
 
 ```
 Backlog
@@ -166,6 +166,7 @@ Rule1
   ON Event#wintermode$|-01- DO Power 1 ENDON
   ON Event#wintermode$|-02- DO Power 1 ENDON
   ON Event#wintermode$|-03- DO Power 1 ENDON
+  ON Event#wintermode$|-10- DO Power 1 ENDON
   ON Event#wintermode$|-11- DO Power 1 ENDON
   ON Event#wintermode$|-12- DO Power 1 ENDON
 

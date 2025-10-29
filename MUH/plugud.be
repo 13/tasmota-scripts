@@ -23,7 +23,12 @@ var data = [
   { "id": 3, "ip": "192.168.22.12", "state": true }  # g1
 ]
 
+var buttonOverride= false
+
 def checkPing(state, id)
+  if buttonOverride 
+    return;
+  end
   if state == nil && id == nil
     if !data[0]["state"] && !data[1]["state"] && !data[2]["state"]
       if tasmota.get_power()[0]
@@ -86,3 +91,23 @@ for device : data
     checkPing(value, device["id"]) 
   end)
 end
+
+# buttonOverride via MQTT
+# mqtt.publish("muh/cmnd", "PLUGUD")
+tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe CMND, muh/cmnd") end)
+tasmota.add_rule("Event#CMND", def (value)
+  if value == "PLUGUD"
+    print("Remote toggle received!")
+    if !tasmota.get_power()[0]
+      # Einschalten + Override aktivieren
+      tasmota.set_power(0, true)
+      buttonOverride = true
+      print("Manual override activated: Plug will stay ON")
+    else
+      # Ausschalten + Override deaktivieren
+      tasmota.set_power(0, false)
+      buttonOverride = false
+      print("Manual override deactivated: Plug follows Ping logic again")
+    end
+  end
+end)
