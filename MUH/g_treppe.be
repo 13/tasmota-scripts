@@ -36,7 +36,13 @@ var status_tim = nil
 
 # Get status sunrise/sunset
 def get_status_tim()
-  status_tim = tasmota.cmd('Status 7')['StatusTIM']
+  var resp = tasmota.cmd('Status 7')
+  if resp != nil && resp.contains("StatusTIM")
+    status_tim = resp["StatusTIM"]
+  else
+    status_tim = nil
+  end
+  #status_tim = tasmota.cmd('Status 7')['StatusTIM']
   print(status_tim)
 end
 
@@ -52,11 +58,21 @@ def is_dark()
   var now_dump = tasmota.time_dump(now)
   var now_date = string.format("%s-%s-%s", now_dump['year'], now_dump['month'], now_dump['day'])
 
-  var sunrise = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunrise']), "%Y-%m-%d %H:%M")
-  var sunset = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunset']), "%Y-%m-%d %H:%M")
+  var sunrise = tasmota.strptime(string.format("%s %s", now_date, status_tim["Sunrise"]), "%Y-%m-%d %H:%M")
+  var sunset  = tasmota.strptime(string.format("%s %s", now_date, status_tim["Sunset"]), "%Y-%m-%d %H:%M")
 
-  var sunrise_threshold = sunrise['epoch'] + time_threshold
-  var sunset_threshold = sunset['epoch'] - time_threshold_sunset
+  if sunrise == nil || sunset == nil
+    return false     # fail-safe: not dark
+  end
+
+  var sunrise_threshold = sunrise["epoch"] + time_threshold
+  var sunset_threshold  = sunset["epoch"] - time_threshold_sunset
+
+  #var sunrise = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunrise']), "%Y-%m-%d %H:%M")
+  #var sunset = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunset']), "%Y-%m-%d %H:%M")
+
+  #var sunrise_threshold = sunrise['epoch'] + time_threshold
+  #var sunset_threshold = sunset['epoch'] - time_threshold_sunset
 
   #print(string.format("Sunrise: %s, Sunset: %s", tasmota.strftime("%H:%M", sunrise['epoch']), tasmota.strftime("%H:%M", sunset['epoch'])))
   print(string.format("Sunrise: %s, Sunset: %s", tasmota.strftime("%H:%M", sunrise_threshold), tasmota.strftime("%H:%M", sunset_threshold)))
@@ -78,6 +94,10 @@ def process_mqtt_message(topic, idx, payload)
 
   try
     data = json.load(payload)
+    if data == nil
+      print("Invalid JSON:", payload)
+      return
+    end
     #print(data)
   except .. as e
     print("Failed to parse MQTT payload:", e)
