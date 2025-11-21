@@ -1,9 +1,13 @@
 # Shelly Dimmer 2
+
 ## Template
+
 ```
 {"NAME":"Shelly Dimmer 2","GPIO":[0,3200,0,3232,5568,5600,0,0,193,0,192,0,320,4736],"FLAG":0,"BASE":18}
 ```
+
 ## Settings
+
 ```
 Backlog Sunrise 1;
 
@@ -12,10 +16,13 @@ SwitchMode 11; SetOption32 10; Rule1 1
 PulseTime 5400
 A PulseTime 3600
 ```
+
 ## Rules
+
 ### Rule 1
+
 ```
-Rule1 
+Rule1
 ON system#boot DO var1 + ENDON
 ON switch1#state=2 DO POWER TOGGLE ENDON
 ON switch1#state=4 DO DIMMER %var1% ENDON
@@ -23,15 +30,26 @@ ON switch1#state=7 DO event upordown=%var1% ENDON
 ON event#upordown=+ DO var1 - ENDON
 ON event#upordown=- DO var1 + ENDON
 ```
+
+### Rule 3
+``````
+Rule3
+ON Time#Minute=420 DO var10 0 ENDON
+ON Time#Minute=1380 DO var10 1 ENDON
+ON Power1#state=1 DO IF (var10==1) Dimmer 20 ENDIF ENDON
+``````
+
 ### Rule 2
+
 - timer to turn off after 1.5 hours
 - Winter sunrise (ON at Mo-Fr 06:00 and Sa-So 06:35)
 
 #### Timer
-```
-Timer1 {"Enable":1,"Mode":0,"Time":"06:00","Window":0,"Days":"0111110","Repeat":1,"Output":1,"Action":3}
+
+``` Timer1 {"Enable":1,"Mode":0,"Time":"06:00","Window":0,"Days":"0111110","Repeat":1,"Output":1,"Action":3}
 Timer2 {"Enable":2,"Mode":0,"Time":"06:35","Window":0,"Days":"1000001","Repeat":1,"Output":1,"Action":3}
 ```
+
 ```
 Rule2
 ON Clock#Timer=1 DO Backlog Dimmer 10; Power1 1 ENDON
