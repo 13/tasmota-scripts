@@ -20,7 +20,7 @@ import string
 import math
 
 # Constants
-var DARK_OFFSET = 90            # Offset in minutes for darkness detection
+var DARK_OFFSET = 10            # Offset in minutes for darkness detection
 var DARK_OFFSET_SUNSET = 20
 var POWER_TIMER_DURATION = 300  # in seconds
 
