@@ -82,7 +82,7 @@ Module 0; Restart 1;
 Backlog
 IPAddress1 192.168.22.56; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName mop; FriendlyName1 mop;
-PowerDelta 5; PowerOnState 0;
+PowerDelta 5; PowerOnState 3;
 Restart 1;
 
 Backlog
@@ -90,7 +90,8 @@ Timer1 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":
 Timer2 {"Enable":1,"Mode":0,"Time":"10:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
 Timer3 {"Enable":1,"Mode":0,"Time":"11:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":3};
 Timer4 {"Enable":1,"Mode":0,"Time":"09:00","Window":0,"Days":"0100010","Repeat":1,"Output":1,"Action":1};
-Timer5 {"Enable":1,"Mode":0,"Time":"16:30","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Timer5 {"Enable":1,"Mode":0,"Time":"15:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
+Timer6 {"Enable":1,"Mode":0,"Time":"18:00","Window":0,"Days":"1111111","Repeat":1,"Output":1,"Action":0};
 Timers 1;
 Restart 1;
 
@@ -145,7 +146,7 @@ Module 0; Restart 1;
 Backlog
 IPAddress1 192.168.22.73; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName HZ_BRENNER; FriendlyName1 HZ_BRENNER;
-PowerDelta 5; PowerOnState 2;
+PowerDelta 5; PowerOnState 3;
 Restart 1;
 ```
 
