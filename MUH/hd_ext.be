@@ -20,8 +20,8 @@ import string
 import math
 
 # Constants
-var DARK_OFFSET = -90           # Offset in minutes for darkness detection
-var DARK_OFFSET_SUNSET = -90
+var DARK_OFFSET = 0           # Offset in minutes for darkness detection
+var DARK_OFFSET_SUNSET = 0
 var POWER_TIMER_DURATION = 20   # in seconds
 
 var MQTT_TOPIC_PIR1 = "shellies/shellymotion2-8CF6811074B3/status"
@@ -31,8 +31,6 @@ var DEVICE_NAME = "HD_EXT"
 
 # State variables
 var pir_state1 = false
-var reed_state1 = true
-var reed_state2 = true 
 var power_state = tasmota.get_power()
 var status_tim = nil
 
@@ -132,9 +130,10 @@ end)
 tasmota.add_rule("Time#Initialized", def () get_status_tim() end)
 
 # Subscribe to MQTT topics
-#mqtt.subscribe(MQTT_TOPIC_PIR1, process_mqtt_message)
+mqtt.subscribe(MQTT_TOPIC_PIR1, process_mqtt_message)
 
 # cron
 tasmota.add_cron("0 30 */3 * * *", def () get_status_tim() end, "get_status_tim")
 
 print(string.format("MUH: Loaded %s ...", DEVICE_NAME))
+
