@@ -104,7 +104,7 @@ def process_mqtt_message(topic, idx, payload)
     turn_on = true
   end
 
-  if turn_on && is_dark()
+  if turn_on && is_dark() && !tasmota.get_power()[0]
     set_power(true, 0, true)
   end
 end
