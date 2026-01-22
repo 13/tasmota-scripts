@@ -50,7 +50,7 @@ end
 def publish_mqtt(sensor)
   ds18b20_data[sensor]['tid'] = DEVICE_NAME
   ds18b20_data[sensor]['time'] = tasmota.time_str(tasmota.rtc()['local'])
-  tasmota.publish(string.format("muh/sensors/%s/%s/json", DEVICE_NAME, sensor), json.dump(ds18b20_data[sensor]))
+  tasmota.publish(string.format("muh/sensors/%s/%s/json", DEVICE_NAME, sensor), json.dump(ds18b20_data[sensor]), true)
 end
 
 # Check DS18B20 sensors and publish data if delta is exceeded or forced
