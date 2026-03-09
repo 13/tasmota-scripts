@@ -26,7 +26,7 @@ var sensors = json.load(tasmota.read_sensors())
 var ds18b20_data = { 'tid': DEVICE_NAME }
 var ds18b20_list = []
 
-for k in sensors.keys()
+for k: sensors.keys()
   if string.startswith(k, DS18B20_PREFIX)
     ds18b20_list.push(k)
     ds18b20_data[k] = {
@@ -59,7 +59,7 @@ def check_ds18b20(force_publish)
     force_publish = false
   end
   sensors = json.load(tasmota.read_sensors())
-  for sensor_id in ds18b20_list
+  for sensor_id: ds18b20_list
     if sensors.contains(sensor_id)
       var sensor_temp = sensors[sensor_id]['Temperature']
       if !force_publish
