@@ -23,8 +23,8 @@ var LUX_THRESHOLD = 35
 var DARK_OFFSET = 90              # Offset in minutes for darkness detection
 var DARK_OFFSET_SUNSET = 60
 
-var MQTT_TOPIC_PIR = "muh/sensors/33c/json"
-var MQTT_TOPIC_REED = "muh/sensors/6a7/json"
+var MQTT_TOPIC_PIR = "muh/sensors/80/json"
+var MQTT_TOPIC_REED = "muh/sensors/64/json"
 var MQTT_TOPIC_LUX = "muh/wst/data/B327"
 
 # State variables
@@ -105,14 +105,14 @@ def process_mqtt_message(topic, idx, payload)
   end
 
   # Handle reed sensor (door) state changes
-  if string.find(topic, '6a7') > -1 && data.contains('S1') && reed_state != data['S1']
-    reed_state = bool(data['S1'])
+  if string.find(topic, '64') > -1 && data.contains('switch') && reed_state != data['switch']
+    reed_state = bool(data['switch'])
     turn_on = !reed_state
   end
 
   # Handle PIR sensor (motion) state changes
-  if string.find(topic, '33c') > -1 && data.contains('M1') && pir_state != data['M1']
-    pir_state = bool(data['M1'])
+  if string.find(topic, '80') > -1 && data.contains('pir') && pir_state != data['pir']
+    pir_state = bool(data['pir'])
     turn_on = pir_state
   end
 
