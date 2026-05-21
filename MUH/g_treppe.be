@@ -105,14 +105,14 @@ def process_mqtt_message(topic, idx, payload)
   end
 
   # Handle reed sensor (door) state changes
-  if string.find(topic, '64') > -1 && data.contains('switch') && reed_state != data['switch']
-    reed_state = bool(data['switch'])
+  if string.find(topic, '64') > -1 && data.contains('SWITCH') && reed_state != data['SWITCH']
+    reed_state = bool(data['SWITCH'])
     turn_on = !reed_state
   end
 
   # Handle PIR sensor (motion) state changes
-  if string.find(topic, '80') > -1 && data.contains('pir') && pir_state != data['pir']
-    pir_state = bool(data['pir'])
+  if string.find(topic, '80') > -1 && data.contains('PIR') && pir_state != data['PIR']
+    pir_state = bool(data['PIR'])
     turn_on = pir_state
   end
 
