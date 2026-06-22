@@ -4,15 +4,13 @@
 Backlog Template {"NAME":"Athom Plug V3","GPIO":[0,0,0,32,0,224,576,0,0,0,0,0,0,0,0,0,0,0,0,0,3104,0],"FLAG":0,"BASE":1}
 ; Module 0; Restart 1;
 
-Backlog 
+Backlog
 DeviceName PlugUD; FriendlyName1 PlugUD;
 PowerOnState 1;
 Restart 1;
 -#
 
-import json
 import string
-import math
 
 print(string.format("MUH: Loading plugud.be on %s...", DEVICENAME))
 
@@ -23,14 +21,26 @@ var data = [
   { "id": 3, "ip": "192.168.22.12", "state": true }  # g1
 ]
 
-var buttonOverride= false
+var buttonOverride = false
+
+# FIX: replaces the old hardcoded "!data[0]&&!data[1]&&!data[2]" check, which
+# silently ignored data[3] (g1). This loops over every entry in `data`, so it
+# stays correct even if devices are added/removed later.
+def allUnreachable()
+  for device : data
+    if device["state"]
+      return false
+    end
+  end
+  return true
+end
 
 def checkPing(state, id)
-  if buttonOverride 
-    return;
+  if buttonOverride
+    return
   end
   if state == nil && id == nil
-    if !data[0]["state"] && !data[1]["state"] && !data[2]["state"]
+    if allUnreachable()
       if tasmota.get_power()[0]
         print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
         tasmota.set_power(0, false)
@@ -44,14 +54,17 @@ def checkPing(state, id)
       end
     end
 
-    if !data[0]["state"] && !data[1]["state"] && !data[2]["state"]
+    if allUnreachable()
       if tasmota.get_power()[0]
         print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
         tasmota.set_power(0, false)
       end
     else
       if !tasmota.get_power()[0]
-        print(string.format("%s MUH: Devices %s is reachable, turning ON the plug", tasmota.time_str(tasmota.rtc()['local']), data[id]["ip"]))
+        # FIX: previously logged "data[id]['ip']" as "reachable" even when
+        # this exact call was the device going DOWN. This branch just means
+        # "at least one device is still up", not that `id` specifically is.
+        print(string.format("%s MUH: At least one device is reachable, turning ON the plug", tasmota.time_str(tasmota.rtc()['local'])))
         tasmota.set_power(0, true)
       end
     end
@@ -59,36 +72,20 @@ def checkPing(state, id)
 end
 
 # CRON
-# Always turn on
-#-
-tasmota.add_cron("0 */5 7-10,12 * * *", def (value)
-#tasmota.add_cron("*/10 * 7-23 * * *", def (value)
-  if !tasmota.get_power()[0]
-    for device : data
-      device["state"] = true
-    end
-    tasmota.set_power(0, true)
-    print("Plug was off. Turning it on.")
-  end
-end, "TurnPlugOn")
--#
-
 for device : data
-  #tasmota.add_cron(string.format("%d 0,30 23,0,1,2 * * *", device["id"] * 20), def (value) 
-  #tasmota.add_cron(string.format("%d * 7-23 * * *", device["id"] * 5), def (value) 
-  tasmota.add_cron(string.format("*/5 * 7-23 * * *"), def (value) 
-    tasmota.cmd("ping1 " .. device["ip"]) 
+  tasmota.add_cron(string.format("*/5 * 7-23 * * *"), def (value)
+    tasmota.cmd("ping1 " .. device["ip"])
   end, "checkPing" .. device["id"])
 end
 
 tasmota.add_cron(string.format("0 0,30 23,0-3 * * *"), def ()
-  checkPing() 
+  checkPing()
 end, "turn_off")
 
 # Rules
 for device : data
-  tasmota.add_rule("Ping#" .. device["ip"] .. "#Reachable", def (value) 
-    checkPing(value, device["id"]) 
+  tasmota.add_rule("Ping#" .. device["ip"] .. "#Reachable", def (value)
+    checkPing(value, device["id"])
   end)
 end
 

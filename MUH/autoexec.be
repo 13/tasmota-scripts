@@ -37,7 +37,6 @@ end
 
 # Get device name
 var DEVICENAME = tasmota.cmd("DeviceName")['DeviceName']
-var loaded = false
 
 # Validate device name
 if DEVICENAME == nil || DEVICENAME == ""
@@ -53,9 +52,10 @@ if DEVICE_SCRIPTS.has(DEVICENAME)
   log(string.format("Loading %s for %s", script, DEVICENAME))
   try
     load(script)
-    loaded = true
-  except .. as e
-    log(string.format("Failed to load %s - %s", script, e))
+  except .. as e, m
+    # FIX: 'as e' alone only captures the exception type, e.g. "io_error".
+    # 'as e, m' also captures the human-readable message so failures are debuggable.
+    log(string.format("Failed to load %s - %s: %s", script, e, m))
   end
 else
   log(string.format("Unknown device %s.", DEVICENAME))
