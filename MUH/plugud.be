@@ -5,6 +5,8 @@ Backlog Template {"NAME":"Athom Plug V3","GPIO":[0,0,0,32,0,224,576,0,0,0,0,0,0,
 ; Module 0; Restart 1;
 
 Backlog
+Backlog
+IPAddress1 192.168.22.31; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName PlugUD; FriendlyName1 PlugUD;
 PowerOnState 1;
 Restart 1;
@@ -15,11 +17,16 @@ import string
 print(string.format("MUH: Loading plugud.be on %s...", DEVICENAME))
 
 var data = [
-  { "id": 0, "ip": "192.168.22.20", "state": true }, # samstv
-  { "id": 1, "ip": "192.168.22.28", "state": true }, # wzr ap
-  { "id": 2, "ip": "192.168.22.11", "state": true }, # gold
-  { "id": 3, "ip": "192.168.22.12", "state": true }  # g1
+  { "id": 0, "ip": "192.168.22.20", "state": true, "fails": 0 }, # samstv
+  { "id": 1, "ip": "192.168.22.28", "state": true, "fails": 0 }, # wzr ap
+  { "id": 2, "ip": "192.168.22.11", "state": true, "fails": 0 }, # gold
+  { "id": 3, "ip": "192.168.22.12", "state": true, "fails": 0 }  # g1
 ]
+
+# Number of consecutive failed pings required before a device is marked
+# unreachable. Single dropped packets (ping1 has no retry) must not flip
+# state, since this plug powers the DVB-T antenna.
+var PING_FAIL_THRESHOLD = 3
 
 var buttonOverride = false
 
@@ -49,7 +56,15 @@ def checkPing(state, id)
   else
     for device : data
       if device["id"] == id
-        device["state"] = state
+        if state
+          device["fails"] = 0
+          device["state"] = true
+        else
+          device["fails"] += 1
+          if device["fails"] >= PING_FAIL_THRESHOLD
+            device["state"] = false
+          end
+        end
         break
       end
     end
