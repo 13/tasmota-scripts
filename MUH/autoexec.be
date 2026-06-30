@@ -25,7 +25,8 @@ var DEVICE_SCRIPTS = {
   "HD_INT": "hd_int.be",
   "HD_EXT": "hd_ext.be",
   "FL2": "fl2.be",
-  "FL3": "fl3.be"
+  "FL3": "fl3.be",
+  "WC": "wc.be",
 }
 
 # Logging function
