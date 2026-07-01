@@ -28,6 +28,13 @@ var data = [
 # state, since this plug powers the DVB-T antenna.
 var PING_FAIL_THRESHOLD = 3
 
+# Minimum time the plug stays on after any single reachable ping, even if
+# every device goes unreachable right after. Each new reachable ping pushes
+# this window out again, so the plug stays on continuously as long as pings
+# keep landing within 10m of each other.
+var KEEP_ON_SECONDS = 600
+var keepOnUntil = 0
+
 var buttonOverride = false
 
 # FIX: replaces the old hardcoded "!data[0]&&!data[1]&&!data[2]" check, which
@@ -47,11 +54,9 @@ def checkPing(state, id)
     return
   end
   if state == nil && id == nil
-    if allUnreachable()
-      if tasmota.get_power()[0]
-        print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
-        tasmota.set_power(0, false)
-      end
+    if allUnreachable() && tasmota.rtc()['local'] >= keepOnUntil && tasmota.get_power()[0]
+      print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
+      tasmota.set_power(0, false)
     end
   else
     for device : data
@@ -59,6 +64,7 @@ def checkPing(state, id)
         if state
           device["fails"] = 0
           device["state"] = true
+          keepOnUntil = tasmota.rtc()['local'] + KEEP_ON_SECONDS
         else
           device["fails"] += 1
           if device["fails"] >= PING_FAIL_THRESHOLD
@@ -70,7 +76,11 @@ def checkPing(state, id)
     end
 
     if allUnreachable()
-      if tasmota.get_power()[0]
+      # Even though every device is currently unreachable, don't turn off
+      # until the 10m keep-on window from the last reachable ping has
+      # elapsed. Otherwise a device flapping in and out would also flap the
+      # antenna's power.
+      if tasmota.rtc()['local'] >= keepOnUntil && tasmota.get_power()[0]
         print(string.format("%s MUH: All devices are unreachable, turning off the plug", tasmota.time_str(tasmota.rtc()['local'])))
         tasmota.set_power(0, false)
       end
@@ -88,14 +98,14 @@ end
 
 # CRON
 for device : data
-  tasmota.add_cron(string.format("*/5 * 7-23 * * *"), def (value)
+  tasmota.add_cron(string.format("*/5 * * * * *"), def (value)
     tasmota.cmd("ping1 " .. device["ip"])
   end, "checkPing" .. device["id"])
 end
 
-tasmota.add_cron(string.format("0 0,30 23,0-3 * * *"), def ()
-  checkPing()
-end, "turn_off")
+#tasmota.add_cron(string.format("0 0,30 23,0-3 * * *"), def ()
+#  checkPing()
+#end, "turn_off")
 
 # Rules
 for device : data
