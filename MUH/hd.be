@@ -1,6 +1,6 @@
 #- HD -#
 
-print(string.format("MUH: Loading hd.be on %s...", devicename))
+log(f"Loading hd.be on {DEVICENAME}...")
 
 var switch1 = tasmota.get_switches()[0] # HD
 var switch2 = tasmota.get_switches()[1] # HDL
@@ -17,23 +17,23 @@ var xmas = ""           # Xmas Easteregg
 var gdOffline = false
 
 # Fingerprint
-def handleFPrint(values,sw1,sw2)
- var soundFPrint = 1
- if sw1 && sw2
-   powerCmd(HD_UNLOCK_PIN,1000)
- elif sw1 && !sw2
-   powerCmd(HD_LOCK_PIN)
- else
-   soundFPrint = 2
- end
- publishFPrint(values,soundFPrint)
+def handleFPrint(values, sw1, sw2)
+  var soundFPrint = 1
+  if sw1 && sw2
+    powerCmd(HD_UNLOCK_PIN, 1000)
+  elif sw1 && !sw2
+    powerCmd(HD_LOCK_PIN)
+  else
+    soundFPrint = 2
+  end
+  publishFPrint(values, soundFPrint)
 end
 
 # Buttons
-def handleButton(name,state)
+def handleButton(name, state)
   if name == "HDB"
     if state == 10
-      tasmota.cmd(string.format("Backlog i2sgain 100; i2splay /sfx/HDB%s.mp3; i2sgain %d", xmas, volume))
+      tasmota.cmd(f"Backlog i2sgain 100; i2splay /sfx/HDB{xmas}.mp3; i2sgain {volume}")
     end
   elif name == "HDBTN"
     if state == 10
@@ -47,23 +47,27 @@ def handleButton(name,state)
       tasmota.cmd("i2splay /say/GD_O.mp3")
     elif state == 13
       volume = volume > 0 ? 0 : volume_default
-      tasmota.cmd(string.format("i2sgain %d", volume))
+      tasmota.cmd(f"i2sgain {volume}")
     end
   else
-    print(string.format("MUH: handleButton() %s...", name))
+    log(f"handleButton() {name}...")
   end
-  mqtt.publish(string.format("muh/portal/%s/json", name), string.format("{\"state\": %d, \"time\": \"%s\"}", state, tasmota.time_str(tasmota.rtc()['local'])), false)
+  mqtt.publish(f"muh/portal/{name}/json", json.dump({
+    "state": state,
+    "time": tasmota.time_str(tasmota.rtc()['local'])
+  }), false)
 end
 
 # Blink LED
-def blinkLED(id,time)
-  #print(string.format("MUH: blinkLED() %s %s...", id, time))
-  tasmota.set_timer(time, def (value) tasmota.set_power(id,!tasmota.get_power()[id]) blinkLED(id,time) end, "HD_LED")
+def blinkLED(id, time)
+  tasmota.set_timer(time, def (value)
+    tasmota.set_power(id, !tasmota.get_power()[id])
+    blinkLED(id, time)
+  end, "HD_LED")
 end
 
 # LED Status
 def handleLED(name, value)
-  #print(string.format("MUH: HD_LED %s %s...", name, value))
   if name == "G"
     if gState != value
       gState = value
@@ -80,26 +84,25 @@ def handleLED(name, value)
       ledChange = true
     end
   else
-    print("MUH: handleLED() empty")
+    log("handleLED() empty")
   end
   if ledChange
-    #print(string.format("MUH: HD_LED changed %s %s...", name, value))
     tasmota.remove_timer("HD_LED")
     if gState && gdlState
-      tasmota.set_power(HD_LED_PIN,true)
-      tasmota.cmd("Color #005500") # #00FF00
+      tasmota.set_power(HD_LED_PIN, true)
+      tasmota.cmd("Color #005500") # green
     elif !gState && !gdlState
-      tasmota.set_power(HD_LED_PIN,false)
-      tasmota.cmd("Color #660000") # #FF0000
+      tasmota.set_power(HD_LED_PIN, false)
+      tasmota.cmd("Color #660000") # red
     elif gState && gdState && !gdlState
-      tasmota.set_power(HD_LED_PIN,true)
-      tasmota.cmd("Color #5A2F00") # #FFCC00
+      tasmota.set_power(HD_LED_PIN, true)
+      tasmota.cmd("Color #5A2F00") # yellow
     elif gState && !gdState && !gdlState
-      tasmota.cmd("Color #5A2F00") # #FFCC00
-      blinkLED(HD_LED_PIN,500)
+      tasmota.cmd("Color #5A2F00") # yellow
+      blinkLED(HD_LED_PIN, 500)
     else
-      tasmota.cmd("Color #660000") # #FF0000
-      blinkLED(HD_LED_PIN,1000)
+      tasmota.cmd("Color #660000") # red
+      blinkLED(HD_LED_PIN, 1000)
     end
   end
   ledChange = false
@@ -108,8 +111,8 @@ end
 def checkGD(state)
   if state == 0
     if gdOffline
-      handleLED("G",0)
-      handleLED("GDL",0)
+      handleLED("G", 0)
+      handleLED("GDL", 0)
     end
     gdOffline = true
   else
@@ -132,39 +135,47 @@ tasmota.add_cron("25 */3 * * * *", def (value) tasmota.cmd("ping4 192.168.22.91"
 # RULES
 ## MQTT & HTTP API
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe RLY, muh/portal/RLY/cmnd") end)
-tasmota.add_rule("Event#"+str(devicename)+"_L=1", def (value) powerCmd(HD_LOCK_PIN) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_L", def (value) powerCmd(HD_LOCK_PIN) end)
-tasmota.add_rule("Event#"+str(devicename)+"_U=1", def (value) powerCmd(HD_UNLOCK_PIN,200) end)
-tasmota.add_rule("Event#"+str(devicename)+"_O=1", def (value) powerCmd(HD_UNLOCK_PIN,1000) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_U", def (value) powerCmd(HD_UNLOCK_PIN,200) end)
-tasmota.add_rule("Event#RLY="+str(devicename)+"_O", def (value) powerCmd(HD_UNLOCK_PIN,1000) end)
+tasmota.add_rule(f"Event#{DEVICENAME}_L=1", def (value) powerCmd(HD_LOCK_PIN) end)
+tasmota.add_rule(f"Event#RLY={DEVICENAME}_L", def (value) powerCmd(HD_LOCK_PIN) end)
+tasmota.add_rule(f"Event#{DEVICENAME}_U=1", def (value) powerCmd(HD_UNLOCK_PIN, 200) end)
+tasmota.add_rule(f"Event#{DEVICENAME}_O=1", def (value) powerCmd(HD_UNLOCK_PIN, 1000) end)
+tasmota.add_rule(f"Event#RLY={DEVICENAME}_U", def (value) powerCmd(HD_UNLOCK_PIN, 200) end)
+tasmota.add_rule(f"Event#RLY={DEVICENAME}_O", def (value) powerCmd(HD_UNLOCK_PIN, 1000) end)
 ## Audio Volume
-tasmota.cmd(string.format("i2sgain %d", volume))
+tasmota.cmd(f"i2sgain {volume}")
 ## FPrint
-tasmota.add_rule(["FPrint#Id","FPrint#Confidence>20"], def (values) handleFPrint(values,switch1,switch2) end)
+tasmota.add_rule(["FPrint#Id", "FPrint#Confidence>20"], def (values) handleFPrint(values, switch1, switch2) end)
 
 ## Switches
-handleSwitchP("HD",switch1)
-handleSwitchP("HDL",switch2)
-tasmota.add_rule("Switch1#state", def (value) switch1 = value tasmota.cmd(string.format("i2splay /sfx/HD%s%s.mp3", value, xmas)) handleSwitchP("HD",value,1) end)
-tasmota.add_rule("Switch2#state", def (value) switch2 = value handleSwitchP("HDL",value,1) end)
-tasmota.add_rule("Switch4#state", def (value) mqtt.publish("muh/portal/HDP/json", string.format("{\"state\": %d, \"time\": \"%s\"}", value, tasmota.time_str(tasmota.rtc()['local'])), false) end)
+handleSwitchP("HD", switch1)
+handleSwitchP("HDL", switch2)
+tasmota.add_rule("Switch1#state", def (value)
+  switch1 = value
+  tasmota.cmd(f"i2splay /sfx/HD{value}{xmas}.mp3")
+  handleSwitchP("HD", value, 1)
+end)
+tasmota.add_rule("Switch2#state", def (value)
+  switch2 = value
+  handleSwitchP("HDL", value, 1)
+end)
+tasmota.add_rule("Switch4#state", def (value)
+  mqtt.publish("muh/portal/HDP/json", json.dump({
+    "state": value,
+    "time": tasmota.time_str(tasmota.rtc()['local'])
+  }), false)
+end)
 
 ## Buttons
-tasmota.add_rule("Button1#state", def (value) handleButton("HDB",value) end)
-tasmota.add_rule("Button2#state", def (value) handleButton("HDBTN",value) end)
+tasmota.add_rule("Button1#state", def (value) handleButton("HDB", value) end)
+tasmota.add_rule("Button2#state", def (value) handleButton("HDBTN", value) end)
 
-## MQTT Subscribe Remote Switches
-### say & led
-#mqtt.unsubscribe("muh/portal/G/json")
-#mqtt.subscribe("cmnd/mqttmsg/control",mqtt_handler)
+## MQTT Subscribe Remote Switches (say & led)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe G, muh/portal/G/json, state") end)
-tasmota.add_rule("Event#G", def (value) handleRemoteSwitchP("G",int(value)) handleLED("G",int(value)) end)
+tasmota.add_rule("Event#G", def (value) handleRemoteSwitchP("G", int(value)) handleLED("G", int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GD, muh/portal/GD/json, state") end)
-tasmota.add_rule("Event#GD", def (value) handleRemoteSwitchP("GD",int(value)) handleLED("GD",int(value)) end)
+tasmota.add_rule("Event#GD", def (value) handleRemoteSwitchP("GD", int(value)) handleLED("GD", int(value)) end)
 tasmota.add_rule("mqtt#connected", def (value) tasmota.cmd("Subscribe GDL, muh/portal/GDL/json, state") end)
-tasmota.add_rule("Event#GDL", def (value) handleLED("GDL",int(value)) end)
+tasmota.add_rule("Event#GDL", def (value) handleLED("GDL", int(value)) end)
 
 ## checkGD
 tasmota.add_rule("Ping#192.168.22.91#Success", def (value) checkGD(value) end)
-

@@ -19,6 +19,7 @@ var sr04 = [-1, 0, 0]
 
 var sensors = json.load(tasmota.read_sensors())
 var timerOn = false
+var loaded = false
 
 # checkDelta
 def checkDelta(current, last, threshold)
@@ -91,7 +92,7 @@ class ParkAi
 end
 
 # load
-print(string.format("MUH: Loading %s ...", devicename))
+print(string.format("MUH: Loading %s ...", DEVICENAME))
 # poweron
 tasmota.cmd('Power 1')
 # bootscreen

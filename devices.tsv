@@ -1,0 +1,22 @@
+# name	ip	scripts (comma-separated, autoexec.be + muh_lib.be always included)
+# ip "?" = unknown — fill in to enable deploy. Header comments in the .be
+# files mostly claim 192.168.22.70 (copy-paste), so they were not trusted.
+HD	?	gdhd.be,hd.be
+GD	?	gdhd.be,gd.be
+PARK1	?	park1.be
+PARK2	?	park2.be
+AnnaUhr	?	annauhr.be
+HZ_WW	?	hz_ww.be
+BAD	?	bad.be
+PlugUD	192.168.22.31	plugud.be
+PV	?	pv.be
+PV_A	?	pv_a.be
+PV_B	?	pv_b.be
+G_TREPPE	?	g_treppe.be
+G_EXT	?	g_ext.be
+G_INT	?	g_int.be
+HD_INT	?	hd_int.be
+HD_EXT	?	hd_ext.be
+FL2	?	fl2.be
+FL3	?	fl3.be
+WC	?	wc.be

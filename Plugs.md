@@ -41,6 +41,10 @@ PowerDelta 101
 Backlog DeviceName KMMR_PC; FriendlyName1 KMMR_PC; 
 ```
 ## Rules
+> These run on ESP8266 plugs (no Berry support), so they stay native Tasmota
+> rules. The `%timestamp%` month-substring matching (`$|-06-`) is a season
+> switch: bron*/brsoff* events only act in months 06-08 (summer mode).
+
 - F1: von Montag bis Freitag von 8:00 bis 19:00 Uhr, Feiertage ausgeschlossen
 - F2: von 7:00 bis 8:00 Uhr, von 19:00 bis 23:00 Uhr von Montag bis Freitag, sowie Samstag von 7:00 bis 23:00 Uhr, Feiertage ausgeschlossen
 - F3: von 00:00 bis 7:00 Uhr und von 23:00 bis 24:00 Uhr von Montag bis Samstag, Sonn- und Feiertage von 00:00 bis 24:00 Uhr.

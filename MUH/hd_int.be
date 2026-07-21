@@ -9,26 +9,26 @@ SaveData 3600;
 PulseTime1 600; PulseTime2 300; SwitchMode3 1; SetOption114 1; Restart 1;
 -#
 
+# Uses muh_lib.be (loaded by autoexec.be)
 import json
 import mqtt
 import string
-import math
 
-# Device names
 var DEVICE_NAME = "HD_INT"
 var DEVICE_NAME2 = "HD_GAR"
 
-# Constants
+# muh_lib config
+DARK_OFFSET = 90
+DARK_OFFSET_SUNSET = 60
+POWER_TIMER_DURATION = 25
+
 var LUX_THRESHOLD = 35
-var DARK_OFFSET = 90            # Offset in minutes for darkness detection
-var DARK_OFFSET_SUNSET = 60
-var POWER_TIMER_DURATION = 25   # in seconds
 
 var MQTT_TOPIC_PIR = "shellies/shellymotion2-8CF6811074B3/status"
 var MQTT_TOPIC_PIR2 = "muh/portal/HDP/json"
 var MQTT_TOPIC_REED = "muh/portal/HD/json"
 var MQTT_TOPIC_LUX = "muh/wst/data/B327"
- 
+
 # State variables
 var pir_state1 = false
 var pir_state2 = false
@@ -36,57 +36,7 @@ var reed_state1 = false
 var reed_state2 = false
 var last_reed_state2 = false
 var hdl_unlocked = false
-var power_state = tasmota.get_power()
 var lux_state = false
-var status_tim = nil
-
-# Get status sunrise/sunset
-def get_status_tim()
-  status_tim = tasmota.cmd('Status 7')['StatusTIM']
-  print(status_tim)
-end
-
-# Check if it's dark based on sunrise and sunset times
-def is_dark()
-  if status_tim == nil
-    return false
-  end
-
-  var time_threshold = DARK_OFFSET * 60  # Convert offset to seconds
-  var time_threshold_sunset = DARK_OFFSET_SUNSET * 60
-  var now = tasmota.rtc()['local']
-  var now_dump = tasmota.time_dump(now)
-  var now_date = string.format("%s-%s-%s", now_dump['year'], now_dump['month'], now_dump['day'])
-  
-  var sunrise = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunrise']), "%Y-%m-%d %H:%M")
-  var sunset = tasmota.strptime(string.format("%s %s", now_date, status_tim['Sunset']), "%Y-%m-%d %H:%M")
-  
-  var sunrise_threshold = sunrise['epoch'] + time_threshold
-  var sunset_threshold = sunset['epoch'] - time_threshold_sunset
-
-  #print(string.format("Sunrise: %s, Sunset: %s", tasmota.strftime("%H:%M", sunrise['epoch']), tasmota.strftime("%H:%M", sunset['epoch'])))
-  print(string.format("Sunrise: %s, Sunset: %s", tasmota.strftime("%H:%M", sunrise_threshold), tasmota.strftime("%H:%M", sunset_threshold)))
-
-  return now < sunrise_threshold || now > sunset_threshold
-end
-
-# Set power state with an optional timer to revert after 20 seconds
-def set_power(state, id, timer)
-  if id == nil
-    id = 0
-  end
-  if timer == nil
-    timer = false
-  end
-
-  tasmota.set_power(id, state)
-
-  tasmota.remove_timer(string.format("power_timer_%d", id))
-  if timer
-    tasmota.set_timer(POWER_TIMER_DURATION * 1000, def () tasmota.set_power(id, !state) end, string.format("power_timer_%d", id))
-  end
-
-end
 
 # Process MQTT messages from subscribed topics
 def process_mqtt_message(topic, idx, payload)
@@ -95,8 +45,12 @@ def process_mqtt_message(topic, idx, payload)
 
   try
     data = json.load(payload)
-  except .. as e
-    print("Failed to parse MQTT payload:", e)
+    if data == nil
+      log(f"Invalid JSON: {payload}")
+      return
+    end
+  except .. as e, m
+    log(f"Failed to parse MQTT payload - {e}: {m}")
     return
   end
 
@@ -122,20 +76,13 @@ def process_mqtt_message(topic, idx, payload)
   # Handle reed sensor 2 (HDL)
   if string.find(topic, 'HDL/json') > -1 && data.contains('state')
     reed_state2 = bool(data['state'])
-    if reed_state2 == false && reed_state2 != last_reed_state2
-      hdl_unlocked = true
-    else
-      hdl_unlocked = false
-    end
+    hdl_unlocked = reed_state2 == false && reed_state2 != last_reed_state2
     last_reed_state2 = reed_state2
   end
 
+  # Weather station lux
   if string.find(topic, 'B327') > -1 && data.contains('light_klx')
-    if int(data['light_klx']) < LUX_THRESHOLD
-      lux_state = true
-    else
-      lux_state = false
-    end
+    lux_state = int(data['light_klx']) < LUX_THRESHOLD
   end
 
   #if turn_on && (is_dark() || lux_state)
@@ -144,32 +91,9 @@ def process_mqtt_message(topic, idx, payload)
   end
 end
 
-def publish_power_state(id, device_name, power_state)
-  var timestamp = tasmota.time_str(tasmota.rtc()['local'])
-  tasmota.publish(
-    string.format("muh/lights/%s/json", device_name),
-    string.format("{\"state\": %d, \"time\": \"%s\"}", int(power_state[id]), timestamp),
-    true
-  )
-end
-
-# Rules to publish power state changes
-tasmota.add_rule("Power1#state", def (value)
-  if power_state[0] != tasmota.get_power()[0]
-    power_state[0] = tasmota.get_power()[0]
-    publish_power_state(0, DEVICE_NAME, power_state)
-  end
-end)
-
-tasmota.add_rule("Power2#state", def (value)
-  if power_state[1] != tasmota.get_power()[1]
-    power_state[1] = tasmota.get_power()[1]
-    publish_power_state(1, DEVICE_NAME2, power_state)
-  end
-end)
-
-# Get sunrise/sunset
-tasmota.add_rule("Time#Initialized", def () get_status_tim() end)
+init_power_publish(0, DEVICE_NAME)
+init_power_publish(1, DEVICE_NAME2)
+init_sun()
 
 # Rules to handle switch states
 tasmota.add_rule("Switch1#state", def (value)
@@ -190,9 +114,6 @@ end)
 mqtt.subscribe(MQTT_TOPIC_PIR, process_mqtt_message)   # PIR sensor 1 (Shelly Motion)
 mqtt.subscribe(MQTT_TOPIC_PIR2, process_mqtt_message)  # PIR sensor 2 (HDP)
 mqtt.subscribe(MQTT_TOPIC_REED, process_mqtt_message)  # Reed sensor (HD)
-mqtt.subscribe(MQTT_TOPIC_LUX, process_mqtt_message)  
+mqtt.subscribe(MQTT_TOPIC_LUX, process_mqtt_message)   # Lux (weather station)
 
-# cron
-tasmota.add_cron("0 30 */3 * * *", def () get_status_tim() end, "get_status_tim")
-
-print(string.format("MUH: Loaded %s ...", DEVICE_NAME))
+log(f"Loaded {DEVICE_NAME} ...")

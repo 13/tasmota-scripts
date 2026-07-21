@@ -64,7 +64,7 @@ def get_power_usage(topic, idx, payload)
       power_usage = 0
     end
   else
-    print(string.format("MUH: ERR MQTT %s ...", devicename))
+    print(string.format("MUH: ERR MQTT %s ...", DEVICENAME))
     power_usage = 0
   end
 end
@@ -104,4 +104,4 @@ mqtt.subscribe(mqtt_topic_power, get_power_usage)
 # check every 10 seconds 
 tasmota.add_cron("* */5 6-21 * * *", def () control_inverter() end, "control_inverter")
 
-print(string.format("MUH: Loaded %s ...", devicename))
+print(string.format("MUH: Loaded %s ...", DEVICENAME))

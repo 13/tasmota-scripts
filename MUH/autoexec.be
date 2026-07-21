@@ -32,7 +32,17 @@ var DEVICE_SCRIPTS = {
 # Logging function
 def log(message)
   if DEBUG
-    print(string.format("%s %s", LOG_PREFIX, message))
+    print(f"{LOG_PREFIX} {message}")
+  end
+end
+
+def load_script(script)
+  try
+    load(script)
+    return true
+  except .. as e, m
+    log(f"Failed to load {script} - {e}: {m}")
+    return false
   end
 end
 
@@ -45,19 +55,15 @@ if DEVICENAME == nil || DEVICENAME == ""
   return
 end
 
-log(string.format("AutoExec %s ...", DEVICENAME))
+log(f"AutoExec {DEVICENAME} ...")
 
-# Load custom script
+# Load shared helpers, then the device script
 if DEVICE_SCRIPTS.has(DEVICENAME)
   var script = DEVICE_SCRIPTS[DEVICENAME]
-  log(string.format("Loading %s for %s", script, DEVICENAME))
-  try
-    load(script)
-  except .. as e, m
-    # FIX: 'as e' alone only captures the exception type, e.g. "io_error".
-    # 'as e, m' also captures the human-readable message so failures are debuggable.
-    log(string.format("Failed to load %s - %s: %s", script, e, m))
+  log(f"Loading {script} for {DEVICENAME}")
+  if load_script("muh_lib.be")
+    load_script(script)
   end
 else
-  log(string.format("Unknown device %s.", DEVICENAME))
+  log(f"Unknown device {DEVICENAME}.")
 end

@@ -79,4 +79,4 @@ end)
 tasmota.add_rule("am2301#Temperature", def (value) temp_in = value end)  # Update indoor temp
 mqtt.subscribe(mqtt_topic_temp, get_temperature)
 
-print(string.format("MUH: Loaded %s ...", devicename))
+print(string.format("MUH: Loaded %s ...", DEVICENAME))
