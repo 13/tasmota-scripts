@@ -14,94 +14,94 @@ import string
 import math
 
 # Constants
-DS18B20_PREFIX = "DS18B20-"
-INVALID_TEMP = 85
-DEFAULT_DELTA_THRESHOLD = 1
+var DS18B20_PREFIX = "DS18B20-"
+var INVALID_TEMP = 85               # DS18B20 power-on / bus-error value
+var DEFAULT_DELTA_THRESHOLD = 1
+var BOOT_RETRY_MS = 5000            # re-read interval while a sensor still says 85 at boot
+var BOOT_RETRIES = 6
+var MIN_UPTIME_FOR_RESTART_MS = 120000   # never Restart from Berry inside Tasmota's boot-loop window
 
-# Device name
-var DEVICE_NAME = tasmota.cmd("DeviceName")['DeviceName']
+# sensor key ("DS18B20-3628FF") -> last published temperature
+var last_temp = {}
 
-# Read sensors and filter DS18B20 sensors
-var sensors = json.load(tasmota.read_sensors())
-var ds18b20_data = { 'tid': DEVICE_NAME }
-var ds18b20_list = []
-
-for k: sensors.keys()
-  if string.startswith(k, DS18B20_PREFIX)
-    ds18b20_list.push(k)
-    ds18b20_data[k] = {
-      'ds18b20': {
-        'id': sensors[k]['Id'],
-        'temperature': sensors[k]['Temperature']
-      }
-    }
+# Fresh read of all DS18B20 entries: key -> {'Id':..., 'Temperature':...}
+def read_ds18b20()
+  var out = {}
+  var sensors = json.load(tasmota.read_sensors())
+  if sensors == nil
+    return out
   end
+  for k: sensors.keys()
+    if string.startswith(k, DS18B20_PREFIX)
+      out[k] = sensors[k]
+    end
+  end
+  return out
 end
 
-# Check if the temperature delta exceeds the threshold
-def check_delta(current, last, threshold)
-  if threshold == nil
-    threshold = DEFAULT_DELTA_THRESHOLD
-  end
-  return math.abs(current - last) >= threshold
+def publish_mqtt(key, s)
+  var payload = {
+    'time': tasmota.time_str(tasmota.rtc()['local']),
+    'tid': DEVICENAME,
+    'ds18b20': {'id': s['Id'], 'temperature': s['Temperature']}
+  }
+  mqtt.publish(f"muh/sensors/{DEVICENAME}/{key}/json", json.dump(payload), true)
+  last_temp[key] = s['Temperature']
 end
 
-# Publish sensor data to MQTT
-def publish_mqtt(sensor)
-  ds18b20_data[sensor]['tid'] = DEVICE_NAME
-  ds18b20_data[sensor]['time'] = tasmota.time_str(tasmota.rtc()['local'])
-  tasmota.publish(string.format("muh/sensors/%s/%s/json", DEVICE_NAME, sensor), json.dump(ds18b20_data[sensor]), true)
-end
-
-# Check DS18B20 sensors and publish data if delta is exceeded or forced
-def check_ds18b20(force_publish)
-  if force_publish == nil
-    force_publish = false
-  end
-  sensors = json.load(tasmota.read_sensors())
-  for sensor_id: ds18b20_list
-    if sensors.contains(sensor_id)
-      var sensor_temp = sensors[sensor_id]['Temperature']
-      if !force_publish
-        if check_delta(sensor_temp, ds18b20_data[sensor_id]['ds18b20']['temperature']) && sensor_temp != INVALID_TEMP
-          ds18b20_data[sensor_id]['ds18b20']['temperature'] = sensor_temp
-          publish_mqtt(sensor_id)
-        end
-      else
-        publish_mqtt(sensor_id)
-      end
+# Publish every valid sensor when forced, otherwise only on >= threshold change.
+# 85 readings are never published.
+def check_ds18b20(force)
+  var all = read_ds18b20()
+  for key: all.keys()
+    var t = all[key]['Temperature']
+    if t == INVALID_TEMP
+      continue
+    end
+    var last = last_temp.find(key)
+    if force || last == nil || math.abs(t - last) >= DEFAULT_DELTA_THRESHOLD
+      publish_mqtt(key, all[key])
     end
   end
 end
 
-# Boot rule: Initialize and publish sensor data
-tasmota.add_rule("system#boot",
-  def (value)
-    for i: 0..ds18b20_list.size()-1
-      var sensor_id = ds18b20_list[i]
-      if sensors.contains(sensor_id)
-        var sensor_temp = sensors[sensor_id]['Temperature']
-        if sensor_temp != INVALID_TEMP
-          publish_mqtt(sensor_id)
-        else
-          print(string.format("BRY: ERR85 %s", sensor_id))
-          tasmota.set_timer((2*i+1)*2000,
-            def (value)
-              if sensor_temp != INVALID_TEMP
-                publish_mqtt(sensor_id)
-              else
-                tasmota.cmd("restart 1")
-              end
-            end,
-          sensor_id)
-        end
-      end
+# Boot: publish what is valid now; while any sensor still reads 85, retry a
+# few times with a FRESH read. Never restart the device for this — a restart
+# inside the first 10 s trips Tasmota's boot-loop protection, which disables
+# Berry entirely (that is how this device went silent for days).
+def boot_publish(attempt)
+  check_ds18b20(false)
+  var all = read_ds18b20()
+  var pending = []
+  for key: all.keys()
+    if all[key]['Temperature'] == INVALID_TEMP
+      pending.push(key)
     end
   end
-)
+  if pending.size() == 0
+    return
+  end
+  if attempt < BOOT_RETRIES
+    log(f"ERR85 {pending}, retry {attempt + 1}/{BOOT_RETRIES}")
+    tasmota.set_timer(BOOT_RETRY_MS, def () boot_publish(attempt + 1) end, "hz_ww_boot_retry")
+  else
+    log(f"ERR85 {pending} still invalid after {BOOT_RETRIES} retries, giving up until next cron")
+  end
+end
+
+tasmota.add_rule("system#boot", def () boot_publish(0) end)
 
 # Cron jobs
-tasmota.add_cron("10 */2 * * * *", def (value) check_ds18b20() end, "check_ds18b20")
-tasmota.add_cron("0 0 */1 * * *", def (value) check_ds18b20(true) end, "check_ds18b20_force")
-tasmota.add_cron("10 */8 * * * *", def (value) tasmota.cmd("ping4 192.168.22.1") end, "check_wifi")
-tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
+tasmota.add_cron("10 */2 * * * *", def () check_ds18b20(false) end, "check_ds18b20")
+tasmota.add_cron("0 0 */1 * * *", def () check_ds18b20(true) end, "check_ds18b20_force")
+tasmota.add_cron("10 */8 * * * *", def () tasmota.cmd("Ping4 192.168.22.1") end, "check_wifi")
+
+# Wi-Fi watchdog: restart only once well past the boot-loop window
+tasmota.add_rule("Ping#192.168.22.1#Success==0", def ()
+  if tasmota.millis() > MIN_UPTIME_FOR_RESTART_MS
+    log("gateway ping failed, restarting")
+    tasmota.cmd("Restart 1")
+  else
+    log("gateway ping failed during boot window, ignored")
+  end
+end)
