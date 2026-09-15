@@ -75,7 +75,7 @@ def boot_publish(attempt)
   var all = read_ds18b20()
   var pending = []
   for key: all.keys()
-    if all[key]['Temperature'] == INVALID_TEMP
+    if all[key].find('Temperature') == INVALID_TEMP
       pending.push(key)
     end
   end
