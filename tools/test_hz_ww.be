@@ -12,16 +12,14 @@ var published = []     # list of [topic, payload_map, retain]
 var cmds = []          # tasmota.cmd() calls
 var rules = {}         # trigger -> closure
 var crons = {}         # id -> closure
-var timers = []        # list of [delay_ms, closure]
+var timers = []        # list of [delay_ms, closure, id]
 var sensor_json = ""
-var millis_now = 0
 var DEVICENAME = "HZ_WW"
 
 class TasmotaStub
   def read_sensors() return sensor_json end
   def rtc() return {'local': 0} end
   def time_str(t) return "2026-01-01T00:00:00" end
-  def millis() return millis_now end
   def cmd(c)
     cmds.push(c)
     if c == "DeviceName"
@@ -34,7 +32,7 @@ class TasmotaStub
   end
   def add_rule(trigger, f) rules[trigger] = f end
   def add_cron(spec, f, id) crons[id] = f end
-  def set_timer(ms, f, id) timers.push([ms, f]) end
+  def set_timer(ms, f, id) timers.push([ms, f, id]) end
   def remove_timer(id) end
 end
 var tasmota = TasmotaStub()
@@ -78,6 +76,11 @@ cmds = []
 load("MUH/hz_ww.be")
 check(cmds.size() == 0, "script does not call tasmota.cmd at load (no DeviceName re-query)")
 
+var guard_timer = nil
+for t: timers
+  if t[2] == "hz_ww_restart_guard" guard_timer = t end
+end
+
 # boot: valid sensor published, 85 sensor not, no restart, retry timer armed
 reset()
 rules["system#boot"]()
@@ -112,14 +115,23 @@ mock_sensors(85, 41.0)
 crons["check_ds18b20_force"]()
 check(published.size() == 1 && published[0][0] == "muh/sensors/HZ_WW/DS18B20-1C16E1/json", "force publish skips 85")
 
-# ping failure: no restart during boot window, restart after
+# ping failure: no restart until the boot-window latch timer has fired, restart after
 reset()
-millis_now = 5000
+check(guard_timer != nil && guard_timer[0] == MIN_UPTIME_FOR_RESTART_MS, "restart guard timer armed at load with MIN_UPTIME_FOR_RESTART_MS")
 rules["Ping#192.168.22.1#Success==0"]()
-check(cmds.size() == 0, "ping fail early uptime: no restart")
-millis_now = MIN_UPTIME_FOR_RESTART_MS + 1
+check(cmds.size() == 0, "ping fail before guard timer fired: no restart")
+guard_timer[1]()
 rules["Ping#192.168.22.1#Success==0"]()
-check(cmds.size() == 1 && string.tolower(cmds[0]) == "restart 1", "ping fail after uptime guard: restart")
+check(cmds.size() == 1 && string.tolower(cmds[0]) == "restart 1", "ping fail after guard timer fired: restart")
+
+# nil Temperature is skipped, not published as null
+reset()
+sensor_json = json.dump({
+  'DS18B20-3628FF': {'Id': '00042B3628FF'},
+  'DS18B20-1C16E1': {'Id': '0621C01C16E1', 'Temperature': 44.0},
+})
+crons["check_ds18b20_force"]()
+check(published.size() == 1 && published[0][0] == "muh/sensors/HZ_WW/DS18B20-1C16E1/json", "nil temperature sensor skipped, other still published")
 
 print(f"{failures} failures")
 if failures > 0 raise "test_failed" end

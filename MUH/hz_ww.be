@@ -23,6 +23,7 @@ var MIN_UPTIME_FOR_RESTART_MS = 120000   # never Restart from Berry inside Tasmo
 
 # sensor key ("DS18B20-3628FF") -> last published temperature
 var last_temp = {}
+var restart_allowed = false   # set once the boot-loop window is safely behind us
 
 # Fresh read of all DS18B20 entries: key -> {'Id':..., 'Temperature':...}
 def read_ds18b20()
@@ -54,8 +55,8 @@ end
 def check_ds18b20(force)
   var all = read_ds18b20()
   for key: all.keys()
-    var t = all[key]['Temperature']
-    if t == INVALID_TEMP
+    var t = all[key].find('Temperature')
+    if t == nil || t == INVALID_TEMP
       continue
     end
     var last = last_temp.find(key)
@@ -90,6 +91,7 @@ def boot_publish(attempt)
 end
 
 tasmota.add_rule("system#boot", def () boot_publish(0) end)
+tasmota.set_timer(MIN_UPTIME_FOR_RESTART_MS, def () restart_allowed = true end, "hz_ww_restart_guard")
 
 # Cron jobs
 tasmota.add_cron("10 */2 * * * *", def () check_ds18b20(false) end, "check_ds18b20")
@@ -98,7 +100,7 @@ tasmota.add_cron("10 */8 * * * *", def () tasmota.cmd("Ping4 192.168.22.1") end,
 
 # Wi-Fi watchdog: restart only once well past the boot-loop window
 tasmota.add_rule("Ping#192.168.22.1#Success==0", def ()
-  if tasmota.millis() > MIN_UPTIME_FOR_RESTART_MS
+  if restart_allowed
     log("gateway ping failed, restarting")
     tasmota.cmd("Restart 1")
   else
