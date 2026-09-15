@@ -63,7 +63,7 @@ end
 def reset()
   published = [] cmds = [] timers = []
 end
-def sensors(a, b)
+def mock_sensors(a, b)
   sensor_json = json.dump({
     'Time': 'x',
     'ANALOG': {'Temperature1': 19.5},
@@ -73,8 +73,10 @@ def sensors(a, b)
 end
 
 # ---- load script under test with one sensor stuck at 85 ----
-sensors(85, 40.0)
+mock_sensors(85, 40.0)
+cmds = []
 load("MUH/hz_ww.be")
+check(cmds.size() == 0, "script does not call tasmota.cmd at load (no DeviceName re-query)")
 
 # boot: valid sensor published, 85 sensor not, no restart, retry timer armed
 reset()
@@ -89,7 +91,7 @@ check(timers.size() == 1, "boot with 85 arms one retry timer")
 
 # retry re-reads sensors fresh: now valid -> published
 reset()
-sensors(53.1, 40.0)
+mock_sensors(53.1, 40.0)
 timers = []
 boot_publish(1)
 check(published.size() == 1 && published[0][0] == "muh/sensors/HZ_WW/DS18B20-3628FF/json", "retry publishes recovered sensor")
@@ -97,16 +99,16 @@ check(cmds.size() == 0, "retry never restarts")
 
 # delta publish: < 1 degree -> nothing, >= 1 -> publish
 reset()
-sensors(53.5, 40.0)
+mock_sensors(53.5, 40.0)
 crons["check_ds18b20"]()
 check(published.size() == 0, "delta below threshold not published")
-sensors(54.2, 40.0)
+mock_sensors(54.2, 40.0)
 crons["check_ds18b20"]()
 check(published.size() == 1 && published[0][1]['ds18b20']['temperature'] == 54.2, "delta above threshold published")
 
 # forced publish skips 85 readings
 reset()
-sensors(85, 41.0)
+mock_sensors(85, 41.0)
 crons["check_ds18b20_force"]()
 check(published.size() == 1 && published[0][0] == "muh/sensors/HZ_WW/DS18B20-1C16E1/json", "force publish skips 85")
 
