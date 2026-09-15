@@ -133,5 +133,23 @@ sensor_json = json.dump({
 crons["check_ds18b20_force"]()
 check(published.size() == 1 && published[0][0] == "muh/sensors/HZ_WW/DS18B20-1C16E1/json", "nil temperature sensor skipped, other still published")
 
+# missing Id is skipped and does not abort the pass for the other sensor
+reset()
+sensor_json = json.dump({
+  'DS18B20-3628FF': {'Temperature': 50.0},
+  'DS18B20-1C16E1': {'Id': '0621C01C16E1', 'Temperature': 45.0},
+})
+crons["check_ds18b20_force"]()
+check(published.size() == 1 && published[0][0] == "muh/sensors/HZ_WW/DS18B20-1C16E1/json", "missing Id sensor skipped, other still published")
+
+# missing Temperature at boot counts as pending and arms a retry
+reset()
+sensor_json = json.dump({
+  'DS18B20-3628FF': {'Id': '00042B3628FF'},
+  'DS18B20-1C16E1': {'Id': '0621C01C16E1', 'Temperature': 45.0},
+})
+rules["system#boot"]()
+check(timers.size() == 1, "missing temperature at boot arms retry timer")
+
 print(f"{failures} failures")
 if failures > 0 raise "test_failed" end

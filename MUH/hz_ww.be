@@ -56,7 +56,7 @@ def check_ds18b20(force)
   var all = read_ds18b20()
   for key: all.keys()
     var t = all[key].find('Temperature')
-    if t == nil || t == INVALID_TEMP
+    if t == nil || t == INVALID_TEMP || all[key].find('Id') == nil
       continue
     end
     var last = last_temp.find(key)
@@ -75,7 +75,8 @@ def boot_publish(attempt)
   var all = read_ds18b20()
   var pending = []
   for key: all.keys()
-    if all[key].find('Temperature') == INVALID_TEMP
+    var t = all[key].find('Temperature')
+    if t == nil || t == INVALID_TEMP
       pending.push(key)
     end
   end
@@ -91,7 +92,10 @@ def boot_publish(attempt)
 end
 
 tasmota.add_rule("system#boot", def () boot_publish(0) end)
-tasmota.set_timer(MIN_UPTIME_FOR_RESTART_MS, def () restart_allowed = true end, "hz_ww_restart_guard")
+tasmota.set_timer(MIN_UPTIME_FOR_RESTART_MS, def ()
+  restart_allowed = true
+  log("boot window over, wifi watchdog restart enabled")
+end, "hz_ww_restart_guard")
 
 # Cron jobs
 tasmota.add_cron("10 */2 * * * *", def () check_ds18b20(false) end, "check_ds18b20")
