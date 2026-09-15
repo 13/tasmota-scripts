@@ -1,5 +1,8 @@
 # tools/test_hz_ww.be — offline behaviour test for MUH/hz_ww.be
 # Run: berry tools/test_hz_ww.be
+import sys
+sys.path().push("tools/stubs")
+
 import json
 import string
 import math
@@ -12,26 +15,32 @@ var crons = {}         # id -> closure
 var timers = []        # list of [delay_ms, closure]
 var sensor_json = ""
 var millis_now = 0
+var DEVICENAME = "HZ_WW"
 
 class TasmotaStub
   def read_sensors() return sensor_json end
   def rtc() return {'local': 0} end
   def time_str(t) return "2026-01-01T00:00:00" end
   def millis() return millis_now end
-  def cmd(c) cmds.push(c) return {} end
+  def cmd(c)
+    cmds.push(c)
+    if c == "DeviceName"
+      return {"DeviceName": DEVICENAME}
+    end
+    return {}
+  end
+  def publish(topic, payload, retain)
+    published.push([topic, json.load(payload), retain])
+  end
   def add_rule(trigger, f) rules[trigger] = f end
   def add_cron(spec, f, id) crons[id] = f end
   def set_timer(ms, f, id) timers.push([ms, f]) end
   def remove_timer(id) end
 end
-class MqttStub
-  def publish(topic, payload, retain)
-    published.push([topic, json.load(payload), retain])
-  end
-end
 var tasmota = TasmotaStub()
-var mqtt = MqttStub()
-var DEVICENAME = "HZ_WW"
+def mqtt_publish_hook(topic, payload, retain)
+  published.push([topic, json.load(payload), retain])
+end
 var LOG_PREFIX = "MUH:"
 var DEBUG = false
 def log(m) if DEBUG print(m) end end
