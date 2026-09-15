@@ -6,7 +6,7 @@ GD	?	gdhd.be,gd.be
 PARK1	?	park1.be
 PARK2	?	park2.be
 AnnaUhr	?	annauhr.be
-HZ_WW	?	hz_ww.be
+HZ_WW	192.168.22.74	hz_ww.be
 BAD	?	bad.be
 PlugUD	192.168.22.31	plugud.be
 PV	?	pv.be
