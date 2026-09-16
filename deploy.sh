@@ -26,9 +26,23 @@ deploy_device() {
   files+=("${extra[@]}")
   for f in "${files[@]}"; do
     echo "  upload $f"
+    # Tasmota only stores an /ufsu upload if the /ufsd page was requested
+    # first (that sets Web.upload_file_type, and every upload resets it), so
+    # prime it before each file. A bare POST is answered with HTTP 200 even
+    # when nothing was written, so read the file back and compare bytes.
+    curl -sf --connect-timeout 5 -o /dev/null \
+      "http://$ip/ufsd${TASMOTA_AUTH:+?$TASMOTA_AUTH}" \
+      || { echo "  FAILED priming upload on $name"; return 1; }
     curl -sf --connect-timeout 5 -F "ufsu=@MUH/$f" \
       "http://$ip/ufsu${TASMOTA_AUTH:+?$TASMOTA_AUTH}" >/dev/null \
       || { echo "  FAILED uploading $f to $name"; return 1; }
+    if ! curl -sf --connect-timeout 5 \
+        "http://$ip/ufsd?download=/$f${TASMOTA_AUTH:+&$TASMOTA_AUTH}" \
+        | cmp -s - "MUH/$f"; then
+      echo "  FAILED: $f on $name does not match the repo after upload"
+      return 1
+    fi
+    echo "  verified $f"
   done
   curl -sf "http://$ip/cm?cmnd=Restart%201${TASMOTA_AUTH:+&$TASMOTA_AUTH}" >/dev/null \
     || { echo "  FAILED restarting $name"; return 1; }
