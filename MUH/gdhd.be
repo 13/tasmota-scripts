@@ -82,15 +82,14 @@ end
 # CRON
 ## Persist
 tasmota.add_cron("0 0 0 * * *", def (value) persist.save() end, "saveData")
-tasmota.add_cron("10 10 */3 * * *", def (value) tasmota.cmd("ping4 192.168.22.1") end, "checkWifi")
 tasmota.add_cron("15 1 */1 * * *", def (value) checkDNS() end, "checkDNS")
 ## PC chime
 tasmota.add_cron("59 29 * * * *", def (value) tasmota.cmd("i2splay /sfx/PC1.mp3") end, "pcHalf")
 tasmota.add_cron("59 59 * * * *", def (value) chimePC() end, "pcFull")
 
 # RULES
-## Restart when the gateway stops answering pings
-tasmota.add_rule("Ping#192.168.22.1#Success==0", def (value) tasmota.cmd("restart 1") end)
+## Wi-Fi watchdog (shared, boot-latched; see muh_lib.be)
+init_wifi_watchdog("192.168.22.1", "10 10 */3 * * * *")
 
 # Load custom script
 if DEVICENAME == "HD"
