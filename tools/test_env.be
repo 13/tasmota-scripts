@@ -46,6 +46,10 @@ var tasmota = TasmotaStub()
 def mqtt_publish_hook(topic, payload, retain)
   published.push([topic, json.load(payload), retain])
 end
+var mqtt_is_connected = false
+def mqtt_connected_hook()
+  return mqtt_is_connected
+end
 
 var LOG_PREFIX = "MUH:"
 var DEBUG = false
