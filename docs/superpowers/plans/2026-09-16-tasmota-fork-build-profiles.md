@@ -30,7 +30,7 @@
 | `tasmota32s2-muh-park` | `env:tasmota32s2` | `-DBEN_PARKASSITANT` | PARK1 |
 | `tasmota32s2-muh-epaper` | `env:tasmota32s2` | `-DBEN_EPAPER -DFIRMWARE_DISPLAYS` + display libs (copied from the fork's `tasmota32s2-display` env) | epaper |
 | `tasmota32-muh-annauhr` | `env:tasmota32` | `-DBEN_ANNA_UHR` | AnnaUhr |
-| `tasmota32-muh-3em` | `env:tasmota32` | `-DBEN_SHELLY3EM` | 3EM |
+| `tasmota-muh-3em` | `env:tasmota-4M` | `-DBEN_SHELLY3EM` | 3EM (Shelly 3EM is ESP8266, 4 MB flash; OTA `.bin.gz`) |
 | `tasmota-muh-bresser` | `env:tasmota` | `-DBEN_TUYA_BRESSER` | ESP12S Bresser |
 | `tasmota-muh-plug` | `env:tasmota` | — | Athom Plug V2 (8266) |
 
@@ -174,11 +174,11 @@ build_flags = ${env:tasmota32.build_flags} ${muh.build_flags}
               -DBEN_ANNA_UHR
               -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32-muh-annauhr.bin"'
 
-[env:tasmota32-muh-3em]
-extends     = env:tasmota32
-build_flags = ${env:tasmota32.build_flags} ${muh.build_flags}
+[env:tasmota-muh-3em]
+extends     = env:tasmota-4M
+build_flags = ${env:tasmota-4M.build_flags} ${muh.build_flags}
               -DBEN_SHELLY3EM
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32-muh-3em.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota-muh-3em.bin.gz"'
 
 [env:tasmota-muh-bresser]
 extends     = env:tasmota
