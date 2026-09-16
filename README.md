@@ -28,6 +28,7 @@ make check            # strict compile + cron-spec lint of every MUH/*.be (needs
 make test             # offline behaviour tests for muh_lib and hz_ww
 make fleet            # health sweep: Berry alive? module/GPIO intact? BUILD vs promoted OTA version
 tools/fleet-cmd.sh '<cmd>' [names]   # send a Tasmota command to devices
+tools/berry-inventory.sh             # read-only: back up every device's *.be, report map drift
 ./deploy.sh WC        # upload autoexec.be + muh_lib.be + wc.be, restart WC
 DEPLOY_ALL=yes ./deploy.sh --all   # same for every device with an IP in devices.tsv
 ```
