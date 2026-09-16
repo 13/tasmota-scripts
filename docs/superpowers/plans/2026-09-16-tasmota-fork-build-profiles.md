@@ -22,19 +22,19 @@
 
 | env | extends | extra flags | devices |
 |---|---|---|---|
-| `muh-solo1` | `env:tasmota32solo1` | — | Shelly Plus 1 / 1PM / 2PM: HZ_WW, HZ_DG, FL2, FL3, Bad, HD_INT, HD_EXT, G_EXT, G_INT, PV_A |
-| `muh-32` | `env:tasmota32` | — | SOLAR_EXT, PV, generic ESP32 |
-| `muh-32c3` | `env:tasmota32c3` | — | Shelly Mini G3 (WZ3, G_TREPPE, HZ_DGB), Athom Plug V3 (PlugUD) |
-| `muh-32s3-hdgd` | `env:tasmota32s3` | `-DBEN_HDGD` | HD, GD |
-| `muh-32s3-park` | `env:tasmota32s3` | `-DBEN_PARKASSITANT` | PARK2 |
-| `muh-32s2-park` | `env:tasmota32s2` | `-DBEN_PARKASSITANT` | PARK1 |
-| `muh-32s2-epaper` | `env:tasmota32s2` | `-DBEN_EPAPER -DFIRMWARE_DISPLAYS` + display libs (copied from the fork's `tasmota32s2-display` env) | epaper |
-| `muh-32-annauhr` | `env:tasmota32` | `-DBEN_ANNA_UHR` | AnnaUhr |
-| `muh-32-3em` | `env:tasmota32` | `-DBEN_SHELLY3EM` | 3EM |
-| `muh-8266-bresser` | `env:tasmota` | `-DBEN_TUYA_BRESSER` | ESP12S Bresser |
-| `muh-8266-plug` | `env:tasmota` | — | Athom Plug V2 (8266) |
+| `tasmota32solo1-muh` | `env:tasmota32solo1` | — | Shelly Plus 1 / 1PM / 2PM: HZ_WW, HZ_DG, FL2, FL3, Bad, HD_INT, HD_EXT, G_EXT, G_INT, PV_A |
+| `tasmota32-muh` | `env:tasmota32` | — | SOLAR_EXT, PV, generic ESP32 |
+| `tasmota32c3-muh` | `env:tasmota32c3` | — | Shelly Mini G3 (WZ3, G_TREPPE, HZ_DGB), Athom Plug V3 (PlugUD) |
+| `tasmota32s3-muh-hdgd` | `env:tasmota32s3` | `-DBEN_HDGD` | HD, GD |
+| `tasmota32s3-muh-park` | `env:tasmota32s3` | `-DBEN_PARKASSITANT` | PARK2 |
+| `tasmota32s2-muh-park` | `env:tasmota32s2` | `-DBEN_PARKASSITANT` | PARK1 |
+| `tasmota32s2-muh-epaper` | `env:tasmota32s2` | `-DBEN_EPAPER -DFIRMWARE_DISPLAYS` + display libs (copied from the fork's `tasmota32s2-display` env) | epaper |
+| `tasmota32-muh-annauhr` | `env:tasmota32` | `-DBEN_ANNA_UHR` | AnnaUhr |
+| `tasmota32-muh-3em` | `env:tasmota32` | `-DBEN_SHELLY3EM` | 3EM |
+| `tasmota-muh-bresser` | `env:tasmota` | `-DBEN_TUYA_BRESSER` | ESP12S Bresser |
+| `tasmota-muh-plug` | `env:tasmota` | — | Athom Plug V2 (8266) |
 
-Deviation from the agreed list, with reason: `solo1-ds18b20` is folded into `muh-solo1` and `BEN_DS18B20` (DS18x20 with ID-as-name) plus `BEN_PV` (`USE_WEBSEND_RESPONSE`, tiny) go into the shared `[muh]` flags. HZ_WW and SOLAR_EXT both already run ID-named DS18B20 keys, the flags cost nothing on devices without the sensor, and one image per chip class is simpler to keep on the OTA server.
+Deviation from the agreed list, with reason: `solo1-ds18b20` is folded into `tasmota32solo1-muh` and `BEN_DS18B20` (DS18x20 with ID-as-name) plus `BEN_PV` (`USE_WEBSEND_RESPONSE`, tiny) go into the shared `[muh]` flags. HZ_WW and SOLAR_EXT both already run ID-named DS18B20 keys, the flags cost nothing on devices without the sensor, and one image per chip class is simpler to keep on the OTA server.
 
 ---
 
@@ -125,81 +125,81 @@ build_flags = -DUSE_BERRY_PARTITION_WIZARD
               -DMUH_WIFI_PASS='"${sysenv.MUH_WIFI_PASS}"'
               -DMUH_SYSLOG_HOST='"${sysenv.MUH_SYSLOG_HOST}"'
 
-[env:muh-solo1]
+[env:tasmota32solo1-muh]
 extends     = env:tasmota32solo1
 build_flags = ${env:tasmota32solo1.build_flags} ${muh.build_flags}
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-solo1.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32solo1-muh.bin"'
 
-[env:muh-32]
+[env:tasmota32-muh]
 extends     = env:tasmota32
 build_flags = ${env:tasmota32.build_flags} ${muh.build_flags}
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-32.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32-muh.bin"'
 
-[env:muh-32c3]
+[env:tasmota32c3-muh]
 extends     = env:tasmota32c3
 build_flags = ${env:tasmota32c3.build_flags} ${muh.build_flags}
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-32c3.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32c3-muh.bin"'
 
-[env:muh-32s3-hdgd]
+[env:tasmota32s3-muh-hdgd]
 extends     = env:tasmota32s3
 build_flags = ${env:tasmota32s3.build_flags} ${muh.build_flags}
               -DBEN_HDGD
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-32s3-hdgd.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32s3-muh-hdgd.bin"'
 
-[env:muh-32s3-park]
+[env:tasmota32s3-muh-park]
 extends     = env:tasmota32s3
 build_flags = ${env:tasmota32s3.build_flags} ${muh.build_flags}
               -DBEN_PARKASSITANT
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-32s3-park.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32s3-muh-park.bin"'
 
-[env:muh-32s2-park]
+[env:tasmota32s2-muh-park]
 extends     = env:tasmota32s2
 build_flags = ${env:tasmota32s2.build_flags} ${muh.build_flags}
               -DBEN_PARKASSITANT
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-32s2-park.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32s2-muh-park.bin"'
 
-[env:muh-32s2-epaper]
+[env:tasmota32s2-muh-epaper]
 extends     = env:tasmota32s2
 build_flags = ${env:tasmota32s2.build_flags} ${muh.build_flags}
               -DBEN_EPAPER -DFIRMWARE_DISPLAYS
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-32s2-epaper.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32s2-muh-epaper.bin"'
 lib_extra_dirs = lib/libesp32, lib/lib_basic, lib/lib_display, lib/lib_ssl
 lib_ignore  = ${env:tasmota32_base.lib_ignore}
               Micro-RTSP
               epdiy
 
-[env:muh-32-annauhr]
+[env:tasmota32-muh-annauhr]
 extends     = env:tasmota32
 build_flags = ${env:tasmota32.build_flags} ${muh.build_flags}
               -DBEN_ANNA_UHR
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-32-annauhr.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32-muh-annauhr.bin"'
 
-[env:muh-32-3em]
+[env:tasmota32-muh-3em]
 extends     = env:tasmota32
 build_flags = ${env:tasmota32.build_flags} ${muh.build_flags}
               -DBEN_SHELLY3EM
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-32-3em.bin"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota32-muh-3em.bin"'
 
-[env:muh-8266-bresser]
+[env:tasmota-muh-bresser]
 extends     = env:tasmota
 build_flags = ${env:tasmota.build_flags} ${muh.build_flags}
               -DBEN_TUYA_BRESSER
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-8266-bresser.bin.gz"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota-muh-bresser.bin.gz"'
 
-[env:muh-8266-plug]
+[env:tasmota-muh-plug]
 extends     = env:tasmota
 build_flags = ${env:tasmota.build_flags} ${muh.build_flags}
-              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/muh-8266-plug.bin.gz"'
+              -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota-muh-plug.bin.gz"'
 ```
   Note: `env:tasmota` already sets `-DOTA_URL=...` in its flags; the override's `#undef OTA_URL / #define OTA_URL MUH_OTA_URL` wins because `user_config_override.h` is included after `my_user_config.h`; verify in Step 3 that the compiler does not warn about `OTA_URL` redefinition (if it does, add `-UOTA_URL` right after `${env:tasmota.build_flags}` in the two 8266 envs).
 - [ ] **Step 2: `platformio_override.ini`**: under `[platformio]` add `extra_configs = platformio_muh.ini`; replace the whole `default_envs` list with the eleven `muh-*` names; remove the now-duplicated `build_flags = -DUSE_BERRY_PARTITION_WIZARD` from `[tasmota]` (it is in `[muh]`).
 - [ ] **Step 3: Verify one env per chip class builds** (with `muh/build.env` filled and sourced: `set -a; . muh/build.env; set +a`):
 ```bash
-pio run -e muh-solo1 -e muh-32c3 -e muh-8266-plug 2>&1 | tail -5
-ls -la build_output/firmware/muh-solo1.bin build_output/firmware/muh-solo1.factory.bin build_output/map/muh-solo1.map
-strings build_output/firmware/muh-solo1.bin | grep -c "$MUH_OTA_BASE/muh-solo1.bin"   # 1
+pio run -e tasmota32solo1-muh -e tasmota32c3-muh -e tasmota-muh-plug 2>&1 | tail -5
+ls -la build_output/firmware/tasmota32solo1-muh.bin build_output/firmware/tasmota32solo1-muh.factory.bin build_output/map/tasmota32solo1-muh.map
+strings build_output/firmware/tasmota32solo1-muh.bin | grep -c "$MUH_OTA_BASE/tasmota32solo1-muh.bin"   # 1
 ```
-  Negative test: `env -u MUH_WIFI_PASS pio run -e muh-solo1` must fail with the `#error` text.
+  Negative test: `env -u MUH_WIFI_PASS pio run -e tasmota32solo1-muh` must fail with the `#error` text.
 - [ ] **Step 4: Commit**: `build: muh-* PlatformIO profiles in platformio_muh.ini`.
 
 ---
@@ -234,10 +234,10 @@ PIO=.venv/bin/pio
 if [[ ! -x $PIO ]]; then
   command -v uv >/dev/null || { echo "need uv to create .venv (pacman -S uv)"; exit 1; }
   uv venv --python 3.13 .venv
-  uv pip install --python .venv/bin/python platformio==6.1.19
+  uv pip install --python .venv/bin/python platformio==6.1.19 pyyaml
 fi
 
-ALL=$(grep -o '^\[env:muh-[^]]*\]' platformio_muh.ini | sed 's/\[env:\(.*\)\]/\1/')
+ALL=$(grep -o '^\[env:tasmota[0-9a-z]*-muh[^]]*\]' platformio_muh.ini | sed 's/\[env:\(.*\)\]/\1/')
 publish=0 clean=0 profiles=()
 for a in "$@"; do
   case $a in
@@ -274,7 +274,7 @@ if [[ $publish -eq 1 ]]; then
   echo "published to $MUH_OTA_HOST:$MUH_OTA_DIR ($MUH_OTA_BASE)"
 fi
 ```
-- [ ] **Step 2: Verify**: `bash -n muh/build.sh`; `muh/build.sh muh-solo1` produces `build/muh-solo1/muh-solo1.bin`, `.factory.bin`, `.map` and a manifest with three sha256 lines; `muh/build.sh nope` exits 1 with the known list; `muh/build.sh --publish muh-solo1` then `curl -sI "$MUH_OTA_BASE/muh-solo1.bin" | head -1` → `HTTP/1.1 200`.
+- [ ] **Step 2: Verify**: `bash -n muh/build.sh`; `muh/build.sh tasmota32solo1-muh` produces `build/tasmota32solo1-muh/tasmota32solo1-muh.bin`, `.factory.bin`, `.map` and a manifest with three sha256 lines; `muh/build.sh nope` exits 1 with the known list; `muh/build.sh --publish tasmota32solo1-muh` then `curl -sI "$MUH_OTA_BASE/tasmota32solo1-muh.bin" | head -1` → `HTTP/1.1 200`.
 - [ ] **Step 3: Commit**: `build: muh/build.sh local build, manifest, --publish to OTA dir`.
 
 ---
@@ -295,7 +295,7 @@ on:
   workflow_dispatch:
     inputs:
       profiles:
-        description: 'space-separated muh-* profiles, or all'
+        description: 'space-separated tasmota*-muh* profiles, or all'
         default: all
 jobs:
   matrix:
@@ -306,7 +306,7 @@ jobs:
       - uses: actions/checkout@v4
       - id: list
         run: |
-          all=$(grep -o '^\[env:muh-[^]]*\]' platformio_muh.ini | sed 's/\[env:\(.*\)\]/\1/')
+          all=$(grep -o '^\[env:tasmota[0-9a-z]*-muh[^]]*\]' platformio_muh.ini | sed 's/\[env:\(.*\)\]/\1/')
           want="${{ github.event.inputs.profiles || 'all' }}"
           [[ $want == all ]] && want=$all
           echo "profiles=$(echo $want | tr ' ' '\n' | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
@@ -333,7 +333,7 @@ jobs:
             .pio
           key: pio-${{ runner.os }}-${{ matrix.profile }}-${{ hashFiles('platformio*.ini') }}
           restore-keys: pio-${{ runner.os }}-${{ matrix.profile }}-
-      - run: pip install -U platformio
+      - run: pip install -U platformio pyyaml
       - name: Guard secrets present
         run: for v in MUH_WIFI_SSID MUH_WIFI_PASS MUH_SYSLOG_HOST MUH_OTA_BASE; do [[ -n "${!v}" ]] || { echo "secret $v missing"; exit 1; }; done
       - run: pio run -e ${{ matrix.profile }}
@@ -367,7 +367,7 @@ jobs:
           generate_release_notes: true
 ```
   Maps are inside the artifacts and the release (`<profile>.map`), which is what Task 4 of the fleet-recovery plan lacked for stock builds. Keep them.
-- [ ] **Step 2: Verify**: push the branch, run `workflow_dispatch` with `profiles: muh-solo1`; job green; artifact contains `.bin`, `.factory.bin`, `.map`, `SHA256SUMS`. Then tag `muh-v15.2.0-muh1` and push the tag; release page lists all eleven profiles' files.
+- [ ] **Step 2: Verify**: push the branch, run `workflow_dispatch` with `profiles: tasmota32solo1-muh`; job green; artifact contains `.bin`, `.factory.bin`, `.map`, `SHA256SUMS`. Then tag `muh-v15.2.0-muh1` and push the tag; release page lists all eleven profiles' files.
 - [ ] **Step 3: Commit**: `ci: muh-build workflow (matrix over muh-* profiles, release on muh-v* tags)`.
 
 ---
@@ -406,11 +406,11 @@ exit $rc
 - [ ] **Step 2: Apply after the first published build** (values from `muh/build.env`):
 ```bash
 tools/fleet-cmd.sh "Backlog LogHost $MUH_SYSLOG_HOST; LogPort 514; SysLog 2"
-tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/muh-solo1.bin" HZ_WW HZ_DG FL2 FL3 BAD HD_INT HD_EXT G_EXT G_INT PV_A
-tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/muh-32c3.bin" G_TREPPE PlugUD
-tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/muh-32s3-hdgd.bin" HD GD
-tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/muh-32s3-park.bin" PARK2
-tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/muh-32-annauhr.bin" AnnaUhr
+tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/tasmota32solo1-muh.bin" HZ_WW HZ_DG FL2 FL3 BAD HD_INT HD_EXT G_EXT G_INT PV_A
+tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/tasmota32c3-muh.bin" G_TREPPE PlugUD
+tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/tasmota32s3-muh-hdgd.bin" HD GD
+tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/tasmota32s3-muh-park.bin" PARK2
+tools/fleet-cmd.sh "OtaUrl $MUH_OTA_BASE/tasmota32-muh-annauhr.bin" AnnaUhr
 ```
   Verify with `tools/fleet-cmd.sh OtaUrl` and `tools/fleet-cmd.sh SysLog`. Upgrading a device is then `Upgrade 1` on that device, one at a time, `make fleet` afterwards.
 - [ ] **Step 3: README** line under Workflow: `tools/fleet-cmd.sh '<cmd>' [names]   # send a Tasmota command to devices`.
