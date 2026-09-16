@@ -30,8 +30,17 @@ make fleet            # health sweep: Berry alive? module/GPIO intact? BUILD vs 
 tools/fleet-cmd.sh '<cmd>' [names]   # send a Tasmota command to devices
 tools/berry-inventory.sh             # read-only: back up every device's *.be, report map drift
 ./deploy.sh WC        # upload autoexec.be + muh_lib.be + wc.be, restart WC
+./deploy.sh --autoexec-only FL3    # upload only autoexec.be + muh_lib.be
 DEPLOY_ALL=yes ./deploy.sh --all   # same for every device with an IP in devices.tsv
+tools/rollback.sh FL3 [ts]         # restore backups/FL3/<ts or newest>/*.be, delete extras, restart
 ```
+
+`deploy.sh` backs a device up (`tools/berry-inventory.sh`) before uploading,
+and — unless `--no-verify` — clears the device's retained
+`muh/berry/<KEY>/status`, restarts, then polls it for up to 90s
+(`$DEPLOY_VERIFY_TIMEOUT`) to confirm the new `autoexec.be` actually loaded.
+On failure it prints the matching `tools/rollback.sh <name> <timestamp>`
+command.
 
 Standalone `berry`: `git clone https://github.com/berry-lang/berry && make`,
 put the binary on PATH (or `make check BERRY=/path/to/berry`).
