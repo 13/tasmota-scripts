@@ -25,6 +25,7 @@ deploy_device() {
   IFS=',' read -ra extra <<<"$scripts"
   files+=("${extra[@]}")
   for f in "${files[@]}"; do
+    [[ -z $f ]] && continue
     echo "  upload $f"
     # Tasmota only stores an /ufsu upload if the /ufsd page was requested
     # first (that sets Web.upload_file_type, and every upload resets it), so

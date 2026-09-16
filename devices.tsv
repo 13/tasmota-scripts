@@ -8,11 +8,10 @@ PARK1	?	park1.be
 PARK2	192.168.23.144	park2.be
 AnnaUhr	192.168.23.124	annauhr.be
 HZ_WW	192.168.22.74	hz_ww.be
-BAD	192.168.23.180	bad.be
+BAD	192.168.23.180	
 PlugUD	192.168.22.31	plugud.be
-PV	?	pv.be
-PV_A	192.168.22.56	pv_a.be
-PV_B	?	pv_b.be
+PV	?	
+PV_A	192.168.22.56	
 G_TREPPE	192.168.23.60	g_treppe.be
 G_EXT	192.168.23.119	g_ext.be
 G_INT	192.168.23.201	g_int.be
@@ -21,3 +20,7 @@ HD_EXT	192.168.23.88	hd_ext.be
 FL2	192.168.23.156	fl2.be
 FL3	192.168.23.186	fl3.be
 WC	?	wc.be
+SOLAR_EXT	192.168.23.145	
+WZ3	192.168.23.228	
+HZ_DG	192.168.22.70	
+HZ_DGB	192.168.22.72	

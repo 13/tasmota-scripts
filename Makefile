@@ -6,6 +6,7 @@ BERRY ?= berry
 
 check:
 	$(BERRY) tools/be-check.be
+	./tools/check-map.sh
 
 test:
 	$(BERRY) tools/test_hz_ww.be
