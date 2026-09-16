@@ -9,8 +9,11 @@
 var published, cmds, rules, crons, timers, sensor_json, check, reset, load, finish, json, string
 compile("tools/test_env.be", "file")()
 
+# Globals provided by MUH/muh_lib.be
+var WATCHDOG_ARM_MS
+
 # Globals provided by MUH/hz_ww.be
-var boot_publish, MIN_UPTIME_FOR_RESTART_MS
+var boot_publish, BOOT_RETRIES, BOOT_RETRY_MS, last_temp
 
 def mock_sensors(a, b)
   sensor_json = json.dump({
@@ -24,13 +27,24 @@ end
 # ---- load script under test with one sensor stuck at 85 ----
 mock_sensors(85, 40.0)
 cmds = []
+load("MUH/muh_lib.be")
 load("MUH/hz_ww.be")
 check(cmds.size() == 0, "script does not call tasmota.cmd at load (no DeviceName re-query)")
 
-var guard_timer = nil
+# wifi watchdog wired through muh_lib: arm timer + cron + rule registered by hz_ww.be
+var arm = nil
 for t: timers
-  if t[2] == "hz_ww_restart_guard" guard_timer = t end
+  if t[2] == "wifi_watchdog_arm" arm = t end
 end
+check(arm != nil && arm[0] == WATCHDOG_ARM_MS, "hz_ww registers the shared wifi watchdog arm timer")
+check(crons.contains("wifi_watchdog_ping") && !crons.contains("check_wifi"), "hz_ww uses the shared ping cron, old check_wifi cron gone")
+reset()
+rules["Ping#192.168.22.1#Success==0"](0, "Ping#192.168.22.1#Success", nil)
+check(cmds.size() == 0, "ping fail before arm: no restart")
+arm[1]()
+reset()
+rules["Ping#192.168.22.1#Success==0"](0, "Ping#192.168.22.1#Success", nil)
+check(cmds.size() == 1 && string.tolower(cmds[0]) == "restart 1", "ping fail after arm: restart")
 
 # boot: valid sensor published, 85 sensor not, no restart, retry timer armed
 reset()
@@ -66,15 +80,6 @@ mock_sensors(85, 41.0)
 crons["check_ds18b20_force"]()
 check(published.size() == 1 && published[0][0] == "muh/sensors/HZ_WW/DS18B20-1C16E1/json", "force publish skips 85")
 
-# ping failure: no restart until the boot-window latch timer has fired, restart after
-reset()
-check(guard_timer != nil && guard_timer[0] == MIN_UPTIME_FOR_RESTART_MS, "restart guard timer armed at load with MIN_UPTIME_FOR_RESTART_MS")
-rules["Ping#192.168.22.1#Success==0"]()
-check(cmds.size() == 0, "ping fail before guard timer fired: no restart")
-guard_timer[1]()
-rules["Ping#192.168.22.1#Success==0"]()
-check(cmds.size() == 1 && string.tolower(cmds[0]) == "restart 1", "ping fail after guard timer fired: restart")
-
 # nil Temperature is skipped, not published as null
 reset()
 sensor_json = json.dump({
@@ -101,5 +106,20 @@ sensor_json = json.dump({
 })
 rules["system#boot"]()
 check(timers.size() == 1, "missing temperature at boot arms retry timer")
+
+# retry chain: permanent 85 -> exactly BOOT_RETRIES re-arms, then give up, never a restart
+reset()
+mock_sensors(85, 40.0)
+last_temp = {}
+rules["system#boot"](nil, "system#boot", nil)
+var rounds = 0
+while timers.size() > 0 && rounds < 20
+  var t = timers.pop()
+  check(t[2] == "hz_ww_boot_retry" && t[0] == BOOT_RETRY_MS, f"retry {rounds + 1} armed as hz_ww_boot_retry")
+  t[1]()
+  rounds += 1
+end
+check(rounds == BOOT_RETRIES, f"retry chain stops after BOOT_RETRIES ({BOOT_RETRIES}) attempts")
+check(cmds.size() == 0, "retry chain never restarts")
 
 finish()

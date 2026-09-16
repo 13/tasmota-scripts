@@ -19,11 +19,9 @@ var INVALID_TEMP = 85               # DS18B20 power-on / bus-error value
 var DEFAULT_DELTA_THRESHOLD = 1
 var BOOT_RETRY_MS = 5000            # re-read interval while a sensor still says 85 at boot
 var BOOT_RETRIES = 6
-var MIN_UPTIME_FOR_RESTART_MS = 120000   # never Restart from Berry inside Tasmota's boot-loop window
 
 # sensor key ("DS18B20-3628FF") -> last published temperature
 var last_temp = {}
-var restart_allowed = false   # set once the boot-loop window is safely behind us
 
 # Fresh read of all DS18B20 entries: key -> {'Id':..., 'Temperature':...}
 def read_ds18b20()
@@ -67,7 +65,7 @@ def check_ds18b20(force)
 end
 
 # Boot: publish what is valid now; while any sensor still reads 85, retry a
-# few times with a FRESH read. Never restart the device for this — a restart
+# few times with a FRESH read. Never reboot the device for this — a reboot
 # inside the first 10 s trips Tasmota's boot-loop protection, which disables
 # Berry entirely (that is how this device went silent for days).
 def boot_publish(attempt)
@@ -92,22 +90,10 @@ def boot_publish(attempt)
 end
 
 tasmota.add_rule("system#boot", def () boot_publish(0) end)
-tasmota.set_timer(MIN_UPTIME_FOR_RESTART_MS, def ()
-  restart_allowed = true
-  log("boot window over, wifi watchdog restart enabled")
-end, "hz_ww_restart_guard")
 
 # Cron jobs
 tasmota.add_cron("10 */2 * * * *", def () check_ds18b20(false) end, "check_ds18b20")
 tasmota.add_cron("0 0 */1 * * *", def () check_ds18b20(true) end, "check_ds18b20_force")
-tasmota.add_cron("10 */8 * * * *", def () tasmota.cmd("Ping4 192.168.22.1") end, "check_wifi")
 
-# Wi-Fi watchdog: restart only once well past the boot-loop window
-tasmota.add_rule("Ping#192.168.22.1#Success==0", def ()
-  if restart_allowed
-    log("gateway ping failed, restarting")
-    tasmota.cmd("Restart 1")
-  else
-    log("gateway ping failed during boot window, ignored")
-  end
-end)
+# Wi-Fi watchdog (shared, boot-latched; see muh_lib.be)
+init_wifi_watchdog("192.168.22.1", "10 */8 * * * *")
