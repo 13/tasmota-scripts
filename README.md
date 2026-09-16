@@ -5,10 +5,11 @@ Berry scripts and device configs for the Tasmota-based home automation setup.
 ## Layout
 
 - `MUH/` — Berry scripts, one per device, dispatched by `MUH/autoexec.be`
-- `MUH/muh_lib.be` — shared helpers (dark detection, timed relays, MQTT state publishing)
+- `MUH/muh_lib.be` — shared helpers (dark detection, timed relays, MQTT state publishing, Wi-Fi watchdog)
 - `*.md` — per-device-class console configs (templates, calibration, rules)
 - `devices.tsv` — device → IP → scripts map used by `deploy.sh`
 - `tools/be-check.be` — offline syntax/global check for all Berry scripts
+- `tools/test_env.be` + `tools/test_*.be` — offline behaviour tests (needs standalone berry)
 - `z-old/` removed — history lives in git
 
 ## How a device boots
@@ -24,6 +25,7 @@ Berry scripts and device configs for the Tasmota-based home automation setup.
 
 ```sh
 make check            # compile-check every MUH/*.be (needs standalone berry)
+make test             # offline behaviour tests for muh_lib and hz_ww
 ./deploy.sh WC        # upload autoexec.be + muh_lib.be + wc.be, restart WC
 ./deploy.sh --all     # same for every device with an IP in devices.tsv
 ```

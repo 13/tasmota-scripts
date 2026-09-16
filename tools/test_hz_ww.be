@@ -34,10 +34,10 @@ check(cmds.size() == 0, "script does not call tasmota.cmd at load (no DeviceName
 # wifi watchdog wired through muh_lib: arm timer + cron + rule registered by hz_ww.be
 var arm = nil
 for t: timers
-  if t[2] == "wifi_watchdog_arm" arm = t end
+  if t[2] == "wifi_watchdog_arm_192.168.22.1" arm = t end
 end
 check(arm != nil && arm[0] == WATCHDOG_ARM_MS, "hz_ww registers the shared wifi watchdog arm timer")
-check(crons.contains("wifi_watchdog_ping") && !crons.contains("check_wifi"), "hz_ww uses the shared ping cron, old check_wifi cron gone")
+check(crons.contains("wifi_watchdog_ping_192.168.22.1") && !crons.contains("check_wifi"), "hz_ww uses the shared ping cron, old check_wifi cron gone")
 reset()
 rules["Ping#192.168.22.1#Success==0"](0, "Ping#192.168.22.1#Success", nil)
 check(cmds.size() == 0, "ping fail before arm: no restart")

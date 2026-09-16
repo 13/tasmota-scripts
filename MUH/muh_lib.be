@@ -97,17 +97,26 @@ end
 # inside Tasmota's 10 s boot-loop window counts toward boot-loop protection,
 # and four of those set no_autoexec, which skips BerryInit() entirely
 # (that is how HZ_WW went silent for four days in Sept 2026).
+# The arm/ping timer and cron ids are derived from gateway_ip, and the arm
+# latch is a local upvalue private to each call, so this may be called once
+# per gateway without the calls colliding.
 WATCHDOG_ARM_MS = 120000
-_watchdog_armed = false
 
 def init_wifi_watchdog(gateway_ip, cron_spec)
+  var armed = false   # per-call latch, shared by the closures below as an upvalue
   tasmota.set_timer(WATCHDOG_ARM_MS, def ()
-    _watchdog_armed = true
+    # NB: log() (which reads gateway_ip) must run before the `armed = true`
+    # assignment below. With this standalone berry (1.1.0), a closure that
+    # writes an upvalue *and then* reads a different upvalue in the same
+    # closure fails to publish that write to sibling closures sharing it
+    # (confirmed via isolated repro) — writing armed second silently breaks
+    # the latch for every other gateway's rule closure.
     log(f"wifi watchdog armed for {gateway_ip}")
-  end, "wifi_watchdog_arm")
-  tasmota.add_cron(cron_spec, def () tasmota.cmd(f"Ping4 {gateway_ip}") end, "wifi_watchdog_ping")
+    armed = true
+  end, f"wifi_watchdog_arm_{gateway_ip}")
+  tasmota.add_cron(cron_spec, def () tasmota.cmd(f"Ping4 {gateway_ip}") end, f"wifi_watchdog_ping_{gateway_ip}")
   tasmota.add_rule(f"Ping#{gateway_ip}#Success==0", def ()
-    if _watchdog_armed
+    if armed
       log(f"ping {gateway_ip} failed, restarting")
       tasmota.cmd("Restart 1")
     else
