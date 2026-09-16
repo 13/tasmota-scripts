@@ -79,6 +79,8 @@ class ParkAi
 
   def every_50ms()
     self.sensors = json.load(tasmota.read_sensors())
+    # sensors appear a few seconds after boot; the old loader waited 8 s
+    if self.sensors == nil || !self.sensors.contains('SR04-1') || !self.sensors.contains('SR04-2') return end
     self.handleSR04(1,self.sensors['SR04-1']['Distance'])
     self.handleSR04(2,self.sensors['SR04-2']['Distance'])
   end

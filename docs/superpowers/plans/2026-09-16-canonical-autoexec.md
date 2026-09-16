@@ -62,6 +62,8 @@
   - different → **stop and ask the owner**: show `diff -u MUH/park2.be backups/PARK2/<ts>/park.be`. Options: (a) map `PARK2 → park.be` and `devices.tsv` scripts column `park.be`, import the device file as `MUH/park.be`; (b) deploy the repo `park2.be` (behaviour change, separate test).
 - [ ] **Step 2:** record the decision in this plan's table and in `.superpowers/sdd/progress.md`.
 
+**Decision (2026-09-16):** device `park.be` equals `MUH/park2.be` except for the `#- setup notes -#` header, so PARK2 gets a normal full `./deploy.sh PARK2` in Task 9 (uploads `park2.be`, map stays `park2.be`; the orphan `park.be` can be deleted afterwards). The old PARK2 loader waited 8 s before loading because `every_50ms` indexes `SR04-1/-2`, which exist only once the sensors have measured; driver exceptions are caught per call (`tasmota_class.be` `event()`), so this was log noise, not a crash. `MUH/park2.be` now returns early until both sensors exist.
+
 ---
 
 ### Task 3: Test harness support
