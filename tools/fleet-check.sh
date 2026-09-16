@@ -29,8 +29,82 @@ cm() { curl -s --connect-timeout 3 --max-time 6 "http://$1/cm?cmnd=$2"; }
 # out so every device just falls back to showing its plain version untagged.
 OTA_BASE=${OTA_BASE:-http://192.168.22.11/tasmota}
 current=$(curl -s --max-time 5 "$OTA_BASE/CURRENT" | grep -E '^[^ ]+ -> [^ ]+$')
+
+# AUTOEXEC column: byte-compare each device's live /autoexec.be against the
+# repo's canonical MUH/autoexec.be. "none" means the download was empty or
+# non-200 (device has no autoexec.be, or ufsd is unavailable).
+autoexec_status() {
+  local tmp code result
+  tmp=$(mktemp)
+  code=$(curl -s -o "$tmp" -w '%{http_code}' --connect-timeout 3 --max-time 6 \
+    "http://$1/ufsd?download=/autoexec.be")
+  if [[ $code != 200 || ! -s $tmp ]]; then
+    result=none
+  elif cmp -s "$tmp" MUH/autoexec.be; then
+    result=same
+  else
+    result=drift
+  fi
+  rm -f "$tmp"
+  echo "$result"
+}
+
+# LOAD column: one retained-message snapshot of muh/berry/+/status, taken
+# once up front (not per device). LOAD_STATUS_FILE lets tests substitute a
+# canned file (lines "muh/berry/<KEY>/status <json>") instead of the broker.
+MQTT_HOST=${MQTT_HOST:-192.168.22.5}
+load_status_file=""
+load_check_enabled=1
+if [[ -n ${LOAD_STATUS_FILE:-} ]]; then
+  load_status_file=$LOAD_STATUS_FILE
+elif command -v mosquitto_sub >/dev/null 2>&1; then
+  load_status_file=$(mktemp)
+  mosquitto_sub -h "$MQTT_HOST" -t 'muh/berry/+/status' -v -W 3 >"$load_status_file" 2>/dev/null
+else
+  load_check_enabled=0
+  echo "warning: mosquitto_sub not found; LOAD column will show '?' without flagging" >&2
+fi
+
+get_load() {
+  local key=$1 file=$2
+  if [[ -z $file || ! -f $file ]]; then echo '?'; return; fi
+  python3 - "$key" "$file" <<'PYEOF'
+import json
+import sys
+
+key, path = sys.argv[1], sys.argv[2]
+want = f"muh/berry/{key}/status"
+result = "?"
+try:
+    with open(path) as f:
+        for line in f:
+            line = line.rstrip("\n")
+            if not line:
+                continue
+            parts = line.split(" ", 1)
+            if len(parts) != 2:
+                continue
+            topic, payload = parts
+            if topic != want:
+                continue
+            try:
+                data = json.loads(payload)
+            except Exception:
+                continue
+            if data.get("ok") is True:
+                result = "ok"
+            else:
+                err = str(data.get("err", ""))[:40]
+                result = err if err else "err"
+except FileNotFoundError:
+    pass
+print(result)
+PYEOF
+}
+
 bad=0
-printf '%-10s %-16s %-6s %-22s %-14s %-12s %-14s %s\n' DEVICE IP BERRY MODULE RELAYS UPTIME BUILD RESTART
+printf '%-10s %-16s %-6s %-22s %-14s %-12s %-14s %-16s %-8s %-6s %s\n' \
+  DEVICE IP BERRY MODULE RELAYS UPTIME BUILD RESTART AUTOEXEC LOAD FLAGS
 for ip in "${targets[@]}"; do
   name=$(cm "$ip" DeviceName | grep -o '"DeviceName":"[^"]*"' | cut -d'"' -f4)
   if [[ -z $name ]]; then
@@ -65,8 +139,23 @@ for ip in "${targets[@]}"; do
   else build="old:${ver%%(*}"; fi
   flag=''
   # ESP8266/ESP8285 builds have no Berry at all; only ESP32 can be "dead"
-  if [[ $hw == ESP8266* || $hw == ESP8285* ]]; then berry=-
-  elif [[ $berry != 52 ]]; then flag='BERRY-DEAD'; fi
+  if [[ $hw == ESP8266* || $hw == ESP8285* ]]; then
+    berry=-
+    autoexec=-
+    load=-
+  else
+    [[ $berry != 52 ]] && flag='BERRY-DEAD'
+    autoexec=$(autoexec_status "$ip")
+    [[ $autoexec == drift || $autoexec == none ]] && flag="$flag AUTOEXEC-DRIFT"
+    key=$(tr '[:lower:]' '[:upper:]' <<<"$name")
+    load='?'
+    [[ $load_check_enabled -eq 1 ]] && load=$(get_load "$key" "$load_status_file")
+    if [[ $load == '?' ]]; then
+      [[ $load_check_enabled -eq 1 ]] && flag="$flag LOAD-MISSING"
+    elif [[ $load != ok ]]; then
+      flag="$flag LOAD-ERROR"
+    fi
+  fi
   # Boot-loop protection resets the module to the fallback (index 1, e.g.
   # ESP32-DevKit) but leaves the stored Template intact, so the two disagree.
   [[ $module == 1:* && ${module#1:} != "$tpl_name" ]] && flag="$flag MODULE-FALLBACK"
@@ -75,6 +164,6 @@ for ip in "${targets[@]}"; do
   # UPGRADE-PENDING is informational only; it never affects the exit code.
   note=''
   [[ -n $want && $build == old:* ]] && note='UPGRADE-PENDING'
-  printf '%-10s %-16s %-6s %-22s %-14s %-12s %-14s %s %s %s\n' "$name" "$ip" "${berry:-?}" "$module" "$relays" "$uptime" "$build" "$reason" "$flag" "$note"
+  printf '%-10s %-16s %-6s %-22s %-14s %-12s %-14s %-16s %-8s %-6s %s %s\n' "$name" "$ip" "${berry:-?}" "$module" "$relays" "$uptime" "$build" "$reason" "$autoexec" "$load" "$flag" "$note"
 done
 exit $bad
