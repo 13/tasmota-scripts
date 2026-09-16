@@ -56,3 +56,11 @@ put the binary on PATH (or `make check BERRY=/path/to/berry`).
 
 ESP8266 devices (Athom Plug V2 etc.) have no Berry — they use native Tasmota
 rules documented in `MUH/Plugs8266.md`.
+
+## Device settings we rely on
+
+- All ESP32 devices run `SetOption36 5` (boot-loop offset): Tasmota then needs 8
+  consecutive restarts under 10 s uptime before it disables Berry, 9 before it
+  wipes GPIOs. Default 1 let a one-minute Wi-Fi crash loop on 2026-09-11 kill
+  Berry on three devices. Re-apply after a settings reset; `make fleet` shows
+  the damage if it happens again.
