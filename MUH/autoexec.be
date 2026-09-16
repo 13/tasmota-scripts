@@ -45,8 +45,14 @@ var DEVICE_SCRIPTS = {
   "HZ_DGB": "",
 }
 
-def log(message)
-  if DEBUG print(f"{LOG_PREFIX} {message}") end
+# Replaces Tasmota's global log(msg, level): calls with a level (Tasmota's own
+# Berry code) go to the Tasmota log as before; device scripts call log(msg).
+def log(message, level)
+  if level != nil
+    tasmota.log(message, level)
+  elif DEBUG
+    print(f"{LOG_PREFIX} {message}")
+  end
 end
 
 # Compile and run a device file. Returns "" on success, otherwise
@@ -69,11 +75,13 @@ end
 
 var DEVICENAME = tasmota.cmd("DeviceName")["DeviceName"]
 var DEVICE_KEY = string.toupper(DEVICENAME != nil ? DEVICENAME : "")
+var devicename = DEVICENAME   # legacy: pre-canonical annauhr.be on AnnaUhr reads it
 var MUH_STATUS = {"lib": false, "script": "", "ok": false, "err": ""}
 
 def muh_boot()
   MUH_STATUS = {"lib": false, "script": "", "ok": false, "err": ""}
   DEVICE_KEY = string.toupper(DEVICENAME != nil ? DEVICENAME : "")
+  devicename = DEVICENAME
   if DEVICE_KEY == ""
     MUH_STATUS["err"] = "DeviceName is empty"
     return
@@ -108,7 +116,7 @@ def publish_status()
   payload["device"] = DEVICENAME
   payload["autoexec"] = AUTOEXEC_VERSION
   payload["time"] = tasmota.time_str(rtc["local"])
-  payload["uptime"] = (utc > 1600000000 && rtc.contains("restart")) ? utc - rtc["restart"] : nil
+  payload["uptime"] = (utc > 1600000000 && rtc.find("restart", 0) > 0) ? utc - rtc["restart"] : nil
   var key = DEVICE_KEY != "" ? DEVICE_KEY : "UNKNOWN"
   mqtt.publish(f"muh/berry/{key}/status", json.dump(payload), true)
 end

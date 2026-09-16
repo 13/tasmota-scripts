@@ -10,7 +10,9 @@ import math
 
 var published = []     # list of [topic, payload_map, retain]
 var cmds = []           # tasmota.cmd() calls
-var rules = {}          # trigger -> closure
+var rules = {}
+var rule_ids = {}       # trigger -> id passed to add_rule
+var tasmota_log = []    # tasmota.log(msg, level) calls          # trigger -> closure
 var crons = {}          # id -> closure
 var timers = []         # list of [delay_ms, closure, id]
 var sensor_json = ""
@@ -30,7 +32,11 @@ class TasmotaStub
   def publish(topic, payload, retain)
     published.push([topic, json.load(payload), retain])
   end
-  def add_rule(trigger, f) rules[trigger] = f end
+  def add_rule(trigger, f, id)
+    rules[trigger] = f
+    rule_ids[trigger] = id
+  end
+  def log(m, l) tasmota_log.push([m, l]) end
   # Tasmota crons are 6 fields (sec min hour dom month dow); a wrong count
   # fails to parse on the device and the cron silently never fires.
   def add_cron(spec, f, id)

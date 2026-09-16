@@ -12,13 +12,13 @@
 # the fixtures) assigns only becomes usable here once that unit's own
 # compile()() call has actually run. Forward-declare every such name first
 # (nil until then) so this file's own code compiles.
-var published, cmds, rules, check, reset, finish, json, string
+var published, cmds, rules, rule_ids, tasmota_log, check, reset, finish, json, string
 var DEVICENAME, DEBUG, TasmotaStub, tasmota, mqtt_is_connected
 compile("tools/test_env.be", "file")()
 
 # Globals provided by MUH/autoexec.be
 var AUTOEXEC_VERSION, DEVICE_SCRIPTS, DEVICE_KEY, MUH_STATUS
-var run_file, muh_boot, publish_status, muh_start
+var run_file, muh_boot, publish_status, muh_start, devicename, log
 # Globals provided by the fixtures
 var FIXTURE_LIB, FIXTURE_GOOD, FIXTURE_NOLIB_RAN
 
@@ -138,6 +138,7 @@ mqtt_is_connected = false
 muh_start()
 check(published.size() == 0, "10 offline: nothing published while MQTT is down")
 check(rules.contains("mqtt#connected"), "10 offline: mqtt#connected rule registered")
+check(rule_ids.find("mqtt#connected") == "muh_status", "10 offline: rule registered with id muh_status (reload replaces it)")
 rules["mqtt#connected"](nil, "mqtt#connected", nil)
 check(published.size() == 1 && published[0][0] == "muh/berry/GOOD/status" && published[0][2] == true,
   "10 offline: rule publishes the retained status once")
@@ -173,4 +174,13 @@ boot_as("Good", {"GOOD": "gdhd_ok.be"})
 check(MUH_STATUS["ok"] == true, "12 gdhd-like ok: success variant reports ok")
 
 os.chdir(ROOT)
+# legacy global and log() compatibility
+check(devicename == DEVICENAME, "13 legacy: devicename mirrors DEVICENAME for old annauhr.be")
+tasmota_log = []
+log("from tasmota code", 2)
+check(tasmota_log.size() == 1 && tasmota_log[0][1] == 2, "13 log(msg, level) goes to tasmota.log")
+tasmota_log = []
+log("from a device script")
+check(tasmota_log.size() == 0, "13 log(msg) prints, does not call tasmota.log")
+
 finish()
