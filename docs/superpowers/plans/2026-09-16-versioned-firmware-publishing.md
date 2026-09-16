@@ -132,11 +132,11 @@ fi
 // Build id from muh/version.sh (git-ignored header). Status 2 then reports
 // e.g. "15.6.0(15.6.0-muh1-tasmota32)"; tools/fleet-check.sh compares it with
 // the version promoted on the OTA host.
-#if __has_include("muh_build_id.h")
+// Included unconditionally: the ESP8266 toolchain (GCC 4.8.2) has no
+// __has_include. muh/build.sh and CI always generate the header.
 #include "muh_build_id.h"
 #undef  TASMOTA_SHA_SHORT
 #define TASMOTA_SHA_SHORT MUH_BUILD_ID-
-#endif
 ```
 - [ ] **Step 2: Verify** (after `. muh/version.sh` with `muh/build.env` loaded): `.venv/bin/pio run -e tasmota32solo1-muh`, then `strings build_output/firmware/tasmota32solo1-muh.bin | grep -m1 -F "($MUH_VERSION-"` prints the image string. Build a second time without changes and confirm the log does not recompile libraries (`grep -c 'Compiling .pio/build/tasmota32solo1-muh/lib' ` on the second run's output is 0).
 - [ ] **Step 3: Commit**: `build: report MUH build id in Status 2 via TASMOTA_SHA_SHORT`.
@@ -159,7 +159,7 @@ build_flags = ${env:tasmota-minimal.build_flags} ${muh.build_flags}
               -DMUH_OTA_URL='"${sysenv.MUH_OTA_BASE}/tasmota-muh-minimal.bin.gz"'
 ```
 - [ ] **Step 2:** add `tasmota-muh-minimal` to `default_envs`.
-- [ ] **Step 3: Verify**: `.venv/bin/pio run -e tasmota-muh-minimal`; `stat -c %s build_output/firmware/tasmota-muh-minimal.bin` must be below 360000 (1 MB devices report `Free` 364 KB). If it is larger, find the MUH flag responsible (`user_config_override.h` features are undone for `FIRMWARE_MINIMAL` by `tasmota_configurations.h`; check which survive with `-DFIRMWARE_MINIMAL` in the `gcc -E -dM` method) and exclude it for `FIRMWARE_MINIMAL` in the override.
+- [ ] **Step 3: Verify**: `.venv/bin/pio run -e tasmota-muh-minimal`; `stat -c %s build_output/firmware/tasmota-muh-minimal.bin.gz` must be below 360000 (1 MB devices report `Free` 364 KB; the ESP8266 core stores the compressed image and unpacks it on boot, so the `.gz` size is what must fit). Measured 2026-09-16: `.bin` 373104, `.bin.gz` 263416, upstream minimal the same size. If it is larger, find the MUH flag responsible (`user_config_override.h` features are undone for `FIRMWARE_MINIMAL` by `tasmota_configurations.h`; check which survive with `-DFIRMWARE_MINIMAL` in the `gcc -E -dM` method) and exclude it for `FIRMWARE_MINIMAL` in the override.
 - [ ] **Step 4: Commit**: `build: tasmota-muh-minimal for ESP8266 two-step upgrades`.
 
 ---
