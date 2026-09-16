@@ -101,22 +101,22 @@ end
 # latch is a local upvalue private to each call, so this may be called once
 # per gateway without the calls colliding.
 WATCHDOG_ARM_MS = 120000
+# gateway_ip -> true once that gateway's boot-window timer fired. Deliberately a
+# global map mutated in place, NOT a local `var armed` captured as an upvalue:
+# Berry 1.1.0 (standalone and Tasmota 15.1.0, verified on-device) drops an
+# upvalue write when the same closure afterwards reads another upvalue, so a
+# `armed = true` followed by log(f"... {gateway_ip}") never reaches the rule
+# closure. Index-assignment on a global object has no such hazard.
+_watchdog_armed = {}
 
 def init_wifi_watchdog(gateway_ip, cron_spec)
-  var armed = false   # per-call latch, shared by the closures below as an upvalue
   tasmota.set_timer(WATCHDOG_ARM_MS, def ()
-    # NB: log() (which reads gateway_ip) must run before the `armed = true`
-    # assignment below. With this standalone berry (1.1.0), a closure that
-    # writes an upvalue *and then* reads a different upvalue in the same
-    # closure fails to publish that write to sibling closures sharing it
-    # (confirmed via isolated repro) — writing armed second silently breaks
-    # the latch for every other gateway's rule closure.
+    _watchdog_armed[gateway_ip] = true
     log(f"wifi watchdog armed for {gateway_ip}")
-    armed = true
   end, f"wifi_watchdog_arm_{gateway_ip}")
   tasmota.add_cron(cron_spec, def () tasmota.cmd(f"Ping4 {gateway_ip}") end, f"wifi_watchdog_ping_{gateway_ip}")
   tasmota.add_rule(f"Ping#{gateway_ip}#Success==0", def ()
-    if armed
+    if _watchdog_armed.find(gateway_ip) == true
       log(f"ping {gateway_ip} failed, restarting")
       tasmota.cmd("Restart 1")
     else
