@@ -98,7 +98,7 @@ end
 # and four of those set no_autoexec, which skips BerryInit() entirely
 # (that is how HZ_WW went silent for four days in Sept 2026).
 # The arm/ping timer and cron ids are derived from gateway_ip, and the arm
-# latch is a local upvalue private to each call, so this may be called once
+# latch is keyed by gateway_ip, so this may be called once
 # per gateway without the calls colliding.
 WATCHDOG_ARM_MS = 120000
 # gateway_ip -> true once that gateway's boot-window timer fired. Deliberately a
