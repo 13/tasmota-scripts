@@ -20,7 +20,7 @@
 
 ## Evidence (2026-09-16)
 
-- `MUH/gdhd.be:85` pings the gateway on cron `10 10 */3 * * * *`; `MUH/gdhd.be:93` restarts on `Ping#192.168.22.1#Success==0` with no uptime guard. Same defect class that silenced HZ_WW for 4 days.
+- `MUH/gdhd.be:85` pings the gateway on cron `10 10 */3 * * *`; `MUH/gdhd.be:93` restarts on `Ping#192.168.22.1#Success==0` with no uptime guard. Same defect class that silenced HZ_WW for 4 days.
 - HD = 192.168.22.92 (uptime 299 d, Berry `52` alive), GD = 192.168.22.91 (uptime 68 d, alive). Both run the pre-`muh_lib` autoexec. Files on device: `autoexec.be`, `gdhd.be`, `hd.be`/`gd.be`, `_persist.json`, `say/`, `sfx/`. No name collisions between gdhd/hd/gd and muh_lib.
 - Also found by sweep (not in scope, for `devices.tsv`): PV_A .56, HZ_DG .70, HZ_DGB .72, 3EM .60.
 - Tasmota DS18x20 driver on this build uses `DS18x20_USE_ID_AS_NAME`, so keys are always `DS18B20-XXXXXX`; the single-sensor bare-key concern from the last review is moot.

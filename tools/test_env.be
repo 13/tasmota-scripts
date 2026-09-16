@@ -31,7 +31,14 @@ class TasmotaStub
     published.push([topic, json.load(payload), retain])
   end
   def add_rule(trigger, f) rules[trigger] = f end
-  def add_cron(spec, f, id) crons[id] = f end
+  # Tasmota crons are 6 fields (sec min hour dom month dow); a wrong count
+  # fails to parse on the device and the cron silently never fires.
+  def add_cron(spec, f, id)
+    if string.split(spec, " ").size() != 6
+      raise "bad_cron_spec", f"'{spec}' must have 6 fields (id {id})"
+    end
+    crons[id] = f
+  end
   def set_timer(ms, f, id) timers.push([ms, f, id]) end
   def remove_timer(id) end
 end
