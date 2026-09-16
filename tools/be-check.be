@@ -18,6 +18,7 @@ var log, DEBUG, LOG_PREFIX, DEVICENAME, DEVICE_SCRIPTS, load_script
 var DARK_OFFSET, DARK_OFFSET_SUNSET, POWER_TIMER_DURATION, status_tim
 var get_status_tim, is_dark, set_power, publish_power_state
 var init_power_publish, init_sun, _last_power
+var WATCHDOG_ARM_MS, _watchdog_armed, init_wifi_watchdog
 # gdhd.be (used by hd.be / gd.be)
 var volume, volume_default, powerCmd, handleSwitchP, publishSwitchP
 var handleRemoteSwitchP, publishFPrint, checkDNS, chimePC

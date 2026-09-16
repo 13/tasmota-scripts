@@ -91,3 +91,27 @@ def init_sun()
   tasmota.add_rule("Time#Initialized", def () get_status_tim() end)
   tasmota.add_cron("0 30 */3 * * *", def () get_status_tim() end, "get_status_tim")
 end
+
+# Wi-Fi watchdog: ping `gateway_ip` on `cron_spec`; restart if a ping fails.
+# The restart is held back until WATCHDOG_ARM_MS after script load: a restart
+# inside Tasmota's 10 s boot-loop window counts toward boot-loop protection,
+# and four of those set no_autoexec, which skips BerryInit() entirely
+# (that is how HZ_WW went silent for four days in Sept 2026).
+WATCHDOG_ARM_MS = 120000
+_watchdog_armed = false
+
+def init_wifi_watchdog(gateway_ip, cron_spec)
+  tasmota.set_timer(WATCHDOG_ARM_MS, def ()
+    _watchdog_armed = true
+    log(f"wifi watchdog armed for {gateway_ip}")
+  end, "wifi_watchdog_arm")
+  tasmota.add_cron(cron_spec, def () tasmota.cmd(f"Ping4 {gateway_ip}") end, "wifi_watchdog_ping")
+  tasmota.add_rule(f"Ping#{gateway_ip}#Success==0", def ()
+    if _watchdog_armed
+      log(f"ping {gateway_ip} failed, restarting")
+      tasmota.cmd("Restart 1")
+    else
+      log(f"ping {gateway_ip} failed inside boot window, ignored")
+    end
+  end)
+end
