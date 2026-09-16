@@ -89,7 +89,7 @@ tasmota.add_cron("59 59 * * * *", def (value) chimePC() end, "pcFull")
 
 # RULES
 ## Wi-Fi watchdog (shared, boot-latched; see muh_lib.be)
-init_wifi_watchdog("192.168.22.1", "10 10 */3 * * * *")
+init_wifi_watchdog("192.168.22.1", "10 10 */3 * * *")
 
 # Load custom script
 if DEVICENAME == "HD"
