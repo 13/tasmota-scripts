@@ -30,7 +30,7 @@ for ip in "${targets[@]}"; do
   if [[ -z $name ]]; then
     printf '%-10s %-16s %s\n' '?' "$ip" 'no answer'; bad=1; continue
   fi
-  berry=$(cm "$ip" Status%204 | grep -o '"Drivers":"[^"]*"' | grep -o '[!]*52')
+  berry=$(cm "$ip" Status%204 | grep -o '"Drivers":"[^"]*"' | grep -oE '(^|,)!?52(,|$)' | tr -d ',')
   module=$(cm "$ip" Module | grep -o '"[0-9]*":"[^"]*"' | head -1 | tr -d '"')
   # Live GPIO assignment is not queryable (`GPIO` lists only free pins), so
   # detect a boot-loop GPIO wipe indirectly: the stored Template still lists
@@ -38,7 +38,7 @@ for ip in "${targets[@]}"; do
   # case `Status 11` carries no "POWER" key.
   tpl=$(cm "$ip" Template)
   tpl_name=$(grep -o '"NAME":"[^"]*"' <<<"$tpl" | cut -d'"' -f4)
-  tpl_relays=$(grep -o '"GPIO":\[[^]]*\]' <<<"$tpl" | grep -o '"GPIO":\[[^]]*\]' | sed -E 's/.*\[(.*)\]/\1/' | tr ',' '\n' | awk '$1>=224 && $1<=255' | wc -l)
+  tpl_relays=$(grep -o '"GPIO":\[[^]]*\]' <<<"$tpl" | grep -o '"GPIO":\[[^]]*\]' | sed -E 's/.*\[(.*)\]/\1/' | tr ',' '\n' | awk '($1>=224 && $1<=255) || ($1>=2272 && $1<=2303)' | wc -l)   # Relay1..32, plus inverted (+2048)
   live_power=$(cm "$ip" Status%2011 | grep -c '"POWER')
   relays="tpl:${tpl_relays} live:$([[ $live_power -gt 0 ]] && echo y || echo n)"
   st1=$(cm "$ip" Status%201)
