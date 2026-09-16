@@ -1,22 +1,23 @@
 # name	ip	scripts (comma-separated, autoexec.be + muh_lib.be always included)
 # ip "?" = unknown — fill in to enable deploy. Header comments in the .be
 # files mostly claim 192.168.22.70 (copy-paste), so they were not trusted.
+# DHCP devices seen 2026-09-16 on 192.168.23.x (may change): FL2 .156, FL3 .186, Bad .180, HD_INT .233, HD_EXT .88, G_EXT .119, G_INT .201, G_TREPPE .60, AnnaUhr .124, PARK2 .144, WZ3 .228
 HD	192.168.22.92	gdhd.be,hd.be
 GD	192.168.22.91	gdhd.be,gd.be
 PARK1	?	park1.be
-PARK2	?	park2.be
-AnnaUhr	?	annauhr.be
+PARK2	192.168.23.144	park2.be
+AnnaUhr	192.168.23.124	annauhr.be
 HZ_WW	192.168.22.74	hz_ww.be
-BAD	?	bad.be
+BAD	192.168.23.180	bad.be
 PlugUD	192.168.22.31	plugud.be
 PV	?	pv.be
 PV_A	192.168.22.56	pv_a.be
 PV_B	?	pv_b.be
-G_TREPPE	?	g_treppe.be
-G_EXT	?	g_ext.be
-G_INT	?	g_int.be
-HD_INT	?	hd_int.be
-HD_EXT	?	hd_ext.be
-FL2	?	fl2.be
-FL3	?	fl3.be
+G_TREPPE	192.168.23.60	g_treppe.be
+G_EXT	192.168.23.119	g_ext.be
+G_INT	192.168.23.201	g_int.be
+HD_INT	192.168.23.233	hd_int.be
+HD_EXT	192.168.23.88	hd_ext.be
+FL2	192.168.23.156	fl2.be
+FL3	192.168.23.186	fl3.be
 WC	?	wc.be

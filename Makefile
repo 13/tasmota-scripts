@@ -2,7 +2,7 @@
 # (clone + make, then put the binary on PATH or pass BERRY=/path/to/berry)
 BERRY ?= berry
 
-.PHONY: check test deploy list
+.PHONY: check test deploy list fleet
 
 check:
 	$(BERRY) tools/be-check.be
@@ -12,7 +12,10 @@ test:
 	$(BERRY) tools/test_wifi_watchdog.be
 
 deploy: check
-	./deploy.sh --all
+	DEPLOY_ALL=yes ./deploy.sh --all
 
 list:
 	./deploy.sh --list
+
+fleet:
+	./tools/fleet-check.sh

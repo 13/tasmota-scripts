@@ -3,7 +3,7 @@
 #
 # Usage:
 #   ./deploy.sh WC FL2       # deploy to specific devices
-#   ./deploy.sh --all        # deploy to every device with a known IP
+#   DEPLOY_ALL=yes ./deploy.sh --all   # deploy to every device with a known IP
 #   ./deploy.sh --list       # show the device map
 #
 # Reads devices.tsv (name, ip, scripts). Every deploy uploads autoexec.be
@@ -58,6 +58,10 @@ main() {
   if [[ $1 == "--list" ]]; then
     column -t "$TSV"
     exit 0
+  fi
+
+  if [[ $1 == "--all" ]]; then
+    [[ ${DEPLOY_ALL:-} == yes ]] || { echo "refusing --all without DEPLOY_ALL=yes"; exit 1; }
   fi
 
   local rc=0

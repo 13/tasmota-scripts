@@ -26,8 +26,9 @@ Berry scripts and device configs for the Tasmota-based home automation setup.
 ```sh
 make check            # strict compile + cron-spec lint of every MUH/*.be (needs standalone berry)
 make test             # offline behaviour tests for muh_lib and hz_ww
+make fleet            # health sweep: Berry alive? module/GPIO intact?
 ./deploy.sh WC        # upload autoexec.be + muh_lib.be + wc.be, restart WC
-./deploy.sh --all     # same for every device with an IP in devices.tsv
+DEPLOY_ALL=yes ./deploy.sh --all   # same for every device with an IP in devices.tsv
 ```
 
 Standalone `berry`: `git clone https://github.com/berry-lang/berry && make`,
