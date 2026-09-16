@@ -8,7 +8,7 @@ Berry scripts and device configs for the Tasmota-based home automation setup.
 - `MUH/muh_lib.be` — shared helpers (dark detection, timed relays, MQTT state publishing, Wi-Fi watchdog)
 - `*.md` — per-device-class console configs (templates, calibration, rules)
 - `devices.tsv` — device → IP → scripts map used by `deploy.sh`
-- `tools/be-check.be` — offline syntax/global check for all Berry scripts
+- `tools/be-check.be` — offline strict-mode compile check + cron-spec lint for all Berry scripts
 - `tools/test_env.be` + `tools/test_*.be` — offline behaviour tests (needs standalone berry)
 - `z-old/` removed — history lives in git
 
@@ -24,7 +24,7 @@ Berry scripts and device configs for the Tasmota-based home automation setup.
 ## Workflow
 
 ```sh
-make check            # compile-check every MUH/*.be (needs standalone berry)
+make check            # strict compile + cron-spec lint of every MUH/*.be (needs standalone berry)
 make test             # offline behaviour tests for muh_lib and hz_ww
 ./deploy.sh WC        # upload autoexec.be + muh_lib.be + wc.be, restart WC
 ./deploy.sh --all     # same for every device with an IP in devices.tsv
@@ -54,4 +54,4 @@ put the binary on PATH (or `make check BERRY=/path/to/berry`).
 | AnnaUhr | annauhr.be | ESP32 clock | Clock |
 
 ESP8266 devices (Athom Plug V2 etc.) have no Berry — they use native Tasmota
-rules documented in `Plugs.md`.
+rules documented in `MUH/Plugs8266.md`.

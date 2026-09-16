@@ -51,27 +51,32 @@ end
 # the field count.
 import string as s2
 
-# Returns the nth (1-based) call argument on `line`, starting right after
-# `marker` (which must end in the call's opening paren), but only if every
-# argument up to and including the nth is itself a quoted string literal in
-# sequence — a non-literal argument (e.g. a variable like `cron_spec`) makes
-# this return nil rather than mistake a later, unrelated quoted string
-# further down the line for the one we want.
-def nth_call_string_arg(line, marker, n)
-  var i = s2.find(line, marker)
-  if i < 0 return nil end
-  i += size(marker)
+# Static cron-spec lint: every add_cron("...") / init_wifi_watchdog(..., "...")
+# literal must have 6 whitespace-separated fields (sec min hour dom month dow).
+# A bad spec fails to parse on the device and the cron silently never fires.
+# Count only; field contents are not validated. Scans the whole file text, so
+# multi-line calls and single-quoted literals are covered.
+def is_space(c) return c == " " || c == "\n" || c == "\t" || c == "\r" end
+
+# nth string-literal argument of the call whose argument list starts at index
+# `start` (just past the opening paren). Returns nil unless arguments 1..n are
+# all string literals in sequence, so a variable argument like `cron_spec`
+# yields nil rather than a later, unrelated literal.
+def nth_call_string_arg(text, start, n)
+  var i = start
   var arg = 1
   while true
-    while i < size(line) && line[i] == " " i += 1 end
-    if i >= size(line) || line[i] != '"' return nil end
-    var j = s2.find(line, '"', i + 1)
+    while i < size(text) && is_space(text[i]) i += 1 end
+    if i >= size(text) return nil end
+    var q = text[i]
+    if q != '"' && q != "'" return nil end
+    var j = s2.find(text, q, i + 1)
     if j < 0 return nil end
-    var value = line[i + 1 .. j - 1]
+    var value = text[i + 1 .. j - 1]
     if arg == n return value end
     i = j + 1
-    while i < size(line) && line[i] == " " i += 1 end
-    if i >= size(line) || line[i] != "," return nil end
+    while i < size(text) && is_space(text[i]) i += 1 end
+    if i >= size(text) || text[i] != "," return nil end
     i += 1
     arg += 1
   end
@@ -85,33 +90,42 @@ def cron_spec_field_count(spec)
   return n
 end
 
+def line_of(text, idx)
+  var n = 1
+  var i = 0
+  while i < idx
+    if text[i] == "\n" n += 1 end
+    i += 1
+  end
+  return n
+end
+
+var lint_failed = 0
 for f : os.listdir("MUH")
   if s2.split(f, -3)[1] == ".be"
     var path = "MUH/" + f
     var fh = open(path)
     var text = fh.read()
     fh.close()
-    var lineno = 0
-    for line : s2.split(text, "\n")
-      lineno += 1
-      var spec = nil
-      if s2.find(line, "add_cron(") >= 0
-        spec = nth_call_string_arg(line, "add_cron(", 1)
-      elif s2.find(line, "init_wifi_watchdog(") >= 0
-        spec = nth_call_string_arg(line, "init_wifi_watchdog(", 2)
-      end
-      if spec != nil
-        var n = cron_spec_field_count(spec)
-        if n != 6
-          print(f"FAIL {path}:{lineno}: cron spec \"{spec}\" has {n} fields, need 6")
-          failed += 1
+    for call : [["add_cron(", 1], ["init_wifi_watchdog(", 2]]
+      var marker = call[0]
+      var pos = s2.find(text, marker)
+      while pos >= 0
+        var spec = nth_call_string_arg(text, pos + size(marker), call[1])
+        if spec != nil
+          var n = cron_spec_field_count(spec)
+          if n != 6
+            print(f"FAIL {path}:{line_of(text, pos)}: cron spec \"{spec}\" has {n} fields, need 6")
+            lint_failed += 1
+          end
         end
+        pos = s2.find(text, marker, pos + size(marker))
       end
     end
   end
 end
 
-print(f"{checked - failed}/{checked} scripts OK")
-if failed > 0
+print(f"{checked - failed}/{checked} scripts OK, {lint_failed} bad cron specs")
+if failed > 0 || lint_failed > 0
   raise "be_check_failed"
 end
