@@ -10,6 +10,7 @@ check:
 test:
 	$(BERRY) tools/test_hz_ww.be
 	$(BERRY) tools/test_wifi_watchdog.be
+	$(BERRY) tools/test_autoexec.be
 
 deploy: check
 	DEPLOY_ALL=yes ./deploy.sh --all

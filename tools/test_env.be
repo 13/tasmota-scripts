@@ -18,7 +18,7 @@ var DEVICENAME = "HZ_WW"
 
 class TasmotaStub
   def read_sensors() return sensor_json end
-  def rtc() return {'local': 0} end
+  def rtc() return {'utc': 0, 'local': 0, 'restart': 0} end
   def time_str(t) return "2026-01-01T00:00:00" end
   def cmd(c)
     cmds.push(c)

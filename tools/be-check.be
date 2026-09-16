@@ -18,7 +18,8 @@ var tasmota, mqtt, persist, load
 # Modules imported at top level somewhere in the load chain
 var string, json, math
 # autoexec.be
-var log, DEBUG, LOG_PREFIX, DEVICENAME, DEVICE_SCRIPTS, load_script
+var log, DEBUG, LOG_PREFIX, DEVICENAME, DEVICE_SCRIPTS, AUTOEXEC_VERSION, DEVICE_KEY
+var MUH_STATUS, run_file, publish_status, muh_boot, muh_start
 # muh_lib.be
 var DARK_OFFSET, DARK_OFFSET_SUNSET, POWER_TIMER_DURATION, status_tim
 var get_status_tim, is_dark, set_power, publish_power_state
