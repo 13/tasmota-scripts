@@ -54,7 +54,9 @@ for ip in "${targets[@]}"; do
   # device's OtaUrl? "stock" = OtaUrl not listed in CURRENT (not a MUH
   # build, or CURRENT has no data yet for it). "old:<ver>" = a promoted
   # build exists but this device hasn't picked it up yet.
-  ver=$(cm "$ip" Status%202 | grep -o '"Version":"[^"]*"' | cut -d'"' -f4)
+  st2=$(cm "$ip" Status%202)
+  ver=$(grep -o '"Version":"[^"]*"' <<<"$st2" | cut -d'"' -f4)
+  hw=$(grep -o '"Hardware":"[^"]*"' <<<"$st2" | cut -d'"' -f4)
   img=${ver#*(}; img=${img%)}
   ota=$(cm "$ip" OtaUrl | grep -o '"OtaUrl":"[^"]*"' | cut -d'"' -f4)
   want=$(awk -v f="${ota##*/}" '$1 == f {print $3}' <<<"$current"); want=${want%/*}; want=${want#dev/}
@@ -62,7 +64,9 @@ for ip in "${targets[@]}"; do
   elif [[ $img == "$want-"* ]]; then build=$want
   else build="old:${ver%%(*}"; fi
   flag=''
-  [[ $berry != 52 ]] && flag='BERRY-DEAD'
+  # ESP8266/ESP8285 builds have no Berry at all; only ESP32 can be "dead"
+  if [[ $hw == ESP8266* || $hw == ESP8285* ]]; then berry=-
+  elif [[ $berry != 52 ]]; then flag='BERRY-DEAD'; fi
   # Boot-loop protection resets the module to the fallback (index 1, e.g.
   # ESP32-DevKit) but leaves the stored Template intact, so the two disagree.
   [[ $module == 1:* && ${module#1:} != "$tpl_name" ]] && flag="$flag MODULE-FALLBACK"
