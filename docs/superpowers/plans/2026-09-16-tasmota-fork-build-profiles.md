@@ -6,7 +6,7 @@
 
 **Architecture:** Profiles are PlatformIO envs `muh-*` in a new tracked file `platformio_muh.ini`, pulled in via `extra_configs` from `platformio_override.ini`. Each env `extends` the matching upstream env (`tasmota32solo1`, `tasmota32`, `tasmota32c3`, `tasmota32s2`, `tasmota32s3`, `tasmota`) and adds its `-DBEN_*` flag(s); shared flags live in a `[muh]` section. Secrets and site values come from environment variables (`${sysenv.MUH_*}`), loaded from a git-ignored `muh/build.env` locally and from repository secrets in CI. `muh/build.sh` builds profiles, collects `.bin`/`.factory.bin`/`.map` plus a manifest into `build/`, and optionally rsyncs to the OTA host. `.github/workflows/muh-build.yml` builds the matrix on tag push and manual dispatch, uploads artifacts, and attaches them to a GitHub Release. Fleet-side settings (OtaUrl, syslog) are pushed with a small script in `tasmota-scripts`.
 
-**Tech Stack:** PlatformIO 6.1.19 (installed at `/usr/bin/pio`), Tasmota fork at `~/repo/tasmota` (last upstream merge `fcdb10631`, prerelease-15.2.0), GitHub Actions ubuntu-latest, rsync/ssh.
+**Tech Stack:** PlatformIO 6.1.19 in a project-local `.venv` (Python 3.13 via `uv`; system Python 3.14 is too new for the espressif32 platform scripts), Tasmota fork at `~/repo/tasmota` (last upstream merge `fcdb10631`, prerelease-15.2.0), GitHub Actions ubuntu-latest, rsync/ssh.
 
 ## Global Constraints
 
@@ -72,10 +72,10 @@ Deviation from the agreed list, with reason: `solo1-ds18b20` is folded into `muh
 #endif
 #undef  SYS_LOG_LEVEL
 #define SYS_LOG_LEVEL          LOG_LEVEL_INFO
-#undef  SYSLOG_HOST
-#define SYSLOG_HOST            MUH_SYSLOG_HOST
-#undef  SYSLOG_PORT
-#define SYSLOG_PORT            514
+#undef  SYS_LOG_HOST
+#define SYS_LOG_HOST           MUH_SYSLOG_HOST
+#undef  SYS_LOG_PORT
+#define SYS_LOG_PORT           514
 
 // OTA URL per profile, from platformio_muh.ini
 #ifndef MUH_OTA_URL
@@ -228,6 +228,15 @@ for v in MUH_WIFI_SSID MUH_WIFI_PASS MUH_SYSLOG_HOST MUH_OTA_BASE; do
   [[ -n ${!v:-} ]] || { echo "$v is empty in $ENVFILE"; exit 1; }
 done
 
+# The espressif32 platform scripts need Python 3.10-3.13; the host has 3.14.
+# Use a project-local venv (created with uv on first run) instead of system pio.
+PIO=.venv/bin/pio
+if [[ ! -x $PIO ]]; then
+  command -v uv >/dev/null || { echo "need uv to create .venv (pacman -S uv)"; exit 1; }
+  uv venv --python 3.13 .venv
+  uv pip install --python .venv/bin/python platformio==6.1.19
+fi
+
 ALL=$(grep -o '^\[env:muh-[^]]*\]' platformio_muh.ini | sed 's/\[env:\(.*\)\]/\1/')
 publish=0 clean=0 profiles=()
 for a in "$@"; do
@@ -249,7 +258,7 @@ echo "built $(date -Iseconds) on $(hostname)" >> build/manifest.txt
 
 for p in "${profiles[@]}"; do
   echo "=== $p"
-  pio run -e "$p"
+  "$PIO" run -e "$p"
   rm -rf "build/$p"; mkdir -p "build/$p"
   cp build_output/firmware/"$p".bin* "build/$p/"
   [[ -f build_output/map/$p.map ]] && cp "build_output/map/$p.map" "build/$p/"
