@@ -8,7 +8,7 @@
 set -uo pipefail
 REPO=$(cd "$(dirname "$0")/.." && pwd)
 FAILED=0
-SCRATCH_DIRS=()
+RUN_TAG=$$
 
 # Fakes shell out through PATH-resolved bash; the sandbox's BASH_ENV prints
 # an escape sequence on shell start, so make sure it's cleared for every
@@ -16,10 +16,9 @@ SCRATCH_DIRS=()
 unset BASH_ENV
 
 cleanup() {
-  local d
-  for d in "${SCRATCH_DIRS[@]:-}"; do
-    [[ -n $d && -d $d ]] && rm -rf "$d"
-  done
+  # new_scratch runs inside $(...), so it cannot append to an array here;
+  # remove every scratch dir this run created by its unique prefix instead.
+  rm -rf "${TMPDIR:-/tmp}"/test-deploy."$RUN_TAG".* 2>/dev/null || true
 }
 trap cleanup EXIT
 
@@ -53,8 +52,7 @@ assert_eq() {
 # new_scratch: fresh scratch copy of the repo + fakes on PATH, echoes its dir.
 new_scratch() {
   local dir
-  dir=$(mktemp -d)
-  SCRATCH_DIRS+=("$dir")
+  dir=$(mktemp -d "${TMPDIR:-/tmp}/test-deploy.$RUN_TAG.XXXXXX")
   cp -r "$REPO/deploy.sh" "$REPO/tools" "$REPO/MUH" "$REPO/devices.tsv" "$dir/"
   mkdir -p "$dir/bin" "$dir/state" "$dir/state/store"
 
@@ -277,7 +275,7 @@ fi
 echo "=== (f) rollback ==="
 s=$(new_scratch)
 mkdir -p "$s/backups/FL3/t1"
-echo a >"$s/backups/FL3/t1/autoexec.be"
+echo 'mqtt.publish("muh/berry/FL3/status")' >"$s/backups/FL3/t1/autoexec.be"
 echo x >"$s/backups/FL3/t1/muh_lib.be"
 echo a >"$s/state/store/autoexec.be"
 echo x >"$s/state/store/muh_lib.be"
@@ -288,7 +286,7 @@ echo z >"$s/state/store/autoexec.bec"    # not exactly .be -> keep
 echo "{\"ok\":true,\"autoexec\":\"old\",\"script\":\"\"}" >"$s/state/sub_queue"
 out=$(DEPLOY_VERIFY_TIMEOUT=10 run_rollback "$s" FL3 t1); rc=$?
 assert_eq "$rc" 0 "(f) expected exit 0"
-assert_contains "$out" "restored: autoexec.be muh_lib.be" "(f) expected restored file list"
+assert_contains "$out" "restored: muh_lib.be autoexec.be" "(f) expected restored file list, autoexec.be last"
 assert_contains "$out" "deleted: fl3.be" "(f) expected fl3.be deleted"
 [[ -f "$s/state/store/fl3.be" ]] && fail "(f) fl3.be should have been removed from the device store"
 [[ -f "$s/state/store/_persist.json" ]] || fail "(f) _persist.json must survive rollback delete pass"
@@ -451,6 +449,38 @@ mkdir -p "$s/backups/FL3/t1"; echo a >"$s/backups/FL3/t1/autoexec.be"
 out=$(FAKE_DEVICENAME=FL3 run_rollback "$s" --no-verify 192.168.23.186 t1); rc=$?
 assert_eq "$rc" 0 "(o) expected exit 0 resolving backups/FL3 via a live DeviceName query"
 assert_contains "$out" "restored: autoexec.be" "(o) expected the FL3 backup to be restored via IP"
+
+# --- (p) rollback to a pre-canonical loader (never publishes status) must not
+#     wait for one: exit 0, explanatory message, no mosquitto_sub.
+echo "=== (p) rollback to an old loader skips the status wait ==="
+s=$(new_scratch)
+mkdir -p "$s/backups/FL3/t1"
+echo 'tasmota.set_timer(8000, def () load("fl3.be") end)' >"$s/backups/FL3/t1/autoexec.be"
+echo f >"$s/backups/FL3/t1/fl3.be"
+out=$(DEPLOY_VERIFY_TIMEOUT=10 run_rollback "$s" FL3 t1); rc=$?
+assert_eq "$rc" 0 "(p) expected exit 0 for a rollback to an old loader"
+assert_contains "$out" "restored loader does not report load status" "(p) expected skip message"
+[[ -f "$s/state/mosquitto_sub.log" ]] && fail "(p) must not wait on mosquitto_sub for an old loader"
+# .EMPTY restore: no loader at all -> also no wait
+s=$(new_scratch)
+mkdir -p "$s/backups/WZ3/t1"; : >"$s/backups/WZ3/t1/.EMPTY"
+echo a >"$s/state/store/autoexec.be"; echo b >"$s/state/store/muh_lib.be"
+out=$(DEPLOY_VERIFY_TIMEOUT=10 run_rollback "$s" WZ3 t1); rc=$?
+assert_eq "$rc" 0 "(p) expected exit 0 for an .EMPTY rollback"
+[[ -f "$s/state/mosquitto_sub.log" ]] && fail "(p) .EMPTY rollback must not wait for a status"
+
+# --- (q) library-only device: empty script field prints "library only"
+echo "=== (q) library-only status text ==="
+s=$(new_scratch)
+echo "{\"ok\":true,\"autoexec\":\"$VERSION\",\"script\":\"\"}" >"$s/state/sub_queue"
+out=$(run_deploy "$s" --autoexec-only WZ3); rc=$?
+assert_eq "$rc" 0 "(q) expected exit 0"
+assert_contains "$out" "LOAD ok (library only)" "(q) expected 'library only' for an empty script"
+s=$(new_scratch)
+echo "{\"ok\":false,\"err\":\"\",\"autoexec\":\"$VERSION\"}" >"$s/state/sub_queue"
+out=$(run_deploy "$s" --autoexec-only WZ3); rc=$?
+assert_eq "$rc" 1 "(q) expected exit 1 for ok:false"
+assert_not_contains "$out" "LOAD FAILED: $VERSION" "(q) an empty err must not be replaced by the version"
 
 if [[ $FAILED -eq 0 ]]; then
   echo "test-deploy.sh: all tests passed"

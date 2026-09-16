@@ -84,14 +84,14 @@ else:
     err = data.get("err", "")
     script = data.get("script", "")
     if ok is True and (not want or autoexec == want):
-        print(f"OK\t{script}\t{autoexec}")
+        print(f"OK\x1f{script}\x1f{autoexec}")
     elif ok is False:
-        print(f"FAILED\t{err}\t{autoexec}")
+        print(f"FAILED\x1f{err}\x1f{autoexec}")
     else:
-        print(f"WAIT\t{ok}\t{autoexec}")
+        print(f"WAIT\x1f{ok}\x1f{autoexec}")
 PYEOF
 )
-      IFS=$'\t' read -r status detail extra <<<"$result"
+      IFS=$'\x1f' read -r status detail extra <<<"$result"
       case $status in
         OK)
           echo "  LOAD ok (${detail:-library only})"

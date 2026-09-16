@@ -95,7 +95,7 @@ has_empty_marker=0
 backup_files=()
 while IFS= read -r f; do
   [[ -n $f ]] && backup_files+=("$f")
-done < <(cd "$backup_dir" && ls -1 -- *.be 2>/dev/null)
+done < <(cd "$backup_dir" && { ls -1 -- *.be 2>/dev/null | grep -vx 'autoexec.be' || true; [[ ! -f autoexec.be ]] || echo autoexec.be; })
 
 if [[ ${#backup_files[@]} -eq 0 && $has_empty_marker -eq 0 ]]; then
   echo "backup $backup_dir is empty (no .EMPTY marker), refusing to roll back" >&2
@@ -104,9 +104,11 @@ fi
 
 rc=0
 echo "$name_arg ($ip): rolling back to $backup_dir"
+restored=()
 if [[ ${#backup_files[@]} -gt 0 ]]; then
   for f in "${backup_files[@]}"; do
-    upload_one "$ip" "$backup_dir/$f" "$f" || { echo "  ABORTING rollback of $name_arg (device not restarted)"; exit 1; }
+    upload_one "$ip" "$backup_dir/$f" "$f" || { echo "  ABORTING rollback of $name_arg (device not restarted; already restored: ${restored[*]:-none})"; exit 1; }
+    restored+=("$f")
   done
   echo "  restored: ${backup_files[*]}"
 else
@@ -165,6 +167,13 @@ if ! curl -sf --connect-timeout 5 --max-time 30 "http://$ip/cm?cmnd=Restart%201$
   exit 1
 fi
 echo "  restarted"
+
+# Loaders from before the canonical autoexec never publish muh/berry/<KEY>/status,
+# and an .EMPTY restore leaves no loader at all: waiting would always time out.
+if [[ $no_verify -eq 0 ]] && ! grep -qs 'muh/berry/' "$backup_dir/autoexec.be"; then
+  echo "  restored loader does not report load status; check with: make fleet (Status 4 / syslog)"
+  no_verify=1
+fi
 
 if [[ $no_verify -eq 0 ]]; then
   # A restored backup may be an older AUTOEXEC_VERSION than the repo's, so
