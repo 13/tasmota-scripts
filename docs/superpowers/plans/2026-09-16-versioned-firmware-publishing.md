@@ -26,7 +26,7 @@
 - Minimal rewrite example with today's names: `…/tasmota-muh-plug.bin.gz` → `…/tasmota-muh-minimal.bin.gz` (last dash before `plug`). One `tasmota-muh-minimal` image therefore serves all three ESP8266 profiles, but only if it exists next to the file the device fetches. No such image is built today, so a 1 MB ESP8266 (e.g. Athom Plug V2: `Free` 364 KB, `tasmota-muh-plug.bin` 653 KB) could not upgrade to a MUH profile at all.
 - A naive versioned name breaks it: `tasmota-muh-plug-15.6.0.bin.gz` → `tasmota-muh-plug-minimal.6.0.bin.gz`.
 - `tasmota/tasmota.ino` includes `include/tasmota_version.h` (defines empty `TASMOTA_SHA_SHORT`) before `my_user_config.h`, which includes `user_config_override.h` last, so the override can redefine it. `STR()` is expanded later (`tasmota.ino:678`). `gcc -E` confirms `STR(MUH_BUILD_ID-)` with `MUH_BUILD_ID` = `15.6.0-muh1` yields `"15.6.0-muh1-"`.
-- A `-D` flag with the version would change the global build flags on every commit and rebuild all libraries; a generated header only recompiles the Tasmota translation unit.
+- A `-D` flag with the version would change the global build flags on every commit and rebuild everything including the framework; a generated header only recompiles units that include `user_config_override.h` (measured 2026-09-16: the Tasmota unit plus ~156 library objects, because several libraries include the override transitively). Acceptable: it only happens when the version changes.
 
 ---
 
