@@ -23,8 +23,14 @@ else
 fi
 
 cm() { curl -s --connect-timeout 3 --max-time 6 "http://$1/cm?cmnd=$2"; }
+# BUILD column: compare each device's running firmware image against the
+# version promoted on the OTA host's CURRENT file (lines "name -> target").
+# Until CURRENT exists, curl returns an nginx 404 page; grep -E filters that
+# out so every device just falls back to showing its plain version untagged.
+OTA_BASE=${OTA_BASE:-http://192.168.22.11/tasmota}
+current=$(curl -s --max-time 5 "$OTA_BASE/CURRENT" | grep -E '^[^ ]+ -> [^ ]+$')
 bad=0
-printf '%-10s %-16s %-6s %-22s %-14s %-12s %s\n' DEVICE IP BERRY MODULE RELAYS UPTIME RESTART
+printf '%-10s %-16s %-6s %-22s %-14s %-12s %-14s %s\n' DEVICE IP BERRY MODULE RELAYS UPTIME BUILD RESTART
 for ip in "${targets[@]}"; do
   name=$(cm "$ip" DeviceName | grep -o '"DeviceName":"[^"]*"' | cut -d'"' -f4)
   if [[ -z $name ]]; then
@@ -44,6 +50,17 @@ for ip in "${targets[@]}"; do
   st1=$(cm "$ip" Status%201)
   uptime=$(grep -o '"Uptime":"[^"]*"' <<<"$st1" | cut -d'"' -f4)
   reason=$(grep -o '"RestartReason":"[^"]*"' <<<"$st1" | cut -d'"' -f4)
+  # BUILD: does the running image match what CURRENT promotes for this
+  # device's OtaUrl? "stock" = OtaUrl not listed in CURRENT (not a MUH
+  # build, or CURRENT has no data yet for it). "old:<ver>" = a promoted
+  # build exists but this device hasn't picked it up yet.
+  ver=$(cm "$ip" Status%202 | grep -o '"Version":"[^"]*"' | cut -d'"' -f4)
+  img=${ver#*(}; img=${img%)}
+  ota=$(cm "$ip" OtaUrl | grep -o '"OtaUrl":"[^"]*"' | cut -d'"' -f4)
+  want=$(awk -v f="${ota##*/}" '$1 == f {print $3}' <<<"$current"); want=${want%/*}; want=${want#dev/}
+  if [[ -z $want ]]; then build=$ver
+  elif [[ $img == "$want-"* ]]; then build=$want
+  else build="old:${ver%%(*}"; fi
   flag=''
   [[ $berry != 52 ]] && flag='BERRY-DEAD'
   # Boot-loop protection resets the module to the fallback (index 1, e.g.
@@ -51,6 +68,9 @@ for ip in "${targets[@]}"; do
   [[ $module == 1:* && ${module#1:} != "$tpl_name" ]] && flag="$flag MODULE-FALLBACK"
   [[ $tpl_relays -gt 0 && $live_power -eq 0 ]] && flag="$flag RELAYS-WIPED"
   [[ -n $flag ]] && bad=1
-  printf '%-10s %-16s %-6s %-22s %-14s %-12s %s %s\n' "$name" "$ip" "${berry:-?}" "$module" "$relays" "$uptime" "$reason" "$flag"
+  # UPGRADE-PENDING is informational only; it never affects the exit code.
+  note=''
+  [[ -n $want && $build == old:* ]] && note='UPGRADE-PENDING'
+  printf '%-10s %-16s %-6s %-22s %-14s %-12s %-14s %s %s %s\n' "$name" "$ip" "${berry:-?}" "$module" "$relays" "$uptime" "$build" "$reason" "$flag" "$note"
 done
 exit $bad
