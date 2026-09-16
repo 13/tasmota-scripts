@@ -10,13 +10,22 @@
 #
 # Reads devices.tsv (name, ip, scripts). Every deploy:
 #   1. backs the device up first (tools/berry-inventory.sh); aborts that
-#      device if the backup fails.
-#   2. uploads autoexec.be and muh_lib.be, plus the device's own script(s)
-#      unless --autoexec-only.
-#   3. clears the retained muh/berry/<KEY>/status message, restarts, then
-#      polls (up to $DEPLOY_VERIFY_TIMEOUT, default 90s) for a fresh status
-#      showing ok:true and the repo's AUTOEXEC_VERSION. --no-verify skips
-#      this (for devices without MQTT).
+#      device if the backup fails (nothing is uploaded).
+#   2. unless --no-verify, clears the retained muh/berry/<KEY>/status
+#      message BEFORE anything is uploaded; aborts (nothing uploaded) if
+#      that fails.
+#   3. uploads muh_lib.be, then the device's own script(s) (unless
+#      --autoexec-only), then autoexec.be LAST: old loaders ignore
+#      muh_lib.be, and the new canonical loader only takes over once
+#      autoexec.be lands, so autoexec.be must be the final file written. A
+#      failure here after at least one file has already landed prints
+#      "PARTIAL: replaced <files>" plus a rollback hint and stops that
+#      device.
+#   4. restarts, then (unless --no-verify) polls (up to
+#      $DEPLOY_VERIFY_TIMEOUT, default 90s) for a fresh status showing
+#      ok:true and the repo's AUTOEXEC_VERSION.
+# Device name matching against devices.tsv is case-insensitive; an argument
+# matching no row is reported as "unknown device <name>".
 # If a device has a web password, export TASMOTA_AUTH="user=admin&pass=xxx".
 # Once MQTT credentials are needed, export MOSQ_ARGS (e.g. "-u u -P p").
 set -euo pipefail
@@ -33,74 +42,11 @@ AUTOEXEC_VERSION=$(grep -oE 'AUTOEXEC_VERSION[[:space:]]*=[[:space:]]*"[^"]+"' M
 autoexec_only=0
 no_verify=0
 
-# clear_retained_status <key>
-# Clears the retained muh/berry/<key>/status message so a later poll only
-# ever sees a fresh publish from the post-restart boot.
-clear_retained_status() {
-  local key=$1
-  echo "  clearing retained status"
-  mosquitto_pub -h "$MQTT_HOST" $MOSQ_ARGS -t "muh/berry/$key/status" -r -n
-}
-
-# wait_for_load <name> <key> <backup_ts>
-wait_for_load() {
-  local name=$1 key=$2 backup_ts=$3
-  echo "  waiting for LOAD status (up to ${DEPLOY_VERIFY_TIMEOUT}s)..."
-  local waited=0 payload result status detail
-  while (( waited < DEPLOY_VERIFY_TIMEOUT )); do
-    payload=$(mosquitto_sub -h "$MQTT_HOST" $MOSQ_ARGS -t "muh/berry/$key/status" -C 1 -W 5 2>/dev/null || true)
-    if [[ -n $payload ]]; then
-      result=$(python3 - "$payload" "$AUTOEXEC_VERSION" <<'PYEOF'
-import json
-import sys
-
-payload, want = sys.argv[1], sys.argv[2]
-try:
-    data = json.loads(payload)
-except Exception:
-    print("WAIT\t")
-    sys.exit()
-ok = data.get("ok")
-autoexec = data.get("autoexec")
-err = data.get("err", "")
-script = data.get("script", "")
-if ok is True and autoexec == want:
-    print(f"OK\t{script}")
-elif ok is False:
-    print(f"FAILED\t{err}")
-else:
-    print(f"WAIT\t{autoexec}")
-PYEOF
-)
-      status=${result%%$'\t'*}
-      detail=${result#*$'\t'}
-      case $status in
-        OK)
-          echo "  LOAD ok (${detail:-library only})"
-          return 0
-          ;;
-        FAILED)
-          echo "  LOAD FAILED: $detail"
-          echo "  rollback: tools/rollback.sh $name $backup_ts"
-          return 1
-          ;;
-        *)
-          : # still on an old/mismatched version, or unparseable — keep polling
-          ;;
-      esac
-    fi
-    (( waited += 5 ))
-  done
-  echo "  LOAD status not received within ${DEPLOY_VERIFY_TIMEOUT}s"
-  echo "  rollback: tools/rollback.sh $name $backup_ts"
-  return 1
-}
-
 deploy_device() {
   local name=$1 ip=$2 scripts=$3
   if [[ $ip == "?" ]]; then
     echo "SKIP $name: no IP in $TSV"
-    return
+    return 0
   fi
   echo "$name ($ip):"
 
@@ -110,41 +56,65 @@ deploy_device() {
     echo "$inv_out" | sed 's/^/    /'
     return 1
   fi
-  local backup_line backup_ts
-  backup_line=$(grep -m1 "^backup: $name -> " <<<"$inv_out" || true)
+  # berry-inventory.sh backs a device up under the DeviceName it reports
+  # live, which may differ in case from the devices.tsv row name (e.g. tsv
+  # "BAD" vs. reported "Bad") -- so match on the "backup: " prefix only and
+  # take whatever path follows it, rather than requiring $name to match.
+  local backup_line backup_path backup_ts
+  backup_line=$(grep -m1 "^backup: " <<<"$inv_out" || true)
   if [[ -z $backup_line ]]; then
     echo "  BACKUP produced no backup dir, skipping $name:"
     echo "$inv_out" | sed 's/^/    /'
     return 1
   fi
   echo "  $backup_line"
-  backup_ts=${backup_line##*/}
-
-  local files=(autoexec.be muh_lib.be)
-  if [[ $autoexec_only -eq 0 ]]; then
-    IFS=',' read -ra extra <<<"$scripts"
-    files+=("${extra[@]}")
-  fi
-  for f in "${files[@]}"; do
-    [[ -z $f ]] && continue
-    upload_one "$ip" "MUH/$f" "$f" || return 1
-  done
+  backup_path=${backup_line#backup: * -> }
+  backup_ts=${backup_path##*/}
+  local rollback_hint="  rollback: tools/rollback.sh $name $backup_ts"
 
   local key=${name^^}
+  if [[ $no_verify -eq 0 ]]; then
+    if ! clear_retained_status "$key"; then
+      echo "  ABORTING $name: could not clear retained status (nothing uploaded)"
+      echo "$rollback_hint"
+      return 1
+    fi
+  fi
+
+  local device_files=()
+  if [[ $autoexec_only -eq 0 ]]; then
+    IFS=',' read -ra device_files <<<"$scripts"
+  fi
+  local files=(muh_lib.be)
+  for f in "${device_files[@]}"; do [[ -n $f ]] && files+=("$f"); done
+  files+=(autoexec.be)
+
+  local replaced=()
+  for f in "${files[@]}"; do
+    [[ -z $f ]] && continue
+    if ! upload_one "$ip" "MUH/$f" "$f"; then
+      if [[ ${#replaced[@]} -gt 0 ]]; then
+        echo "  PARTIAL: replaced ${replaced[*]}"
+      fi
+      echo "$rollback_hint"
+      return 1
+    fi
+    replaced+=("$f")
+  done
+
+  if ! curl -sf --connect-timeout 5 --max-time 30 "http://$ip/cm?cmnd=Restart%201${TASMOTA_AUTH:+&$TASMOTA_AUTH}" >/dev/null; then
+    echo "  FAILED restarting $name"
+    echo "  PARTIAL: replaced ${replaced[*]}"
+    echo "$rollback_hint"
+    return 1
+  fi
+  echo "  restarted"
+
   if [[ $no_verify -eq 1 ]]; then
-    curl -sf --connect-timeout 5 --max-time 30 "http://$ip/cm?cmnd=Restart%201${TASMOTA_AUTH:+&$TASMOTA_AUTH}" >/dev/null \
-      || { echo "  FAILED restarting $name"; return 1; }
-    echo "  restarted"
     return 0
   fi
 
-  clear_retained_status "$key"
-
-  curl -sf --connect-timeout 5 --max-time 30 "http://$ip/cm?cmnd=Restart%201${TASMOTA_AUTH:+&$TASMOTA_AUTH}" >/dev/null \
-    || { echo "  FAILED restarting $name"; return 1; }
-  echo "  restarted"
-
-  wait_for_load "$name" "$key" "$backup_ts"
+  wait_for_load "$name" "$key" "$backup_ts" "$AUTOEXEC_VERSION"
 }
 
 main() {
@@ -173,16 +143,29 @@ main() {
   fi
 
   local rc=0
+  local -A matched=()
   while IFS=$'\t' read -r name ip scripts; do
     [[ $name == \#* || -z $name ]] && continue
     if [[ $1 == "--all" ]]; then
       deploy_device "$name" "$ip" "$scripts" || rc=1
     else
       for want in "$@"; do
-        [[ $want == "$name" ]] && { deploy_device "$name" "$ip" "$scripts" || rc=1; }
+        if [[ ${want^^} == "${name^^}" ]]; then
+          matched[$want]=1
+          deploy_device "$name" "$ip" "$scripts" || rc=1
+        fi
       done
     fi
   done < "$TSV"
+
+  if [[ $1 != "--all" ]]; then
+    for want in "$@"; do
+      if [[ -z ${matched[$want]:-} ]]; then
+        echo "unknown device $want" >&2
+        rc=1
+      fi
+    done
+  fi
   exit $rc
 }
 

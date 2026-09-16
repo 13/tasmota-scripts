@@ -32,15 +32,20 @@ tools/berry-inventory.sh             # read-only: back up every device's *.be, r
 ./deploy.sh WC        # upload autoexec.be + muh_lib.be + wc.be, restart WC
 ./deploy.sh --autoexec-only FL3    # upload only autoexec.be + muh_lib.be
 DEPLOY_ALL=yes ./deploy.sh --all   # same for every device with an IP in devices.tsv
-tools/rollback.sh FL3 [ts]         # restore backups/FL3/<ts or newest>/*.be, delete extras, restart
+tools/rollback.sh FL3               # no timestamp: lists backups/FL3/* (oldest first), exits 1
+tools/rollback.sh FL3 20260916-153000   # restore that backup's *.be, delete extras, restart
 ```
 
 `deploy.sh` backs a device up (`tools/berry-inventory.sh`) before uploading,
 and — unless `--no-verify` — clears the device's retained
-`muh/berry/<KEY>/status`, restarts, then polls it for up to 90s
+`muh/berry/<KEY>/status` *before* uploading anything, uploads `muh_lib.be`,
+then the device's own script(s), then `autoexec.be` **last** (old loaders
+ignore `muh_lib.be`; the new canonical loader only takes over once
+`autoexec.be` lands), restarts, then polls the status for up to 90s
 (`$DEPLOY_VERIFY_TIMEOUT`) to confirm the new `autoexec.be` actually loaded.
-On failure it prints the matching `tools/rollback.sh <name> <timestamp>`
-command.
+On any failure it prints the matching `tools/rollback.sh <name> <timestamp>`
+command — `tools/rollback.sh <name>` with no timestamp always requires one
+explicitly and lists what's on disk instead of guessing "the newest".
 
 Standalone `berry`: `git clone https://github.com/berry-lang/berry && make`,
 put the binary on PATH (or `make check BERRY=/path/to/berry`).
@@ -61,21 +66,21 @@ retained so a consumer can check the latest state without waiting for a reboot.
   "err": "",
   "device": "WC",
   "autoexec": "2026.09.16-1",
-  "time": "2026-09-16 15:30:45",
+  "time": "2026-09-16T15:30:45",
   "uptime": 86400
 }
 ```
 
-**Example: failure** (library load error)
+**Example: failure** (device script load error; the library still loaded)
 ```json
 {
-  "lib": false,
-  "script": "",
+  "lib": true,
+  "script": "gdhd.be",
   "ok": false,
   "err": "gdhd.be: load_error: hd.be: key_error: some_undefined_key",
   "device": "HD",
   "autoexec": "2026.09.16-1",
-  "time": "2026-09-16 15:30:45",
+  "time": "2026-09-16T15:30:45",
   "uptime": null
 }
 ```

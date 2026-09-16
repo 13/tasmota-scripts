@@ -78,7 +78,16 @@ for ip in "${targets[@]}"; do
     continue
   fi
 
-  listing=$(curl -s --connect-timeout 3 --max-time 8 "http://$ip/ufsd?dir=/")
+  # Require a real 200 + something that looks like the ufsd management page;
+  # curl -s alone would happily "succeed" on a connection-refused empty
+  # response, which used to look just like an empty (but valid) file list.
+  listing_rc=0
+  listing=$(curl -sf --connect-timeout 3 --max-time 8 "http://$ip/ufsd?dir=/") || listing_rc=$?
+  if [[ $listing_rc -ne 0 || $listing != *ufsd* ]]; then
+    echo "FAILED: could not list files on $name ($ip)" >&2
+    rc=1
+    continue
+  fi
   files=()
   while IFS= read -r f; do
     [[ -n $f ]] && files+=("$f")
@@ -95,6 +104,11 @@ for ip in "${targets[@]}"; do
   done
   if [[ $dl_fail -ne 0 ]]; then
     rc=1
+  fi
+  # A device that genuinely has no *.be files gets a marker so rollback.sh
+  # can tell "empty backup, on purpose" apart from "backup never completed".
+  if [[ ${#files[@]} -eq 0 ]]; then
+    : >"$backup_dir/.EMPTY"
   fi
   echo "backup: $name -> $backup_dir" >&2
 
