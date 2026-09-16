@@ -1,66 +1,17 @@
 # tools/test_hz_ww.be — offline behaviour test for MUH/hz_ww.be
-# Run: berry tools/test_hz_ww.be
-import sys
-sys.path().push("tools/stubs")
+# Run: berry tools/test_hz_ww.be   (from repo root)
 
-import json
-import string
-import math
-
-# ---- stubs for Tasmota built-ins ----
-var published = []     # list of [topic, payload_map, retain]
-var cmds = []          # tasmota.cmd() calls
-var rules = {}         # trigger -> closure
-var crons = {}         # id -> closure
-var timers = []        # list of [delay_ms, closure, id]
-var sensor_json = ""
-var DEVICENAME = "HZ_WW"
-
-class TasmotaStub
-  def read_sensors() return sensor_json end
-  def rtc() return {'local': 0} end
-  def time_str(t) return "2026-01-01T00:00:00" end
-  def cmd(c)
-    cmds.push(c)
-    if c == "DeviceName"
-      return {"DeviceName": DEVICENAME}
-    end
-    return {}
-  end
-  def publish(topic, payload, retain)
-    published.push([topic, json.load(payload), retain])
-  end
-  def add_rule(trigger, f) rules[trigger] = f end
-  def add_cron(spec, f, id) crons[id] = f end
-  def set_timer(ms, f, id) timers.push([ms, f, id]) end
-  def remove_timer(id) end
-end
-var tasmota = TasmotaStub()
-def mqtt_publish_hook(topic, payload, retain)
-  published.push([topic, json.load(payload), retain])
-end
-var LOG_PREFIX = "MUH:"
-var DEBUG = false
-def log(m) if DEBUG print(m) end end
-def load(filename)
-  compile(filename, "file")()
-end
+# Berry compiles this whole file in one pass before executing any of it, so
+# a name that a separately-compiled unit (tools/test_env.be, MUH/hz_ww.be)
+# assigns only becomes usable here once that unit's own compile()() call has
+# actually run. Forward-declare every such name first (nil until then) so
+# this file's own code compiles, then call compile() to fill them in.
+var published, cmds, rules, crons, timers, sensor_json, check, reset, load, finish, json, string
+compile("tools/test_env.be", "file")()
 
 # Globals provided by MUH/hz_ww.be
 var boot_publish, MIN_UPTIME_FOR_RESTART_MS
 
-var failures = 0
-def check(cond, name)
-  if cond
-    print(f"ok   {name}")
-  else
-    print(f"FAIL {name}")
-    failures += 1
-  end
-end
-def reset()
-  published = [] cmds = [] timers = []
-end
 def mock_sensors(a, b)
   sensor_json = json.dump({
     'Time': 'x',
@@ -151,5 +102,4 @@ sensor_json = json.dump({
 rules["system#boot"]()
 check(timers.size() == 1, "missing temperature at boot arms retry timer")
 
-print(f"{failures} failures")
-if failures > 0 raise "test_failed" end
+finish()
