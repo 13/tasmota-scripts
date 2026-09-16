@@ -91,11 +91,12 @@ tasmota.add_cron("59 59 * * * *", def (value) chimePC() end, "pcFull")
 ## Wi-Fi watchdog (shared, boot-latched; see muh_lib.be)
 init_wifi_watchdog("192.168.22.1", "10 10 */3 * * *")
 
-# Load custom script
-if DEVICENAME == "HD"
-  load("hd.be")
-elif DEVICENAME == "GD"
-  load("gd.be")
-else
-  log(f"Unknown {DEVICENAME}")
+# Load the door-specific part; raise so autoexec records the real error
+var sub = DEVICENAME == "HD" ? "hd.be" : DEVICENAME == "GD" ? "gd.be" : nil
+if sub == nil
+  raise "config_error", f"gdhd.be: unknown device {DEVICENAME}"
+end
+var sub_err = run_file(sub)
+if sub_err != ""
+  raise "load_error", sub_err
 end

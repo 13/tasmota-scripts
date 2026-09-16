@@ -164,5 +164,13 @@ for k : DEVICE_SCRIPTS.keys()
 end
 check(bad_keys.size() == 0, f"11 real map: every key is upper case {bad_keys}")
 
+# ---- 12. gdhd.be-like propagation: sub-script error surfaces via raise ----
+boot_as("Good", {"GOOD": "gdhd_like.be"})
+check(MUH_STATUS["ok"] == false && has(MUH_STATUS["err"], "gdhd_like.be") && has(MUH_STATUS["err"], "boom at load"),
+  f"12 gdhd-like error: err names gdhd_like.be and boom at load ({MUH_STATUS['err']})")
+
+boot_as("Good", {"GOOD": "gdhd_ok.be"})
+check(MUH_STATUS["ok"] == true, "12 gdhd-like ok: success variant reports ok")
+
 os.chdir(ROOT)
 finish()
