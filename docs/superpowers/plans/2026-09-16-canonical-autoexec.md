@@ -299,7 +299,9 @@ end
 ### Task 9: Rollout
 
 - [ ] **Step 1: Canary FL3** (hallway light): `./deploy.sh --autoexec-only FL3` → status `ok`, retained message present, walk past the PIR, light works. `make fleet FL3`-row clean.
-- [ ] **Step 2:** one at a time with `--autoexec-only`: FL2, G_EXT, G_INT, HD_EXT, HD_INT, G_TREPPE, ANNAUHR, PLUGUD, PARK2 (after Task 2), BAD, PV_A, SOLAR_EXT, WZ3, HZ_DG, HZ_DGB. After each: status `ok`, functional spot check where the device has a script.
+- [ ] **Step 2:** one at a time with `--autoexec-only` (names exactly as in `devices.tsv`): FL2, G_EXT, G_INT, HD_EXT, HD_INT, G_TREPPE, AnnaUhr, PlugUD, BAD, PV_A, SOLAR_EXT, WZ3, HZ_DG, HZ_DGB. After each: status `ok`, functional spot check where the device has a script.
+- [ ] **Step 2b:** PARK2 with a full `./deploy.sh PARK2` (Task 2 decision; `--autoexec-only` would report `park2.be: file not found`). Afterwards delete the orphan: `curl 'http://192.168.23.144/ufsd?delete=/park.be'`.
+- [ ] Rollback for any device uses the pre-rollout backup timestamp explicitly: `tools/rollback.sh <name> 20260916-182955` (the first inventory run; every later deploy creates a newer backup of the new files).
 - [ ] **Step 3:** HZ_WW, then HD, then GD with a full `./deploy.sh <name>` (they already run repo scripts; this ships the new `gdhd.be`). After HD and GD: lock/unlock once each.
 - [ ] **Step 4:** `make fleet` exit 0 (no drift, no load errors). `mosquitto_sub -t 'muh/berry/+/status' -v -W 3` lists every Berry device.
 
