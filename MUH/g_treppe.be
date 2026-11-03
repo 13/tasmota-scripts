@@ -5,6 +5,7 @@ Backlog Template {"NAME":"Shelly Plus1PMMini","GPIO":[576,32,0,4736,0,224,3200,8
 
 Backlog IPAddress1 192.168.22.70; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 DeviceName G_TREPPE; FriendlyName1 G_TREPPE;
+SaveData 3600;
 SwitchMode 1; PulseTime1 160; Restart 1;
 -#
 

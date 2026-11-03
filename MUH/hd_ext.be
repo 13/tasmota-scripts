@@ -8,6 +8,7 @@ Module 0; restart 1;
 Backlog IPAddress1 192.168.22.70; IPAddress2 192.168.22.6; IPAddress3 255.255.255.0; IPAddress4 192.168.22.6; IPAddress5 192.168.22.1;
 
 DeviceName HD_EXT; FriendlyName1 HD_EXT;
+SaveData 3600;
 PulseTime1 600; SwitchMode 1;
 Restart 1;
 -#

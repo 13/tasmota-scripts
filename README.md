@@ -170,3 +170,9 @@ rules documented in `MUH/Plugs8266.md`.
   wipes GPIOs. Default 1 let a one-minute Wi-Fi crash loop on 2026-09-11 kill
   Berry on three devices. Re-apply after a settings reset; `make fleet` shows
   the damage if it happens again.
+- Relay devices (HD_INT, G_TREPPE, G_INT, G_EXT, HD_EXT, FL2, FL3, WC, WZ3) run
+  `SaveData 3600`. With the default `SaveData 1` plus `SetOption0 1`, every relay
+  change is a flash write — measured 1:1 over 30 days in 2026-10 (G_TREPPE ~30
+  writes/day; HD_INT at 3600: 56 writes for 2,614 changes). Cost: after a power
+  cut a relay comes back in its state from the last hourly save. Check with
+  `tools/fleet-cmd.sh SaveData`; `SaveCount` in `Status 1` is the write counter.
