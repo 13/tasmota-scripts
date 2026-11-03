@@ -12,7 +12,6 @@ PulseTime1 600; PulseTime2 300; SwitchMode3 1; SetOption114 1; Restart 1;
 # Uses muh_lib.be (loaded by autoexec.be)
 import json
 import mqtt
-import string
 
 var DEVICE_NAME = "HD_INT"
 var DEVICE_NAME2 = "HD_GAR"
@@ -24,24 +23,18 @@ POWER_TIMER_DURATION = 25
 
 var LUX_THRESHOLD = 35
 
-var MQTT_TOPIC_PIR = "shellies/shellymotion2-8CF6811074B3/status"
-var MQTT_TOPIC_PIR2 = "muh/portal/HDP/json"
-var MQTT_TOPIC_REED = "muh/portal/HD/json"
+var MQTT_TOPIC_PIR = "muh/portal/HDP/json"   # inside motion: PIR on the HD door unit (Switch4 in hd.be)
+var MQTT_TOPIC_REED = "muh/portal/HD/json"   # front door reed: state 1 = closed, 0 = open
 var MQTT_TOPIC_LUX = "muh/wst/data/B327"
 
 # State variables
-var pir_state1 = false
-var pir_state2 = false
-var reed_state1 = false
-var reed_state2 = false
-var last_reed_state2 = false
-var hdl_unlocked = false
+var motion_inside = false
+var door_closed = nil   # nil until the first (retained) HD message arrives
 var lux_state = false
 
 # Process MQTT messages from subscribed topics
 def process_mqtt_message(topic, idx, payload)
   var data = nil
-  var turn_on = false
 
   try
     data = json.load(payload)
@@ -54,40 +47,27 @@ def process_mqtt_message(topic, idx, payload)
     return
   end
 
-  # Handle PIR sensor 1 (Shelly Motion)
-  if string.find(topic, 'shellymotion2-8CF6811074B3') > -1 && data.contains('motion')
-    pir_state1 = bool(data['motion'])
+  # Inside motion sensor (HDP)
+  if topic == MQTT_TOPIC_PIR && data.contains('state')
+    motion_inside = bool(data['state'])
   end
 
-  # Handle PIR sensor 2 (HDP)
-  if string.find(topic, 'HDP/json') > -1 && data.contains('state')
-    pir_state2 = bool(data['state'])
-  end
-
-  # Handle reed sensor (HD)
-  if string.find(topic, 'HD/json') > -1 && data.contains('state')
-    reed_state1 = bool(data['state'])
-    # Turn on the light if conditions are met
-    if pir_state1 && !pir_state2 && !reed_state1 && hdl_unlocked
-      turn_on = true
+  # Front door (HD): light on when the door goes closed -> open while dark
+  # and nobody is moving inside (someone inside opening the door = leaving,
+  # no auto light). Edge-triggered so a retained "open" after
+  # reboot/reconnect does nothing.
+  if topic == MQTT_TOPIC_REED && data.contains('state')
+    var closed = bool(data['state'])
+    # skip if already on, so the timer never switches off a manually-on light
+    if door_closed == true && !closed && !motion_inside && !tasmota.get_power()[0] && is_dark()
+      set_power(true, 0, true)
     end
+    door_closed = closed
   end
 
-  # Handle reed sensor 2 (HDL)
-  if string.find(topic, 'HDL/json') > -1 && data.contains('state')
-    reed_state2 = bool(data['state'])
-    hdl_unlocked = reed_state2 == false && reed_state2 != last_reed_state2
-    last_reed_state2 = reed_state2
-  end
-
-  # Weather station lux
-  if string.find(topic, 'B327') > -1 && data.contains('light_klx')
+  # Weather station lux (used by Switch3 for HD_GAR)
+  if topic == MQTT_TOPIC_LUX && data.contains('light_klx')
     lux_state = int(data['light_klx']) < LUX_THRESHOLD
-  end
-
-  #if turn_on && (is_dark() || lux_state)
-  if turn_on && is_dark()
-    set_power(true, 0, true)
   end
 end
 
@@ -111,8 +91,7 @@ tasmota.add_rule("Switch3#state=1", def ()
 end)
 
 # Subscribe to MQTT topics
-mqtt.subscribe(MQTT_TOPIC_PIR, process_mqtt_message)   # PIR sensor 1 (Shelly Motion)
-mqtt.subscribe(MQTT_TOPIC_PIR2, process_mqtt_message)  # PIR sensor 2 (HDP)
+mqtt.subscribe(MQTT_TOPIC_PIR, process_mqtt_message)   # Inside motion (HDP)
 mqtt.subscribe(MQTT_TOPIC_REED, process_mqtt_message)  # Reed sensor (HD)
 mqtt.subscribe(MQTT_TOPIC_LUX, process_mqtt_message)   # Lux (weather station)
 
